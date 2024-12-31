@@ -8,4 +8,18 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  devise_for :users, skip: [:registrations, :sessions]
+
+  namespace :api do
+    namespace :v1 do
+      namespace :auth do
+        devise_scope :user do
+          post 'signup', to: 'registrations#create'
+          post 'signin', to: 'sessions#create'
+          post 'signout', to: 'sessions#destroy'
+        end
+      end
+    end
+  end
 end
