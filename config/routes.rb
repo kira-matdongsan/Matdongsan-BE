@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 
-  devise_for :users, skip: [:registrations, :sessions]
+  devise_for :users, skip: [:registrations, :sessions], controllers: { omniauth_callbacks: 'api/v1/auth/omniauth_callbacks' }
 
   namespace :api do
     namespace :v1 do
@@ -18,7 +18,12 @@ Rails.application.routes.draw do
           post 'signup', to: 'registrations#create'
           post 'signin', to: 'sessions#create'
           post 'signout', to: 'sessions#destroy'
+          post 'token', to: 'sessions#refresh'
+
+          get '/kakao/callback', to: 'omniauth_callbacks#kakao'
         end
+
+        resources :test
       end
     end
   end

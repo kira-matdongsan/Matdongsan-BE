@@ -35,6 +35,8 @@ gem "kaminari"
 
 gem "devise"
 gem "devise-jwt"
+gem "omniauth-oauth2"
+gem "omniauth-rails_csrf_protection"
 
 group :hyein_local, :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

@@ -8,6 +8,9 @@
 #
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
+
+require 'omniauth/strategies/kakao'
+
 Devise.setup do |config|
   # The secret key used by Devise. Devise uses this key to generate
   # random tokens. Changing this key will render invalid all existing
@@ -324,4 +327,8 @@ Devise.setup do |config|
       ['DELETE', %r{^/api/v1/auth/signout$}]
     ]
   end
+
+  config.navigational_formats = []
+
+  config.omniauth :kakao, Rails.application.credentials.dig(:kakao, :client_id), Rails.application.credentials.dig(:kakao, :secret_key), provider_ignores_state: Rails.env.development?, callback_path: '/api/v1/auth/kakao/callback'
 end
