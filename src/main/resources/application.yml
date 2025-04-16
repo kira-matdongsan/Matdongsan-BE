@@ -1,0 +1,14 @@
+spring.application.name: demo
+
+spring:
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+  jackson:
+    time-zone: Asia/Seoul
