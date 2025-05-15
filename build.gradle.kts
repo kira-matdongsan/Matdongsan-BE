@@ -34,8 +34,6 @@ dependencies {
 
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
-	implementation("org.flywaydb:flyway-mysql")
-
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	runtimeOnly("org.postgresql:postgresql")
