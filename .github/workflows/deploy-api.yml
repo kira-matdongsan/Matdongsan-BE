@@ -60,11 +60,13 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }} << 'EOF'
             IMAGE_URI="${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}:latest"
 
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin ${{ secrets.AWS_ECR_REGISTRY }}
+          
             docker stop ${{ secrets.AWS_ECR_REPOSITORY }} || true
             docker rm ${{ secrets.AWS_ECR_REPOSITORY }} || true
-
+          
             docker pull $IMAGE_URI
-
+          
             docker run -d \
               --name ${{ secrets.AWS_ECR_REPOSITORY }} \
               --env-file ~/.env \
