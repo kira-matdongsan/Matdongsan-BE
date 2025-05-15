@@ -1,0 +1,63 @@
+name: Deploy Matdongsan API to EC2
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - '**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build and Deploy to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ secrets.AWS_ECR_REPOSITORY }} .
+
+      - name: Tag and Push Docker image to ECR
+        run: |
+          IMAGE_URI=${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}:latest
+          docker tag ${{ secrets.AWS_ECR_REPOSITORY }} $IMAGE_URI
+          docker push $IMAGE_URI
+
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.AWS_EC2_SSH_KEY }}" > key.pem
+          chmod 400 key.pem
+
+      - name: SSH to EC2 and deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.AWS_EC2_USER }}@${{ secrets.AWS_EC2_HOST }} << 'EOF'
+            IMAGE_URI="${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY }}:latest"
+
+            docker stop ${{ secrets.AWS_ECR_REPOSITORY }} || true
+            docker rm ${{ secrets.AWS_ECR_REPOSITORY }} || true
+
+            docker pull $IMAGE_URI
+
+            docker run -d \
+              --name ${{ secrets.AWS_ECR_REPOSITORY }} \
+              --env-file ~/.env \
+              -p 8080:8080 \
+              $IMAGE_URI
+          EOF
+          
+          rm -f key.pem
