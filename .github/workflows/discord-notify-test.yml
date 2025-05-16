@@ -1,0 +1,72 @@
+name: 🧪 Discord Webhook Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Capture Start Time
+        id: start
+        run: |
+          echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
+          echo "start_iso=$(date --iso-8601=seconds)" >> $GITHUB_OUTPUT
+
+      - name: Notify Discord - START 🚀
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_API }}
+          username: "Matdongsan CI/CD"
+          avatar-url: "https://i.pinimg.com/736x/b1/6a/68/b16a68e999f2a3410290fbb745071752.jpg"
+          embed-title: "🚀 테스트 배포 시작"
+          embed-url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-description: |
+            - 🌿 브랜치: `${{ github.ref_name }}`
+            - 👤 실행자: `${{ github.actor }}`
+            - 📝 워크플로가 시작되었습니다.
+          embed-color: 16776960 # 노랑
+          embed-timestamp: ${{ steps.start.outputs.start_iso }}
+
+      - name: Simulate Work
+        run: sleep 5
+
+      - name: Capture End Time and Duration
+        id: end
+        run: |
+          end_time=$(date +%s)
+          start_time=${{ steps.start.outputs.start_time }}
+          duration=$(( end_time - start_time ))
+          echo "duration=${duration}" >> $GITHUB_OUTPUT
+          echo "end_iso=$(date --iso-8601=seconds)" >> $GITHUB_OUTPUT
+
+      - name: Notify Discord - SUCCESS ✅
+        if: success()
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_API }}
+          username: "Matdongsan CI/CD"
+          avatar-url: "https://i.pinimg.com/736x/b1/6a/68/b16a68e999f2a3410290fbb745071752.jpg"
+          embed-title: "✅ 테스트 성공"
+          embed-url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-description: |
+            워크플로가 성공적으로 실행되었습니다.  
+            ⏱️ 소요 시간: `${{ steps.end.outputs.duration }}초`
+          embed-color: 5763719 # 초록
+          embed-timestamp: ${{ steps.end.outputs.end_iso }}
+
+      - name: Notify Discord - FAIL ❌
+        if: failure()
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_API }}
+          username: "Matdongsan CI/CD"
+          avatar-url: "https://i.pinimg.com/736x/b1/6a/68/b16a68e999f2a3410290fbb745071752.jpg"
+          embed-title: "❌ 테스트 실패"
+          embed-url: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          embed-description: |
+            워크플로가 실패했습니다.  
+            ⏱️ 소요 시간: `${{ steps.end.outputs.duration }}초`
+          embed-color: 15548997 # 빨강
+          embed-timestamp: ${{ steps.end.outputs.end_iso }}
