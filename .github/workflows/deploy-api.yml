@@ -8,12 +8,36 @@ on:
       - '**'
   workflow_dispatch:
 
+env:
+  DEFAULT_COMMIT_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
 jobs:
   deploy:
     name: Build and Deploy to EC2
     runs-on: ubuntu-latest
 
     steps:
+      - name: Capture Start Time
+        id: start
+        run: |
+          echo "start_time=$(date +%s)" >> $GITHUB_OUTPUT
+          echo "start_iso=$(date --iso-8601=seconds)" >> $GITHUB_OUTPUT
+
+      - name: Notify Discord on Deploy Start
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_API }}
+          username: "Matdongsan API Deploy"
+          avatar-url: "https://i.pinimg.com/736x/b1/6a/68/b16a68e999f2b27ab34b656ef313c674.jpg"
+          embed-title: "🚀 Matdongsan Dev API 배포 시작"
+          embed-url: "${{ env.DEFAULT_COMMIT_URL }}"
+          embed-description: |
+            - 🌿 브랜치: `${{ github.ref_name }}`
+            - 👤 작성자: `${{ github.event.head_commit.author.name || github.actor }}`
+            - 📝 커밋: [${{ github.event.head_commit.message || '수동 실행' }}](${{ github.event.head_commit.url || env.DEFAULT_COMMIT_URL }})
+          embed-color: 3447003
+          embed-timestamp: ${{ steps.start.outputs.start_iso }}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -75,3 +99,42 @@ jobs:
           EOF
 
           rm -f key.pem
+
+      - name: Capture End Time and Duration
+        id: end
+        run: |
+          end_time=$(date +%s)
+          start_time=${{ steps.start.outputs.start_time }}
+          duration=$(( end_time - start_time ))
+          echo "duration=${duration}" >> $GITHUB_OUTPUT
+          echo "end_iso=$(date --iso-8601=seconds)" >> $GITHUB_OUTPUT
+
+      - name: Notify Discord on Success
+        if: success()
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_API }}
+          username: "Matdongsan API Deploy"
+          avatar-url: "https://i.pinimg.com/736x/b1/6a/68/b16a68e999f2b27ab34b656ef313c674.jpg"
+          embed-title: "✅ Matdongsan Dev API 배포 성공"
+          embed-url: "${{ env.DEFAULT_COMMIT_URL }}"
+          embed-description: |
+            최신 커밋 기준으로 API 서버가 정상적으로 배포되었습니다.
+            ⏱️ 소요 시간: `${{ steps.end.outputs.duration }}초`
+          embed-color: 5763719
+          embed-timestamp: ${{ steps.end.outputs.end_iso }}
+
+      - name: Notify Discord on Failure
+        if: failure()
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_API }}
+          username: "Matdongsan API Deploy"
+          avatar-url: "https://i.pinimg.com/736x/b1/6a/68/b16a68e999f2b27ab34b656ef313c674.jpg"
+          embed-title: "❌ Matdongsan Dev API 배포 실패"
+          embed-url: "${{ env.DEFAULT_COMMIT_URL }}"
+          embed-description: |
+            오류가 발생하여 배포가 중단되었습니다.
+            ⏱️ 소요 시간: `${{ steps.end.outputs.duration }}초`
+          embed-color: 15548997
+          embed-timestamp: ${{ steps.end.outputs.end_iso }}
