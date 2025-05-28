@@ -28,11 +28,19 @@ public class Food extends BaseTimeEntity {
 
     private LocalDateTime lastFeaturedAt;
 
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String imageUrl;
+
+    @Column(columnDefinition = "TEXT")
+    private String thumbnailUrl;
+
+    private String color;
 
     private String subtitle;
 
     private String description;
+
+    private Integer likeCount = 0;
 
     @Convert(converter = JsonListConverter.class)
     @Column(columnDefinition = "json")
