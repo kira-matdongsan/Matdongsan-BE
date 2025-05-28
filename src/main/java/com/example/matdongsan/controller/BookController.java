@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "책 API", description = "책 관련 기능을 제공합니다.")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/sample/books")
 public class BookController {
 
     private final BookService bookService;

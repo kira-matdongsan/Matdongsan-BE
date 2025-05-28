@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/authors")
+@RequestMapping("/sample/authors")
 public class AuthorController {
 
     private final AuthorService authorService;
