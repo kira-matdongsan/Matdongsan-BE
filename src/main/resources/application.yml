@@ -12,3 +12,8 @@ spring:
         show_sql: true
   jackson:
     time-zone: Asia/Seoul
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha # 기본 알파벳 순서, 우선순위 변경은 불가
+    operations-sorter: method # operation(HTTP 메서드) 순서
