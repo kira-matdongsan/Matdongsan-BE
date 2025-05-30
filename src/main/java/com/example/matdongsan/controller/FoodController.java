@@ -4,7 +4,7 @@ import com.example.matdongsan.common.CommonResponse;
 import com.example.matdongsan.common.PageResponse;
 import com.example.matdongsan.common.ResponseCode;
 import com.example.matdongsan.common.ResultResponse;
-import com.example.matdongsan.controller.dto.DishResponseDto;
+import com.example.matdongsan.controller.dto.DishPickResponseDto;
 import com.example.matdongsan.controller.dto.FoodInfoResponseDto;
 import com.example.matdongsan.controller.dto.StoryResponseDto;
 import com.example.matdongsan.service.FoodService;
@@ -37,7 +37,7 @@ public class FoodController {
 
     @Operation(summary = "맛동산 Pick 제철요리 목록 조회", description = "제철 음식 ID로 제철요리 조회")
     @GetMapping("/{id}/dishes")
-    public ResponseEntity<CommonResponse<DishResponseDto>> getAllDishesByFoodId(
+    public ResponseEntity<CommonResponse<DishPickResponseDto>> getAllDishesByFoodId(
             @Parameter(name = "id", description = "조회할 제철 음식 ID", example = "1")
             @PathVariable Long id
     ) {

@@ -33,6 +33,7 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
 
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+	implementation("software.amazon.awssdk:s3:2.27.21")
 
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("com.mysql:mysql-connector-j")

@@ -32,7 +32,9 @@ public enum ErrorCode {
     BOOK_NOT_FOUND(404, "책을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     DUPLICATE_BOOK(409, "이미 등록된 책입니다.", HttpStatus.CONFLICT),
     AUTHOR_NOT_FOUND(404, "작가를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    DUPLICATE_AUTHOR(409, "이미 등록된 작가입니다.", HttpStatus.CONFLICT);
+    DUPLICATE_AUTHOR(409, "이미 등록된 작가입니다.", HttpStatus.CONFLICT),
+
+    FOOD_NOT_FOUND(404, "제철 음식을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
 
     private final int code;
     private final String message;

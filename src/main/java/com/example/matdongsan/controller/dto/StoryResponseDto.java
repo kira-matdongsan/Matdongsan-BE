@@ -1,5 +1,8 @@
 package com.example.matdongsan.controller.dto;
 
+import com.example.matdongsan.domain.FoodStory;
+import com.example.matdongsan.domain.FoodStorySeasonalNote;
+import com.example.matdongsan.domain.FoodStoryType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -24,7 +27,7 @@ public class StoryResponseDto {
     private final String profileImageUrl;
 
     @Schema(description = "이야기 타입", example = "SEASONAL_NOTE")
-    private final String type;
+    private final FoodStoryType type;
 
     @Schema(description = "글(제철 기록), 한줄평(플레이스)", example = "길가에 트럭을 보면 그냥 지나치지 못하고 항상 옥수수를 사먹는데 이태원 길가에 있던 옥수수 사장님이 오늘 개시 손님이라고 해서 뭔가 기분이 좋았당! 집에 가서 먹으려고 했는데 못참고 길옥수수를 했다.")
     private final String content;
@@ -64,5 +67,24 @@ public class StoryResponseDto {
     private final String address;
     @Schema(description = "가게 네이버 지도 URL", example = "")
     private final String naverUrl;
+
+    public static StoryResponseDto of(FoodStory foodStory, List<StoryImageResponseDto> images) {
+        return StoryResponseDto.builder().build();
+    }
+
+    public static StoryResponseDto ofSeasonalNoteStory(FoodStorySeasonalNote foodStorySeasonalNote, List<StoryImageResponseDto> images) {
+        return StoryResponseDto.builder()
+                .id(foodStorySeasonalNote.getId())
+                .nickname("도란도란")
+                .profileImageUrl("https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/profile-image/sample.jpg")
+                .type(FoodStoryType.SEASONAL_NOTE)
+                .content(foodStorySeasonalNote.getContent())
+                .likeCount(foodStorySeasonalNote.getLikeCount())
+                .isLiked(true)
+                .images(images)
+                .createdAt(foodStorySeasonalNote.getCreatedAt())
+                .recordedDate(foodStorySeasonalNote.getRecordedDate())
+                .build();
+    }
 
 }

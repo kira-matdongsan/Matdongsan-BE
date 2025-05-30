@@ -4,8 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -13,7 +14,11 @@ import lombok.*;
 @Entity
 public class FoodStoryPlace extends FoodStory {
 
-    private String name;
+    private String placeName;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
     private String category;
     private String address;
 

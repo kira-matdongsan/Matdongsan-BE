@@ -16,11 +16,13 @@ public class DishService {
         return List.of(DishImageResponseDto.builder().build());
     }
 
+    // TODO: [User] 계정 작업 후 구현 가능
     @Transactional
     public void reportVoteImage(Long imageId) {
 
     }
 
+    // TODO: [User] 계정 작업 후 구현 가능
     @Transactional
     public void voteDish(Long id) {
 

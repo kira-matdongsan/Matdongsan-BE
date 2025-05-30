@@ -9,19 +9,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
+
 @SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@DiscriminatorValue("RECIPE")
+@DiscriminatorValue("SEASONAL_NOTE")
 @Entity
-public class FoodStoryRecipe extends FoodStory {
-
-    private String recipeName;
+public class FoodStorySeasonalNote extends FoodStory {
 
     @Column(columnDefinition = "TEXT")
-    private String ingredients;
+    private String content;
 
-    @Column(columnDefinition = "TEXT")
-    private String instructions;
+    private LocalDate recordedDate;
+
 }

@@ -1,17 +1,20 @@
 package com.example.matdongsan.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-
+@SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @Entity
-public abstract class FoodStory extends BaseTimeEntity {
+public abstract class FoodStory extends BaseTimeEntityWithSoftDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +26,8 @@ public abstract class FoodStory extends BaseTimeEntity {
 
     private Long userId;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
-
     private Integer likeCount = 0;
 
-    private LocalDate recordedDate;
+    private Integer reportCount = 0;
+
 }

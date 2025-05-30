@@ -2,13 +2,14 @@ package com.example.matdongsan.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-public class FoodStoryImage extends BaseTimeEntity {
+public class FoodStoryImage extends BaseTimeEntityWithSoftDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
