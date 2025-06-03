@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Map;
+
 @Schema(description = "제철 음식 영양성분 응답 DTO")
 @Builder
 @Getter
@@ -33,4 +35,7 @@ public class FoodNutrientResponseDto {
     @Schema(description = "지방 (g)", example = "1.2")
     private final Float fat;
 
+    public static FoodNutrientResponseDto of(Map<String, Object> nutrients) {
+        return FoodNutrientResponseDto.builder().build();
+    }
 }

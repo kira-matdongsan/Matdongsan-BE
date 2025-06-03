@@ -1,5 +1,6 @@
 package com.example.matdongsan.controller.dto;
 
+import com.example.matdongsan.domain.Food;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -30,17 +31,17 @@ public class FoodInfoResponseDto {
     @Schema(description = "제철 음식 대표 이미지 URL", example = "")
     private final String imageUrl;
 
-    @Schema(description = "제철 음식 대표 컬러", example = "")
+    @Schema(description = "제철 음식 대표 컬러", example = "#FFEB7B")
     private final String color;
 
-    @Schema(description = "현재 특집 선정 여부", example = "TRUE")
+    @Schema(description = "현재 특집 선정 여부", example = "true")
     private final Boolean isFeatured;
 
     @Schema(description = "마지막 제철 음식 특집 선정일", example = "2025-07-07")
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private final LocalDate lastFeaturedDate;
 
-    @Schema(description = "제철 음식 좋아요 여부", example = "TRUE")
+    @Schema(description = "제철 음식 좋아요 여부", example = "true")
     private final Boolean isLiked;
 
     @Schema(description = "제철 음식 제철시기", example = "7~8월")
@@ -60,5 +61,26 @@ public class FoodInfoResponseDto {
 
     @Schema(description = "제철 음식 영양성분")
     private final FoodNutrientResponseDto nutrients;
+
+    public static FoodInfoResponseDto of(Food food, Boolean isLiked) {
+        return FoodInfoResponseDto.builder()
+                .id(food.getId())
+                .name(food.getName())
+                .englishName(food.getEnglishName())
+                .subtitle(food.getSubtitle())
+                .description(food.getDescription())
+                .imageUrl(food.getImageUrl())
+                .color(food.getColor())
+                .isFeatured(food.getIsFeatured())
+                .lastFeaturedDate(food.getLastFeaturedAt() != null ? food.getLastFeaturedAt().toLocalDate() : null)
+                .isLiked(isLiked)
+                .seasonMonths(food.getSeasonMonths().toString())
+                .regions(food.getRegions())
+                .benefits(food.getBenefits())
+                .buyingTips(food.getBuyingTips())
+                .preparationTips(food.getBuyingTips())
+                .nutrients(FoodNutrientResponseDto.of(food.getNutrients()))
+                .build();
+    }
 
 }
