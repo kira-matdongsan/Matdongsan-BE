@@ -1,5 +1,6 @@
 package com.example.matdongsan.controller.dto;
 
+import com.example.matdongsan.domain.FoodStoryImage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,5 +15,12 @@ public class StoryImageResponseDto {
 
     @Schema(description = "썸네일 이미지 URL", example = "")
     private final String thumbnailUrl;
+
+    public static StoryImageResponseDto of(FoodStoryImage foodStoryImage) {
+        return StoryImageResponseDto.builder()
+                .imageUrl(foodStoryImage.getImageUrl())
+                .thumbnailUrl(foodStoryImage.getThumbnailUrl())
+                .build();
+    }
 
 }
