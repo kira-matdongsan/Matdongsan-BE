@@ -9,28 +9,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDate;
+
 @SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@DiscriminatorValue("PLACE")
+@DiscriminatorValue("SEASONAL_NOTE")
 @Entity
-public class FoodStoryPlace extends FoodStory {
-
-    private String placeName;
+public class FoodStorySeasonalNote extends FoodStory {
 
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private String category;
-    private String address;
-
-    @Column(columnDefinition = "TEXT")
-    private String naverUrl;
+    private LocalDate recordedDate;
 
     @Override
     public FoodStoryType getType() {
-        return FoodStoryType.PLACE;
+        return FoodStoryType.SEASONAL_NOTE;
     }
-
 }

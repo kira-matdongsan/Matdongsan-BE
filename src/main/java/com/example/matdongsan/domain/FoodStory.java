@@ -7,13 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
-
 @SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type")
 @Entity
 public abstract class FoodStory extends BaseTimeEntityWithSoftDelete {
@@ -28,10 +26,9 @@ public abstract class FoodStory extends BaseTimeEntityWithSoftDelete {
 
     private Long userId;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
-
     private Integer likeCount = 0;
 
-    private LocalDate recordedDate;
+    private Integer reportCount = 0;
+
+    public abstract FoodStoryType getType();
 }
