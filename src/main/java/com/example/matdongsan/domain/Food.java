@@ -4,12 +4,13 @@ import com.example.matdongsan.common.util.converter.JsonListConverter;
 import com.example.matdongsan.common.util.converter.JsonMapConverter;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-@Builder
+@SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor

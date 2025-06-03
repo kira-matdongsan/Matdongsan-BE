@@ -1,17 +1,22 @@
 package com.example.matdongsan.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
+@SuperBuilder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type")
 @Entity
-public abstract class FoodStory extends BaseTimeEntity {
+public abstract class FoodStory extends BaseTimeEntityWithSoftDelete {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
