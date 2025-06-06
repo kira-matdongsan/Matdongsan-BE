@@ -35,6 +35,8 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("software.amazon.awssdk:s3:2.27.21")
 
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
 	runtimeOnly("com.h2database:h2")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	runtimeOnly("org.postgresql:postgresql")
