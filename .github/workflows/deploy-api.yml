@@ -93,8 +93,8 @@ jobs:
           
             docker run -d \
               --name ${{ secrets.AWS_ECR_REPOSITORY }} \
+              --network host \
               --env-file ~/.env \
-              -p 8080:8080 \
               $IMAGE_URI
           EOF
 
