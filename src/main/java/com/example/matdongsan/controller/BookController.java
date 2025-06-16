@@ -1,6 +1,6 @@
 package com.example.matdongsan.controller;
 
-import com.example.matdongsan.common.*;
+import com.example.matdongsan.common.response.*;
 import com.example.matdongsan.controller.dto.BookCreateRequestDto;
 import com.example.matdongsan.controller.dto.BookPatchRequestDto;
 import com.example.matdongsan.controller.dto.BookPutRequestDto;

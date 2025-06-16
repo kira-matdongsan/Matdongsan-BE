@@ -1,7 +1,7 @@
 package com.example.matdongsan.controller;
 
-import com.example.matdongsan.common.CommonResponse;
-import com.example.matdongsan.common.ResponseCode;
+import com.example.matdongsan.common.response.CommonResponse;
+import com.example.matdongsan.common.response.ResponseCode;
 import com.example.matdongsan.controller.dto.PlaceCreateRequestDto;
 import com.example.matdongsan.controller.dto.RecipeCreateRequestDto;
 import com.example.matdongsan.controller.dto.SeasonalNoteCreateRequestDto;

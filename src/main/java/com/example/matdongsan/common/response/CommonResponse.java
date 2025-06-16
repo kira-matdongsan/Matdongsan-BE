@@ -1,4 +1,4 @@
-package com.example.matdongsan.common;
+package com.example.matdongsan.common.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

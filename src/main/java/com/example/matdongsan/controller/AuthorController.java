@@ -1,9 +1,9 @@
 package com.example.matdongsan.controller;
 
-import com.example.matdongsan.common.CommonResponse;
-import com.example.matdongsan.common.ResponseCode;
-import com.example.matdongsan.common.ListResponse;
-import com.example.matdongsan.common.ResultResponse;
+import com.example.matdongsan.common.response.CommonResponse;
+import com.example.matdongsan.common.response.ResponseCode;
+import com.example.matdongsan.common.response.ListResponse;
+import com.example.matdongsan.common.response.ResultResponse;
 import com.example.matdongsan.controller.dto.AuthorRequestDto;
 import com.example.matdongsan.controller.dto.AuthorResponseDto;
 import com.example.matdongsan.service.AuthorService;

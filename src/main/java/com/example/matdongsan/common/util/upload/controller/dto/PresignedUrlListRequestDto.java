@@ -1,6 +1,6 @@
-package com.example.matdongsan.common.util.controller.dto;
+package com.example.matdongsan.common.util.upload.controller.dto;
 
-import com.example.matdongsan.common.util.domain.FileType;
+import com.example.matdongsan.common.util.upload.domain.FileType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;

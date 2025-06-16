@@ -1,5 +1,6 @@
-package com.example.matdongsan.common;
+package com.example.matdongsan.common.response;
 
+import com.example.matdongsan.common.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

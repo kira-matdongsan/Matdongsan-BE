@@ -1,6 +1,6 @@
 package com.example.matdongsan.docs;
 
-import com.example.matdongsan.common.*;
+import com.example.matdongsan.common.response.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.PageImpl;

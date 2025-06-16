@@ -1,8 +1,7 @@
 package com.example.matdongsan.common.exception;
 
-import com.example.matdongsan.common.CommonResponseError;
-import com.example.matdongsan.common.CommonResponseFail;
-import com.example.matdongsan.common.ErrorCode;
+import com.example.matdongsan.common.response.CommonResponseError;
+import com.example.matdongsan.common.response.CommonResponseFail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;

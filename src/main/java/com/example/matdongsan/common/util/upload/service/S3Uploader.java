@@ -1,6 +1,6 @@
-package com.example.matdongsan.common.util.service;
+package com.example.matdongsan.common.util.upload.service;
 
-import com.example.matdongsan.common.util.domain.FileType;
+import com.example.matdongsan.common.util.upload.domain.FileType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

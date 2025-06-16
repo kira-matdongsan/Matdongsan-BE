@@ -1,13 +1,13 @@
-package com.example.matdongsan.common.util.controller;
+package com.example.matdongsan.common.util.upload.controller;
 
-import com.example.matdongsan.common.CommonResponse;
-import com.example.matdongsan.common.ListResponse;
-import com.example.matdongsan.common.ResponseCode;
-import com.example.matdongsan.common.ResultResponse;
-import com.example.matdongsan.common.util.controller.dto.PresignedUrlListRequestDto;
-import com.example.matdongsan.common.util.controller.dto.PresignedUrlResponseDto;
-import com.example.matdongsan.common.util.domain.FileType;
-import com.example.matdongsan.common.util.service.S3PresignedUrlService;
+import com.example.matdongsan.common.response.CommonResponse;
+import com.example.matdongsan.common.response.ListResponse;
+import com.example.matdongsan.common.response.ResponseCode;
+import com.example.matdongsan.common.response.ResultResponse;
+import com.example.matdongsan.common.util.upload.controller.dto.PresignedUrlListRequestDto;
+import com.example.matdongsan.common.util.upload.controller.dto.PresignedUrlResponseDto;
+import com.example.matdongsan.common.util.upload.domain.FileType;
+import com.example.matdongsan.common.util.upload.service.S3PresignedUrlService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

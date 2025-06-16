@@ -1,6 +1,6 @@
 package com.example.matdongsan.service;
 
-import com.example.matdongsan.common.ErrorCode;
+import com.example.matdongsan.common.exception.ErrorCode;
 import com.example.matdongsan.common.exception.CustomException;
 import com.example.matdongsan.controller.dto.BookResponseDto;
 import com.example.matdongsan.domain.Author;

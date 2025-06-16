@@ -1,4 +1,4 @@
-package com.example.matdongsan.common.util.controller.dto;
+package com.example.matdongsan.common.util.upload.controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

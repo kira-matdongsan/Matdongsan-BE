@@ -1,4 +1,4 @@
-package com.example.matdongsan.common;
+package com.example.matdongsan.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

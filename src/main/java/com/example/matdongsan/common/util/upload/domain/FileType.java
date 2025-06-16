@@ -1,4 +1,4 @@
-package com.example.matdongsan.common.util.domain;
+package com.example.matdongsan.common.util.upload.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
