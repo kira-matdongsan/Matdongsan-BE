@@ -23,6 +23,7 @@ public class FeaturedFood extends BaseTimeEntity {
 
     private Integer year;
     private Integer week;
+    private Integer dishVoteCount = 0;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
 

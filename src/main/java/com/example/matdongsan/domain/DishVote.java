@@ -16,10 +16,6 @@ public class DishVote extends BaseTimeEntityWithSoftDelete {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pick_id", nullable = false)
-    private DishPick dishPick;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dish_id", nullable = false)
     private Dish dish;
 

@@ -16,8 +16,8 @@ public class Dish extends BaseTimeEntityWithSoftDelete {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pick_id", nullable = false)
-    private DishPick dishPick;
+    @JoinColumn(name = "featured_food_id", nullable = false)
+    private FeaturedFood featuredFood;
 
     private Long userId;
 

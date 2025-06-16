@@ -16,6 +16,10 @@ public class DishVoteImage extends BaseTimeEntityWithSoftDelete {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "dish_id", nullable = false)
+    private Dish dish;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vote_id", nullable = false)
     private DishVote dishVote;
 
@@ -25,7 +29,7 @@ public class DishVoteImage extends BaseTimeEntityWithSoftDelete {
     @Column(columnDefinition = "TEXT")
     private String thumbnailUrl;
 
-    private Integer orderNum = 0;
+    private Integer orderNum = 1;
 
     private Integer reportCount = 0;
 }
