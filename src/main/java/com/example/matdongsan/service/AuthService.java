@@ -1,5 +1,6 @@
 package com.example.matdongsan.service;
 
+import com.example.matdongsan.common.util.email.EmailSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,14 @@ import java.util.Random;
 @Service
 public class AuthService {
     private final StringRedisTemplate redisTemplate;
+
+    private final EmailSender emailSender;
+
+    public void sendVerificationEmail(String email, String code) {
+        String subject = "[맛동산] 이메일 인증번호 안내";
+        String body = String.format("인증번호는 [%s] 입니다. 5분 이내에 입력해주세요.", code);
+        emailSender.send(email, subject, body);
+    }
 
     // TODO: 회원가입 로직은 나중에 구현!
     public void register(String email, String password) {
