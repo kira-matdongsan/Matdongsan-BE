@@ -5,8 +5,10 @@ import com.example.matdongsan.common.response.PageResponse;
 import com.example.matdongsan.common.response.ResponseCode;
 import com.example.matdongsan.common.response.ResultResponse;
 import com.example.matdongsan.controller.dto.DishPickResponseDto;
+import com.example.matdongsan.controller.dto.DishRequestDto;
 import com.example.matdongsan.controller.dto.FoodInfoResponseDto;
 import com.example.matdongsan.controller.dto.StoryResponseDto;
+import com.example.matdongsan.service.DishService;
 import com.example.matdongsan.service.FoodService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class FoodController {
 
     private final FoodService foodService;
+    private final DishService dishService;
 
     @Operation(summary = "정보 조회", description = "제철 음식 ID로 정보 조회")
     @GetMapping("/{id}/info")
@@ -42,6 +45,17 @@ public class FoodController {
             @PathVariable Long id
     ) {
         return CommonResponse.success(ResponseCode.OK, foodService.getAllDishesByFoodId(id));
+    }
+
+    @Operation(summary = "맛동산 Pick 제철요리 등록 및 투표", description = "이미지를 등록하여 제철 요리 등록 및 투표")
+    @PostMapping("/{id}/dishes")
+    public ResponseEntity<CommonResponse<ResultResponse<Boolean>>> createDish(
+            @Parameter(name = "id", description = "제철 요리를 등록할 제철 음식 ID", example = "1")
+            @PathVariable Long id,
+            @RequestBody DishRequestDto requestDto
+    ) {
+        dishService.createDish(id, requestDto.toServiceDto());
+        return CommonResponse.successResult(ResponseCode.OK, true);
     }
 
     @Operation(summary = "나의 제철음식 이야기 목록 조회", description = "제철 음식 ID로 제철음식 이야기 조회")

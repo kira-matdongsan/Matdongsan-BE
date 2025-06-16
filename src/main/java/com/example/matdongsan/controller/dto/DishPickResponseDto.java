@@ -13,9 +13,6 @@ import java.util.List;
 @Getter
 public class DishPickResponseDto {
 
-    @Schema(description = "제철요리 ID", example = "1")
-    private final Long id;
-
     @Schema(description = "총 투표 수", example = "54")
     private final Integer totalVoteCount;
 

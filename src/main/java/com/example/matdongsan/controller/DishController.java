@@ -4,7 +4,8 @@ import com.example.matdongsan.common.response.CommonResponse;
 import com.example.matdongsan.common.response.ListResponse;
 import com.example.matdongsan.common.response.ResponseCode;
 import com.example.matdongsan.common.response.ResultResponse;
-import com.example.matdongsan.controller.dto.DishImageResponseDto;
+import com.example.matdongsan.controller.dto.DishVoteImageResponseDto;
+import com.example.matdongsan.controller.dto.DishVoteRequestDto;
 import com.example.matdongsan.service.DishService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,9 +22,9 @@ public class DishController {
 
     private final DishService dishService;
 
-    @Operation(summary = "제철 요리 투표 이미지 조회", description = "제철 요리 ID로 이미지 조회")
+    @Operation(summary = "제철 요리 투표 이미지 목록 조회", description = "제철 요리 ID로 이미지 조회")
     @GetMapping("/{id}/images")
-    public ResponseEntity<CommonResponse<ListResponse<DishImageResponseDto>>> getAllDishImagesById(
+    public ResponseEntity<CommonResponse<ListResponse<DishVoteImageResponseDto>>> getAllDishImagesById(
             @Parameter(name = "id", description = "조회할 제철 요리 ID", example = "1")
             @PathVariable Long id
     ) {
@@ -44,9 +45,10 @@ public class DishController {
     @PostMapping("/{id}/vote")
     public ResponseEntity<CommonResponse<ResultResponse<Boolean>>> voteDish(
             @Parameter(name = "id", description = "투표할 제철 요리 ID", example = "1")
-            @PathVariable Long id
+            @PathVariable Long id,
+            @RequestBody DishVoteRequestDto requestDto
     ) {
-        dishService.voteDish(id);
+        dishService.voteDish(id, requestDto.toServiceDto());
         return CommonResponse.successResult(ResponseCode.OK, true);
     }
 }
