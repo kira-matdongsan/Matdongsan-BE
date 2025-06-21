@@ -33,6 +33,14 @@ public class CommonResponseFail<T> {
                         .build());
     }
 
+    public static <T> ResponseEntity<CommonResponseFail<T>> fail(ErrorCode errorCode, String message) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+                .body(CommonResponseFail.<T>builder()
+                        .code(errorCode.getCode())
+                        .message(message)
+                        .build());
+    }
+
     public static <T> ResponseEntity<CommonResponseFail<T>> fail(ErrorCode errorCode, T errors) {
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(CommonResponseFail.<T>builder()

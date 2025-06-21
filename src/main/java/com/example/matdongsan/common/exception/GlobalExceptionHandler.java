@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<CommonResponseFail<Void>> handleCustomException(CustomException ex) {
         log.warn("[handleCustomException] ErrorCode::{} - {}", ex.getErrorCode(), ex.getErrorCode().getMessage(), ex);
-        return CommonResponseFail.fail(ex.getErrorCode());
+        return CommonResponseFail.fail(ex.getErrorCode(), ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
