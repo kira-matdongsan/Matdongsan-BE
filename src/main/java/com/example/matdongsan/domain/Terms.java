@@ -18,6 +18,7 @@ public class Terms extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private TermsType type;
 
     private Integer version;
@@ -26,6 +27,10 @@ public class Terms extends BaseTimeEntity {
 
     private String content;
 
-    private boolean required;
+    private Boolean required;
+
+    private Boolean active;
+
+    private Integer orderNum = 1;
 
 }

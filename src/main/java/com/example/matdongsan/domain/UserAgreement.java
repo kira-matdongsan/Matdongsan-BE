@@ -25,4 +25,11 @@ public class UserAgreement {
     @ManyToOne(fetch = FetchType.LAZY)
     private Terms term;
 
+    public static UserAgreement from(User user, Terms term) {
+        return UserAgreement.builder()
+                .term(term)
+                .user(user)
+                .agreedAt(LocalDateTime.now())
+                .build();
+    }
 }

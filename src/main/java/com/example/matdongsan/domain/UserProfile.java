@@ -24,4 +24,10 @@ public class UserProfile extends BaseTimeEntityWithSoftDelete {
     @OneToOne
     private User user;
 
+    public static UserProfile createDefault(User user) {
+        return UserProfile.builder()
+                .user(user)
+                .nickname("행복한사자")
+                .build();
+    }
 }

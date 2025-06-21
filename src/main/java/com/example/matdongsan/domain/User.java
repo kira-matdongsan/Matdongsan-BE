@@ -24,13 +24,21 @@ public class User extends BaseTimeEntityWithSoftDelete {
 
     private LocalDateTime lastLoggedInAt;
 
+    @Setter
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserProfile profile;
 
+    @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserLoginCredential> loginCredentials = new ArrayList<>();
 
+    @Setter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserAgreement> agreements = new ArrayList<>();
 
+    public static User create() {
+        return User.builder()
+                .isBlocked(false)
+                .build();
+    }
 }

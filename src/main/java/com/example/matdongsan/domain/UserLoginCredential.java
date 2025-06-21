@@ -25,4 +25,13 @@ public class UserLoginCredential extends BaseTimeEntityWithSoftDelete {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
+
+    public static UserLoginCredential createEmailLogin(User user, String email, String encryptedPassword) {
+        return UserLoginCredential.builder()
+                .loginType(LoginType.EMAIL)
+                .email(email)
+                .password(encryptedPassword)
+                .user(user)
+                .build();
+    }
 }
