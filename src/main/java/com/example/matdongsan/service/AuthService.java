@@ -2,13 +2,19 @@ package com.example.matdongsan.service;
 
 import com.example.matdongsan.common.exception.CustomException;
 import com.example.matdongsan.common.exception.ErrorCode;
+import com.example.matdongsan.common.util.JwtUtil;
 import com.example.matdongsan.common.util.email.EmailSender;
 import com.example.matdongsan.common.util.email.EmailTemplateRenderer;
+import com.example.matdongsan.controller.dto.SigninResponseDto;
 import com.example.matdongsan.controller.dto.TermsResponseDto;
 import com.example.matdongsan.domain.*;
 import com.example.matdongsan.infrastructure.redis.RedisEmailVerificationStore;
+import com.example.matdongsan.infrastructure.redis.RedisRefreshTokenStore;
 import com.example.matdongsan.repository.*;
+import com.example.matdongsan.service.dto.ReissueServiceDto;
+import com.example.matdongsan.service.dto.SigninServiceDto;
 import com.example.matdongsan.service.dto.SignupServiceDto;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,9 +28,12 @@ import java.util.*;
 public class AuthService {
 
     private final RedisEmailVerificationStore redisEmailVerificationStore;
+    private final RedisRefreshTokenStore redisRefreshTokenStore;
+
     private final EmailTemplateRenderer emailTemplateRenderer;
     private final EmailSender emailSender;
 
+    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
     private final TermsRepository termsRepository;
@@ -79,7 +88,7 @@ public class AuthService {
         return !userLoginCredentialRepository.existsByEmail(email);
     }
 
-    // 회원가입
+    // 이메일 회원가입
     @Transactional
     public void signup(SignupServiceDto serviceDto) {
         String email = serviceDto.getEmail();
@@ -125,5 +134,63 @@ public class AuthService {
 
     private String generateCode() {
         return String.format("%04d", new Random().nextInt(9999));
+    }
+
+    // 이메일 로그인
+    public SigninResponseDto signin(SigninServiceDto serviceDto) {
+        String email = serviceDto.getEmail();
+        String password = serviceDto.getPassword();
+
+        UserLoginCredential userLoginCredential = userLoginCredentialRepository.findByLoginTypeAndEmail(LoginType.EMAIL, email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = userLoginCredential.getUser();
+
+        if(!passwordEncoder.matches(password, userLoginCredential.getPassword())) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        }
+
+        String accessToken = jwtUtil.generateAccessToken(user.getId(), LoginType.EMAIL, email);
+        Claims accessTokenClaim = jwtUtil.parseClaims(accessToken);
+        String accessTokenJti = accessTokenClaim.getId();
+
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), LoginType.EMAIL);
+
+        redisRefreshTokenStore.save(user.getId(), LoginType.EMAIL, accessTokenJti, refreshToken);
+
+        return SigninResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    // 토큰 재발급 (이메일 로그인)
+    public SigninResponseDto reissue(ReissueServiceDto serviceDto) {
+        String accessToken = serviceDto.getAccessToken();
+        String refreshToken = serviceDto.getRefreshToken();
+
+        Long userId = jwtUtil.getUserId(accessToken);
+        LoginType loginType = jwtUtil.getLoginType(accessToken);
+
+        Claims accessClaims = jwtUtil.parseClaims(accessToken);
+        String accessJti = accessClaims.getId();
+
+        boolean valid = redisRefreshTokenStore.isValid(userId, loginType, accessJti, refreshToken);
+        if (!valid) {
+            throw new RuntimeException("Invalid or expired refresh token");
+        }
+
+        redisRefreshTokenStore.delete(userId, loginType, accessJti);
+
+        String newAccessToken = jwtUtil.generateAccessToken(userId, loginType, jwtUtil.getEmail(accessToken));
+        String newRefreshToken = jwtUtil.generateRefreshToken(userId, loginType);
+
+        Claims newAccessClaims = jwtUtil.parseClaims(newAccessToken);
+        String newAccessJti = newAccessClaims.getId();
+
+        redisRefreshTokenStore.save(userId, loginType, newAccessJti, newRefreshToken);
+
+        return SigninResponseDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
     }
 }

@@ -18,6 +18,7 @@ public class UserLoginCredential extends BaseTimeEntityWithSoftDelete {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     private LoginType loginType;
     private String email;
     private String password;

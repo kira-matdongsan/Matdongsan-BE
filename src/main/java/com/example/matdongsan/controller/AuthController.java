@@ -4,8 +4,7 @@ import com.example.matdongsan.common.response.CommonResponse;
 import com.example.matdongsan.common.response.ListResponse;
 import com.example.matdongsan.common.response.ResponseCode;
 import com.example.matdongsan.common.response.ResultResponse;
-import com.example.matdongsan.controller.dto.SignupRequestDto;
-import com.example.matdongsan.controller.dto.TermsResponseDto;
+import com.example.matdongsan.controller.dto.*;
 import com.example.matdongsan.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -74,5 +73,17 @@ public class AuthController {
         return CommonResponse.successResult(ResponseCode.OK, true);
     }
 
-    // 로그인
+    // 이메일 로그인
+    @Operation(summary = "이메일 로그인")
+    @PostMapping("/signin")
+    public ResponseEntity<CommonResponse<SigninResponseDto>> signin(@RequestBody @Valid SigninRequestDto requestDto) {
+        return CommonResponse.success(ResponseCode.OK, authService.signin(requestDto.toServiceDto()));
+    }
+
+    // 토큰 재발급 (이메일 로그인)
+    @Operation(summary = "토큰 재발급 (이메일 로그인)")
+    @PostMapping("/reissue")
+    public ResponseEntity<CommonResponse<SigninResponseDto>> reissue(@RequestBody @Valid ReissueRequestDto requestDto) {
+        return CommonResponse.success(ResponseCode.OK, authService.reissue(requestDto.toServiceDto()));
+    }
 }
