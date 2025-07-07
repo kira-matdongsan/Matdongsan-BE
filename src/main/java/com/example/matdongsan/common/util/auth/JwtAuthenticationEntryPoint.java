@@ -1,4 +1,4 @@
-package com.example.matdongsan.common.util;
+package com.example.matdongsan.common.util.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

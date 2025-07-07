@@ -1,4 +1,4 @@
-package com.example.matdongsan.common.util;
+package com.example.matdongsan.common.util.auth;
 
 import com.example.matdongsan.domain.User;
 import com.example.matdongsan.domain.UserLoginCredential;

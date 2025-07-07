@@ -2,7 +2,7 @@ package com.example.matdongsan.service;
 
 import com.example.matdongsan.common.exception.CustomException;
 import com.example.matdongsan.common.exception.ErrorCode;
-import com.example.matdongsan.common.util.JwtUtil;
+import com.example.matdongsan.common.util.auth.JwtUtil;
 import com.example.matdongsan.common.util.email.EmailSender;
 import com.example.matdongsan.common.util.email.EmailTemplateRenderer;
 import com.example.matdongsan.controller.dto.SigninResponseDto;
