@@ -37,7 +37,10 @@ public enum ErrorCode {
 
     FOOD_NOT_FOUND(404, "제철 음식을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     FEATURED_FOOD_NOT_FOUND(404, "특집 제철 음식을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    DISH_NOT_FOUND(404, "제철 요리를 찾을 수 없습니다", HttpStatus.NOT_FOUND);
+    DISH_NOT_FOUND(404, "제철 요리를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
+
+    // 외부 API
+    KAKAO_OAUTH_FAILED(401, "카카오 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private final String message;

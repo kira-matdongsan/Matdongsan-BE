@@ -30,4 +30,12 @@ public class UserProfile extends BaseTimeEntityWithSoftDelete {
                 .nickname("행복한사자")
                 .build();
     }
+
+    public static UserProfile createOauth(User user, String nickname, String profileImageUrl) {
+        return UserProfile.builder()
+                .user(user)
+                .nickname(nickname)
+                .profileImageUrl(profileImageUrl)
+                .build();
+    }
 }

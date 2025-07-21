@@ -80,6 +80,13 @@ public class AuthController {
         return CommonResponse.success(ResponseCode.OK, authService.signin(requestDto.toServiceDto()));
     }
 
+    // Oauth2 로그인
+    @Operation(summary = "Oauth2 (카카오/네이버) 로그인")
+    @PostMapping("/oauth/signin")
+    public ResponseEntity<CommonResponse<SigninResponseDto>> oauthSignin(@RequestBody @Valid OauthSigninRequestDto requestDto) {
+        return CommonResponse.success(ResponseCode.OK, authService.oauthSignin(requestDto.toServiceDto()));
+    }
+
     // 토큰 재발급 (이메일 로그인)
     @Operation(summary = "토큰 재발급 (이메일 로그인)")
     @PostMapping("/reissue")

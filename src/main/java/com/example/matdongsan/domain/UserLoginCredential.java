@@ -35,4 +35,13 @@ public class UserLoginCredential extends BaseTimeEntityWithSoftDelete {
                 .user(user)
                 .build();
     }
+
+    public static UserLoginCredential createOauthLogin(User user, LoginType loginType, String email, String oauthId) {
+        return UserLoginCredential.builder()
+                .loginType(loginType)
+                .email(email)
+                .oauthId(oauthId)
+                .user(user)
+                .build();
+    }
 }
