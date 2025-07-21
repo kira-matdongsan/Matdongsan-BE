@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class FoodStoryController {
 
     // 이야기 작성
     @Operation(summary = "제철기록 작성", description = "제철 음식 ID로 제철음식 이야기 작성")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/stories/seasonal-note")
     public ResponseEntity<CommonResponse<StoryResponseDto>> createSeasonalNoteStory(
             @Parameter(name = "id", description = "이야기를 작성할 제철 음식 ID", example = "1")
@@ -39,6 +41,7 @@ public class FoodStoryController {
     }
 
     @Operation(summary = "레시피 작성", description = "제철 음식 ID로 제철음식 이야기 작성")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/stories/recipe")
     public ResponseEntity<CommonResponse<StoryResponseDto>> createRecipeStory(
             @Parameter(name = "id", description = "이야기를 작성할 제철 음식 ID", example = "1")
@@ -49,6 +52,7 @@ public class FoodStoryController {
     }
 
     @Operation(summary = "플레이스 작성", description = "제철 음식 ID로 제철음식 이야기 작성")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/stories/place")
     public ResponseEntity<CommonResponse<StoryResponseDto>> createPlaceStory(
             @Parameter(name = "id", description = "이야기를 작성할 제철 음식 ID", example = "1")

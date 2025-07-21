@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -41,6 +42,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CommonResponseFail<Void>> handleEnumTypeMismatch(HttpMessageNotReadableException ex) {
         log.warn("[handleEnumTypeMismatch] {}", ex.getClass().getName(), ex);
         return CommonResponseFail.fail(ErrorCode.INVALID_INPUT_VALUE);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<CommonResponseFail<Void>> handleAccessDeniedException(AccessDeniedException ex) {
+        log.warn("[handleAccessDeniedException] {}", ex.getClass().getName(), ex);
+        return CommonResponseFail.fail(ErrorCode.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
