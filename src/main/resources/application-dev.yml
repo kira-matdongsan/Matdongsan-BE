@@ -37,6 +37,10 @@ aws:
 external:
   opendata:
     api-key: ${OPENDATA_API_KEY}
+  kakao:
+    oauth:
+      client-id: ${KAKAO_OAUTH_CLIENT_ID}
+      client-secret: ${KAKAO_OAUTH_CLIENT_SECRET}
 
 mail:
   from:
