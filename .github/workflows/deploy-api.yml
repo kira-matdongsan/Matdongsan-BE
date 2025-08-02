@@ -2,8 +2,8 @@ name: Deploy Matdongsan API to EC2
 
 on:
   push:
-    branches:
-      - develop
+#    branches:
+#      - develop
     paths:
       - '**'
   workflow_dispatch:

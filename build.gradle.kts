@@ -1,61 +1,72 @@
+import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
-	java
-	id("org.springframework.boot") version "3.4.3"
-	id("io.spring.dependency-management") version "1.1.7"
+    java
+    alias(libs.plugins.java.library)
+    alias(libs.plugins.spring.boot) apply false
+    alias(libs.plugins.spring.dependency.management) apply false
 }
 
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
+allprojects {
+    group = "com.example"
+    version = "0.0.1-SNAPSHOT"
 
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    repositories {
+        mavenCentral()
+    }
 }
 
-repositories {
-	mavenCentral()
+subprojects {
+    val libs = rootProject.libs
+
+    apply(plugin = "java")
+    apply(plugin = libs.plugins.java.library.get().pluginId)
+
+    apply(plugin = libs.plugins.spring.boot.get().pluginId)
+    apply(plugin = libs.plugins.spring.dependency.management.get().pluginId)
+
+    configure<DependencyManagementExtension> {
+        imports {
+            mavenBom(libs.spring.cloud.dependencies.get().toString())
+        }
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(libs.versions.javaLanguage.get().toInt())
+        }
+    }
+
+    dependencies {
+        compileOnly(libs.lombok)
+        annotationProcessor(libs.lombok)
+
+        testImplementation(libs.spring.boot.starter.test)
+        testRuntimeOnly(libs.junit.platform.launcher)
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
 }
 
-val springCloudVersion = "2024.0.0"
+val libraryModules = listOf(":domain", ":core")
+val appModules = listOf(":api", ":admin")
 
-dependencyManagement {
-	imports {
-		mavenBom("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion")
-	}
+configure(libraryModules.map { project(it) }) {
+    val jar: Jar by tasks
+    jar.enabled = true
 }
 
-dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-aop")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
+configure(appModules.map { project(it) }) {
+    val jar: Jar by tasks
+    val bootJar: BootJar by tasks
+    bootJar.enabled = true
+    jar.enabled = true
 
-	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-	implementation("software.amazon.awssdk:s3:2.27.21")
-
-	implementation("org.springframework.boot:spring-boot-starter-data-redis")
-	implementation("org.springframework.boot:spring-boot-starter-mail")
-	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-
-	implementation("org.springframework.boot:spring-boot-starter-security")
-
-	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
-	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
-
-	runtimeOnly("com.h2database:h2")
-	runtimeOnly("com.mysql:mysql-connector-j")
-	runtimeOnly("org.postgresql:postgresql")
-
-	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
-
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-tasks.withType<Test> {
-	useJUnitPlatform()
+    dependencies {
+        implementation(project(":domain"))
+        implementation(project(":core"))
+    }
 }

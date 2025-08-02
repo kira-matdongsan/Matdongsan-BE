@@ -42,4 +42,4 @@ out/
 .LSOverride
 
 ### Secrets ###
-src/main/resources/application-local.yml
+**/application-local.yml

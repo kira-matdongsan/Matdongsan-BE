@@ -1,0 +1,53 @@
+[versions]
+springBoot = "3.4.3"
+springDependencyManagement = "1.1.7"
+springCloud = "2024.0.0"
+springdoc = "2.8.6"
+jjwt = "0.12.6"
+awsSdk = "2.27.21"
+javaLanguage = "21"
+
+[libraries]
+# Spring Boot
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+spring-boot-starter-validation = { module = "org.springframework.boot:spring-boot-starter-validation" }
+spring-boot-starter-json = { module = "org.springframework.boot:spring-boot-starter-json" }
+spring-boot-starter-aop = { module = "org.springframework.boot:spring-boot-starter-aop" }
+spring-boot-starter-mail = { module = "org.springframework.boot:spring-boot-starter-mail" }
+spring-boot-starter-thymeleaf = { module = "org.springframework.boot:spring-boot-starter-thymeleaf" }
+spring-boot-starter-test = { module = "org.springframework.boot:spring-boot-starter-test" }
+
+# Spring Cloud
+spring-cloud-dependencies = { module = "org.springframework.cloud:spring-cloud-dependencies", version.ref = "springCloud" }
+spring-cloud-starter-openfeign = { module = "org.springframework.cloud:spring-cloud-starter-openfeign" }
+
+# Springdoc
+springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+
+# JWT
+jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
+jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
+jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+
+# AWS SDK
+aws-sdk-s3 = { module = "software.amazon.awssdk:s3", version.ref = "awsSdk" }
+
+# Lombok
+lombok = { module = "org.projectlombok:lombok" }
+
+# Database drivers
+h2 = { module = "com.h2database:h2" }
+mysql-connector = { module = "com.mysql:mysql-connector-j" }
+postgresql = { module = "org.postgresql:postgresql" }
+
+# JUnit
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "springBoot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "springDependencyManagement" }
+java-library = { id = "java-library" }
