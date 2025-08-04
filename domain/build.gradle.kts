@@ -1,6 +1,6 @@
 dependencies {
     api(libs.spring.boot.starter.data.jpa)
-    api(libs.spring.boot.starter.data.redis)
+    implementation(libs.spring.boot.starter.data.redis)
     implementation(libs.spring.boot.starter.validation)
     implementation(libs.spring.boot.starter.json)
 

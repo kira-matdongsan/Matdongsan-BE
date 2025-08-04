@@ -6,10 +6,14 @@ import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
 import com.example.matdongsan.external.oauth.OauthService;
 import com.example.matdongsan.external.oauth.dto.OauthResponseDto;
-import com.example.matdongsan.infrastructure.redis.RedisEmailVerificationStore;
-import com.example.matdongsan.infrastructure.redis.RedisRefreshTokenStore;
 import com.example.matdongsan.jpa.entity.*;
 import com.example.matdongsan.jpa.repository.*;
+import com.example.matdongsan.redis.entity.EmailVerification;
+import com.example.matdongsan.redis.entity.RefreshToken;
+import com.example.matdongsan.redis.entity.VerifiedEmail;
+import com.example.matdongsan.redis.repository.EmailVerificationRepository;
+import com.example.matdongsan.redis.repository.RefreshTokenRepository;
+import com.example.matdongsan.redis.repository.VerifiedEmailRepository;
 import com.example.matdongsan.service.dto.OauthSigninServiceDto;
 import com.example.matdongsan.service.dto.ReissueServiceDto;
 import com.example.matdongsan.service.dto.SigninServiceDto;
@@ -32,9 +36,6 @@ import java.util.*;
 @Service
 public class AuthService {
 
-    private final RedisEmailVerificationStore redisEmailVerificationStore;
-    private final RedisRefreshTokenStore redisRefreshTokenStore;
-
     private final EmailTemplateRenderer emailTemplateRenderer;
     private final EmailSender emailSender;
 
@@ -48,6 +49,10 @@ public class AuthService {
     private final UserLoginCredentialRepository userLoginCredentialRepository;
     private final UserAgreementRepository userAgreementRepository;
     private final UserProfileRepository userProfileRepository;
+
+    private final EmailVerificationRepository emailVerificationRepository;
+    private final VerifiedEmailRepository verifiedEmailRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 약관 목록 조회
     public List<TermsResponseDto> getAllTerms() {
@@ -67,44 +72,46 @@ public class AuthService {
         String code = generateCode();
 
         String subject = "맛동산 이메일 인증 코드입니다.";
-        String html = emailTemplateRenderer.buildTemplate("templates/email/verification", Map.of("code", code));
+                String html = emailTemplateRenderer.buildTemplate("email/verification", Map.of("code", code));
         emailSender.send(email, subject, html);
 
-        redisEmailVerificationStore.saveCode(email, code);
+        emailVerificationRepository.save(EmailVerification.of(email, code));
     }
 
     // 인증 번호 검증
     public void verifyCode(String email, String inputCode) {
-        String savedCode = redisEmailVerificationStore.getCode(email);
+        EmailVerification emailVerification = emailVerificationRepository.findById(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "이메일 발송을 재시도하세요."));
+        String savedCode = emailVerification.getCode();
 
-        if (!Objects.equals(savedCode, inputCode)) {
-            long fails = redisEmailVerificationStore.incrementFailCount(email);
-            if (fails >= 5) {
-                redisEmailVerificationStore.deleteCode(email);
-                redisEmailVerificationStore.deleteFailCount(email);
-                throw new CustomException(ErrorCode.BAD_REQUEST, "인증 시도 횟수 초과 : " + fails);
+        if (!savedCode.equals(inputCode)) {
+            emailVerification.incrementFailCount();
+            emailVerificationRepository.save(emailVerification);
+
+            long failCount = emailVerification.getFailCount();
+
+            if (failCount >= 5) {
+                emailVerificationRepository.delete(emailVerification);
+                throw new CustomException(ErrorCode.BAD_REQUEST, "인증 시도 횟수 초과 : " + failCount);
             }
             throw new CustomException(ErrorCode.BAD_REQUEST, "인증번호 불일치");
         }
 
         // 인증 성공 → verified_email:{email} 저장 (10분 유지)
-        redisEmailVerificationStore.markVerified(email);
+        verifiedEmailRepository.save(VerifiedEmail.of(email));
 
         // 기존 인증번호 + 실패 카운트는 삭제
-        redisEmailVerificationStore.deleteCode(email);
-        redisEmailVerificationStore.deleteFailCount(email);
+        emailVerificationRepository.delete(emailVerification);
     }
 
     // 이메일 회원가입
     @Transactional
     public void signup(SignupServiceDto serviceDto) {
         String email = serviceDto.getEmail();
-        boolean isVerified = redisEmailVerificationStore.isVerified(email);
 
         // 이메일 인증 확인
-        if (!isVerified) {
-            throw new CustomException(ErrorCode.BAD_REQUEST, "이메일 인증이 필요합니다.");
-        }
+        VerifiedEmail verifiedEmail = verifiedEmailRepository.findById(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "이메일 인증이 필요합니다."));
 
         // 약관 동의 확인
         Set<Long> requiredTermsIds = termsRepository.findRequiredTermsIds();
@@ -136,7 +143,7 @@ public class AuthService {
         userRepository.save(user);
 
         // 가입 완료 후 인증 상태 삭제
-        redisEmailVerificationStore.deleteVerified(email);
+        verifiedEmailRepository.delete(verifiedEmail);
     }
 
     // 이메일 로그인
@@ -208,12 +215,13 @@ public class AuthService {
         Claims accessClaims = jwtUtil.parseClaims(accessToken);
         String accessJti = accessClaims.getId();
 
-        boolean valid = redisRefreshTokenStore.isValid(userId, loginType, accessJti, refreshToken);
-        if (!valid) {
-            throw new RuntimeException("Invalid or expired refresh token");
+        RefreshToken storedRefreshToken = refreshTokenRepository.findById(RefreshToken.buildKey(userId, loginType, accessJti))
+                .orElseThrow(() -> new RuntimeException("Expired refresh token"));
+        if (!refreshToken.equals(storedRefreshToken.getRefreshTokenValue())) {
+            throw new RuntimeException("Invalid refresh token");
         }
 
-        redisRefreshTokenStore.delete(userId, loginType, accessJti);
+        refreshTokenRepository.deleteById(RefreshToken.buildKey(userId, loginType, accessJti));
 
         String newAccessToken = jwtUtil.generateAccessToken(userId, loginType, jwtUtil.getEmail(accessToken));
         String newRefreshToken = jwtUtil.generateRefreshToken(userId, loginType);
@@ -221,7 +229,7 @@ public class AuthService {
         Claims newAccessClaims = jwtUtil.parseClaims(newAccessToken);
         String newAccessJti = newAccessClaims.getId();
 
-        redisRefreshTokenStore.save(userId, loginType, newAccessJti, newRefreshToken);
+        refreshTokenRepository.save(RefreshToken.of(userId, loginType, newAccessJti, newRefreshToken));
 
         return SigninResponseDto.builder()
                 .accessToken(newAccessToken)
@@ -240,7 +248,7 @@ public class AuthService {
 
         String refreshToken = jwtUtil.generateRefreshToken(user.getId(), loginType);
 
-        redisRefreshTokenStore.save(user.getId(), loginType, accessTokenJti, refreshToken);
+        refreshTokenRepository.save(RefreshToken.of(user.getId(), loginType, accessTokenJti, refreshToken));
 
         return new String[]{accessToken, refreshToken};
     }
