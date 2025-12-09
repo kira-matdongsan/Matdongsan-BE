@@ -5,8 +5,8 @@ import com.example.matdongsan.auth.application.dto.ReissueServiceDto;
 import com.example.matdongsan.auth.application.dto.SigninServiceDto;
 import com.example.matdongsan.auth.application.dto.SignupServiceDto;
 import com.example.matdongsan.auth.enums.LoginType;
-import com.example.matdongsan.auth.presentation.response.SigninResponseDto;
-import com.example.matdongsan.auth.presentation.response.TermsResponseDto;
+import com.example.matdongsan.auth.presentation.response.SigninResponse;
+import com.example.matdongsan.auth.presentation.response.TermsResponse;
 import com.example.matdongsan.common.util.auth.JwtUtil;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
@@ -60,9 +60,9 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 약관 목록 조회
-    public List<TermsResponseDto> getAllTerms() {
+    public List<TermsResponse> getAllTerms() {
         List<Terms> terms = termsRepository.findAllByActiveTrueOrderByOrderNumAsc();
-        return terms.stream().map(TermsResponseDto::of).toList();
+        return terms.stream().map(TermsResponse::of).toList();
     }
 
     // 이메일 중복 검사
@@ -152,7 +152,7 @@ public class AuthService {
     }
 
     // 이메일 로그인
-    public SigninResponseDto signin(SigninServiceDto serviceDto) {
+    public SigninResponse signin(SigninServiceDto serviceDto) {
         String email = serviceDto.getEmail();
         String password = serviceDto.getPassword();
 
@@ -165,7 +165,7 @@ public class AuthService {
 
         String[] tokens = generateTokens(user, LoginType.EMAIL, email);
 
-        return SigninResponseDto.builder()
+        return SigninResponse.builder()
                 .accessToken(tokens[0])
                 .refreshToken(tokens[1])
                 .build();
@@ -173,7 +173,7 @@ public class AuthService {
 
     // Oauth2 (카카오/네이버) 로그인
     @Transactional
-    public SigninResponseDto oauthSignin(OauthSigninServiceDto serviceDto) {
+    public SigninResponse oauthSignin(OauthSigninServiceDto serviceDto) {
         LoginType loginType = serviceDto.getLoginType();
         String token = serviceDto.getToken();
 
@@ -203,14 +203,14 @@ public class AuthService {
 
         String[] tokens = generateTokens(user, loginType, email);
 
-        return SigninResponseDto.builder()
+        return SigninResponse.builder()
                 .accessToken(tokens[0])
                 .refreshToken(tokens[1])
                 .build();
     }
 
     // 토큰 재발급 (이메일 로그인)
-    public SigninResponseDto reissue(ReissueServiceDto serviceDto) {
+    public SigninResponse reissue(ReissueServiceDto serviceDto) {
         String accessToken = serviceDto.getAccessToken();
         String refreshToken = serviceDto.getRefreshToken();
 
@@ -236,7 +236,7 @@ public class AuthService {
 
         refreshTokenRepository.save(RefreshToken.of(userId, loginType, newAccessJti, newRefreshToken));
 
-        return SigninResponseDto.builder()
+        return SigninResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)
                 .build();

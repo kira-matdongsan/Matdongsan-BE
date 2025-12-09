@@ -1,15 +1,17 @@
 package com.example.matdongsan.auth.presentation.request;
 
-import com.example.matdongsan.auth.application.dto.SigninServiceDto;
+import com.example.matdongsan.auth.application.dto.SignupServiceDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Getter;
 
-@Schema(description = "이메일 로그인 요청 DTO")
+import java.util.List;
+
+@Schema(description = "이메일 회원가입 요청 DTO")
 @Builder
 @Getter
-public class SigninRequestDto {
+public class SignupRequest {
 
     @Schema(description = "이메일 주소", example = "test@test.com")
     @NotBlank(message = "이메일을 입력해주세요.")
@@ -19,10 +21,14 @@ public class SigninRequestDto {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
-    public SigninServiceDto toServiceDto() {
-        return SigninServiceDto.builder()
+    @Schema(description = "동의하는 약관 ID 목록", example = "[1,2,3]")
+    private List<Long> termsIds;
+
+    public SignupServiceDto toServiceDto() {
+        return SignupServiceDto.builder()
                 .email(email)
                 .password(password)
+                .termsIds(termsIds)
                 .build();
     }
 }

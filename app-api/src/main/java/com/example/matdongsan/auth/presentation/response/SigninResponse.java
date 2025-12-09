@@ -7,7 +7,7 @@ import lombok.Getter;
 @Schema(description = "이메일 로그인 응답 DTO")
 @Builder
 @Getter
-public class SigninResponseDto {
+public class SigninResponse {
 
     @Schema(description = "Access Token 값")
     private final String accessToken;

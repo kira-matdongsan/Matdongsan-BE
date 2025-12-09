@@ -9,7 +9,7 @@ import lombok.Getter;
 @Schema(description = "토큰 재발급 (이메일 로그인) 요청 DTO")
 @Builder
 @Getter
-public class ReissueRequestDto {
+public class ReissueRequest {
 
     @NotBlank
     private String accessToken;

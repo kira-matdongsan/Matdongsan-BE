@@ -1,11 +1,11 @@
 package com.example.matdongsan.auth.presentation;
 
-import com.example.matdongsan.auth.presentation.request.OauthSigninRequestDto;
-import com.example.matdongsan.auth.presentation.request.ReissueRequestDto;
-import com.example.matdongsan.auth.presentation.request.SigninRequestDto;
-import com.example.matdongsan.auth.presentation.request.SignupRequestDto;
-import com.example.matdongsan.auth.presentation.response.SigninResponseDto;
-import com.example.matdongsan.auth.presentation.response.TermsResponseDto;
+import com.example.matdongsan.auth.presentation.request.OauthSigninRequest;
+import com.example.matdongsan.auth.presentation.request.ReissueRequest;
+import com.example.matdongsan.auth.presentation.request.SigninRequest;
+import com.example.matdongsan.auth.presentation.request.SignupRequest;
+import com.example.matdongsan.auth.presentation.response.SigninResponse;
+import com.example.matdongsan.auth.presentation.response.TermsResponse;
 import com.example.matdongsan.response.RestApiResponse;
 import com.example.matdongsan.response.ListResponse;
 import com.example.matdongsan.response.ResponseCode;
@@ -32,7 +32,7 @@ public class AuthController {
     // 약관 목록 조회
     @Operation(summary = "약관 목록 조회", description = "전체 약관 목록 조회 (상세 내용 포함)")
     @GetMapping("/terms")
-    public ResponseEntity<RestApiResponse<ListResponse<TermsResponseDto>>> getAllTerms() {
+    public ResponseEntity<RestApiResponse<ListResponse<TermsResponse>>> getAllTerms() {
         return RestApiResponse.successList(ResponseCode.OK, authService.getAllTerms());
     }
 
@@ -73,7 +73,7 @@ public class AuthController {
     // 이메일 회원가입
     @Operation(summary = "이메일 회원가입")
     @PostMapping("/signup")
-    public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> signup(@RequestBody @Valid SignupRequestDto requestDto) {
+    public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> signup(@RequestBody @Valid SignupRequest requestDto) {
         authService.signup(requestDto.toServiceDto());
         return RestApiResponse.successResult(ResponseCode.OK, true);
     }
@@ -81,21 +81,21 @@ public class AuthController {
     // 이메일 로그인
     @Operation(summary = "이메일 로그인")
     @PostMapping("/signin")
-    public ResponseEntity<RestApiResponse<SigninResponseDto>> signin(@RequestBody @Valid SigninRequestDto requestDto) {
+    public ResponseEntity<RestApiResponse<SigninResponse>> signin(@RequestBody @Valid SigninRequest requestDto) {
         return RestApiResponse.success(ResponseCode.OK, authService.signin(requestDto.toServiceDto()));
     }
 
     // Oauth2 로그인
     @Operation(summary = "Oauth2 (카카오/네이버) 로그인")
     @PostMapping("/oauth/signin")
-    public ResponseEntity<RestApiResponse<SigninResponseDto>> oauthSignin(@RequestBody @Valid OauthSigninRequestDto requestDto) {
+    public ResponseEntity<RestApiResponse<SigninResponse>> oauthSignin(@RequestBody @Valid OauthSigninRequest requestDto) {
         return RestApiResponse.success(ResponseCode.OK, authService.oauthSignin(requestDto.toServiceDto()));
     }
 
     // 토큰 재발급 (이메일 로그인)
     @Operation(summary = "토큰 재발급 (이메일 로그인)")
     @PostMapping("/reissue")
-    public ResponseEntity<RestApiResponse<SigninResponseDto>> reissue(@RequestBody @Valid ReissueRequestDto requestDto) {
+    public ResponseEntity<RestApiResponse<SigninResponse>> reissue(@RequestBody @Valid ReissueRequest requestDto) {
         return RestApiResponse.success(ResponseCode.OK, authService.reissue(requestDto.toServiceDto()));
     }
 }

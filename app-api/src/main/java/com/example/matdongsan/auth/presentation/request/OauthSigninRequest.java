@@ -11,7 +11,7 @@ import lombok.Getter;
 @Schema(description = "Oauth2 (카카오/네이버) 로그인 요청 DTO")
 @Builder
 @Getter
-public class OauthSigninRequestDto {
+public class OauthSigninRequest {
 
     @Schema(description = "OAuth2 제공자", example = "KAKAO")
     @NotNull(message = "provider를 입력해주세요.")

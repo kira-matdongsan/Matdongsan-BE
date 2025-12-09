@@ -9,7 +9,7 @@ import lombok.Getter;
 @Schema(description = "약관 목록 조회 응답 DTO")
 @Builder
 @Getter
-public class TermsResponseDto {
+public class TermsResponse {
 
     @Schema(description = "약관 ID", example = "1")
     private final Long id;
@@ -26,8 +26,8 @@ public class TermsResponseDto {
     @Schema(description = "약관 필수 여부", example = "true")
     private final Boolean required;
 
-    public static TermsResponseDto of(Terms terms) {
-        return TermsResponseDto.builder()
+    public static TermsResponse of(Terms terms) {
+        return TermsResponse.builder()
                 .id(terms.getId())
                 .type(terms.getType())
                 .title(terms.getTitle())
