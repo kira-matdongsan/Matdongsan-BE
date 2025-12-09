@@ -1,7 +1,7 @@
 package com.example.matdongsan.external.opendata.converter;
 
-import com.example.matdongsan.jpa.entity.ExternalFoodSource;
-import com.example.matdongsan.jpa.entity.Food;
+import com.example.matdongsan.jpa.entity.external.ExternalFoodSource;
+import com.example.matdongsan.jpa.entity.food.Food;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

@@ -1,6 +1,6 @@
 package com.example.matdongsan.food.presentation.response;
 
-import com.example.matdongsan.jpa.entity.Food;
+import com.example.matdongsan.jpa.entity.food.Food;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.example.matdongsan.auth.presentation.response;
 
-import com.example.matdongsan.jpa.entity.Terms;
-import com.example.matdongsan.jpa.entity.TermsType;
+import com.example.matdongsan.jpa.entity.auth.Terms;
+import com.example.matdongsan.auth.enums.TermsType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

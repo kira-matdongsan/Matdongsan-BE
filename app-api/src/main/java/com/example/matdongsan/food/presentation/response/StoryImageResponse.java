@@ -1,6 +1,6 @@
 package com.example.matdongsan.food.presentation.response;
 
-import com.example.matdongsan.jpa.entity.FoodStoryImage;
+import com.example.matdongsan.jpa.entity.food.FoodStoryImage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

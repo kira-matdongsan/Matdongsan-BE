@@ -10,7 +10,7 @@ import com.example.matdongsan.external.oauth.kakao.dto.KakaoUserResponse;
 import com.example.matdongsan.external.oauth.naver.NaverOauthClient;
 import com.example.matdongsan.external.oauth.naver.dto.NaverUserProfile;
 import com.example.matdongsan.external.oauth.naver.dto.NaverUserResponse;
-import com.example.matdongsan.jpa.entity.LoginType;
+import com.example.matdongsan.auth.enums.LoginType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

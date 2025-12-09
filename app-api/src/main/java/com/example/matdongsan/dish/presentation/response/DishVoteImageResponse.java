@@ -1,6 +1,6 @@
 package com.example.matdongsan.dish.presentation.response;
 
-import com.example.matdongsan.jpa.entity.DishVoteImage;
+import com.example.matdongsan.jpa.entity.dish.DishVoteImage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;

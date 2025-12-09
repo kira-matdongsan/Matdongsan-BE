@@ -1,6 +1,6 @@
 package com.example.matdongsan.auth.application.dto;
 
-import com.example.matdongsan.jpa.entity.LoginType;
+import com.example.matdongsan.auth.enums.LoginType;
 import lombok.Builder;
 import lombok.Getter;
 

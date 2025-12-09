@@ -51,7 +51,7 @@ subprojects {
     }
 }
 
-val libraryModules = listOf(":core-domain", ":core-utils")
+val libraryModules = listOf(":core-domain", "core-data", ":core-utils")
 val appModules = listOf(":app-api", ":app-admin")
 
 configure(libraryModules.map { project(it) }) {
@@ -67,6 +67,7 @@ configure(appModules.map { project(it) }) {
 
     dependencies {
         implementation(project(":core-domain"))
+        implementation(project(":core-data"))
         implementation(project(":core-utils"))
     }
 }

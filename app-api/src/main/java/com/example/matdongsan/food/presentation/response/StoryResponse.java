@@ -1,6 +1,10 @@
 package com.example.matdongsan.food.presentation.response;
 
-import com.example.matdongsan.jpa.entity.*;
+import com.example.matdongsan.food.enums.FoodStoryType;
+import com.example.matdongsan.jpa.entity.food.FoodStory;
+import com.example.matdongsan.jpa.entity.food.FoodStoryPlace;
+import com.example.matdongsan.jpa.entity.food.FoodStoryRecipe;
+import com.example.matdongsan.jpa.entity.food.FoodStorySeasonalNote;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

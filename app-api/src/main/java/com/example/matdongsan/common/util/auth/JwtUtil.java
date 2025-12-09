@@ -1,6 +1,6 @@
 package com.example.matdongsan.common.util.auth;
 
-import com.example.matdongsan.jpa.entity.LoginType;
+import com.example.matdongsan.auth.enums.LoginType;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

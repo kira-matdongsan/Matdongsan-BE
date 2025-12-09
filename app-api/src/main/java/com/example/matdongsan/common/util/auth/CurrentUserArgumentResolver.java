@@ -1,7 +1,7 @@
 package com.example.matdongsan.common.util.auth;
 
 
-import com.example.matdongsan.jpa.entity.User;
+import com.example.matdongsan.jpa.entity.user.User;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

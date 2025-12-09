@@ -1,7 +1,7 @@
 package com.example.matdongsan.common.util.auth;
 
-import com.example.matdongsan.jpa.entity.User;
-import com.example.matdongsan.jpa.entity.UserLoginCredential;
+import com.example.matdongsan.jpa.entity.user.User;
+import com.example.matdongsan.jpa.entity.auth.UserLoginCredential;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

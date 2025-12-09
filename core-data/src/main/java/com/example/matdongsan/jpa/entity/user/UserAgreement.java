@@ -1,0 +1,36 @@
+package com.example.matdongsan.jpa.entity.user;
+
+import com.example.matdongsan.jpa.entity.auth.Terms;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Builder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Entity
+public class UserAgreement {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private LocalDateTime agreedAt;
+    private LocalDateTime withdrawnAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Terms term;
+
+    public static UserAgreement from(User user, Terms term) {
+        return UserAgreement.builder()
+                .term(term)
+                .user(user)
+                .agreedAt(LocalDateTime.now())
+                .build();
+    }
+}

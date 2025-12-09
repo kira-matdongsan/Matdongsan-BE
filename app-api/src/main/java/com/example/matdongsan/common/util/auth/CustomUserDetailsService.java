@@ -1,7 +1,7 @@
 package com.example.matdongsan.common.util.auth;
 
-import com.example.matdongsan.jpa.entity.LoginType;
-import com.example.matdongsan.jpa.entity.UserLoginCredential;
+import com.example.matdongsan.auth.enums.LoginType;
+import com.example.matdongsan.jpa.entity.auth.UserLoginCredential;
 import com.example.matdongsan.jpa.repository.UserLoginCredentialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

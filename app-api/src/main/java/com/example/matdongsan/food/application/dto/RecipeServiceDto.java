@@ -1,7 +1,7 @@
 package com.example.matdongsan.food.application.dto;
 
-import com.example.matdongsan.jpa.entity.Food;
-import com.example.matdongsan.jpa.entity.FoodStoryRecipe;
+import com.example.matdongsan.jpa.entity.food.Food;
+import com.example.matdongsan.jpa.entity.food.FoodStoryRecipe;
 import lombok.Builder;
 import lombok.Getter;
 

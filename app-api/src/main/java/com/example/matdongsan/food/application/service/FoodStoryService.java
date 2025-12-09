@@ -1,14 +1,14 @@
 package com.example.matdongsan.food.application.service;
 
-import com.example.matdongsan.food.presentation.response.StoryImageResponse;
-import com.example.matdongsan.food.presentation.response.StoryResponse;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
-import com.example.matdongsan.jpa.entity.*;
-import com.example.matdongsan.jpa.repository.*;
 import com.example.matdongsan.food.application.dto.PlaceServiceDto;
 import com.example.matdongsan.food.application.dto.RecipeServiceDto;
 import com.example.matdongsan.food.application.dto.SeasonalNoteServiceDto;
+import com.example.matdongsan.food.presentation.response.StoryImageResponse;
+import com.example.matdongsan.food.presentation.response.StoryResponse;
+import com.example.matdongsan.jpa.entity.food.*;
+import com.example.matdongsan.jpa.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

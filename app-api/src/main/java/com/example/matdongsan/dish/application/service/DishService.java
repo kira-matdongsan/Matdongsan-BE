@@ -1,12 +1,16 @@
 package com.example.matdongsan.dish.application.service;
 
+import com.example.matdongsan.dish.application.dto.DishServiceDto;
+import com.example.matdongsan.dish.application.dto.DishVoteServiceDto;
 import com.example.matdongsan.dish.presentation.response.DishVoteImageResponse;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
-import com.example.matdongsan.jpa.entity.*;
+import com.example.matdongsan.jpa.entity.dish.Dish;
+import com.example.matdongsan.jpa.entity.dish.DishVote;
+import com.example.matdongsan.jpa.entity.dish.DishVoteImage;
+import com.example.matdongsan.jpa.entity.food.FeaturedFood;
+import com.example.matdongsan.jpa.entity.food.Food;
 import com.example.matdongsan.jpa.repository.*;
-import com.example.matdongsan.dish.application.dto.DishServiceDto;
-import com.example.matdongsan.dish.application.dto.DishVoteServiceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

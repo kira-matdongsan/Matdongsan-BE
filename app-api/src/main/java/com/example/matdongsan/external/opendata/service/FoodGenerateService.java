@@ -1,6 +1,6 @@
 package com.example.matdongsan.external.opendata.service;
 
-import com.example.matdongsan.jpa.entity.Food;
+import com.example.matdongsan.jpa.entity.food.Food;
 import com.example.matdongsan.external.opendata.converter.ExternalFoodSourceToFoodConverter;
 import com.example.matdongsan.jpa.repository.ExternalFoodSourceRepository;
 import com.example.matdongsan.jpa.repository.FoodRepository;

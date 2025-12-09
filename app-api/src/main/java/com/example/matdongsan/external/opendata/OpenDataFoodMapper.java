@@ -1,6 +1,6 @@
 package com.example.matdongsan.external.opendata;
 
-import com.example.matdongsan.jpa.entity.ExternalFoodSource;
+import com.example.matdongsan.jpa.entity.external.ExternalFoodSource;
 import com.example.matdongsan.external.opendata.dto.OpenDataFoodItem;
 import org.springframework.stereotype.Component;
 

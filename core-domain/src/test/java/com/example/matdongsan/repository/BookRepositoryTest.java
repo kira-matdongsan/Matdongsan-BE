@@ -1,8 +1,8 @@
 package com.example.matdongsan.repository;
 
-import com.example.matdongsan.jpa.entity.Author;
-import com.example.matdongsan.jpa.entity.Book;
-import com.example.matdongsan.jpa.entity.Genre;
+import com.example.matdongsan.jpa.entity.dummy.Author;
+import com.example.matdongsan.jpa.entity.dummy.Book;
+import com.example.matdongsan.jpa.entity.dummy.Genre;
 import com.example.matdongsan.jpa.repository.AuthorRepository;
 import com.example.matdongsan.jpa.repository.BookRepository;
 import org.junit.jupiter.api.BeforeEach;

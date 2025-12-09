@@ -1,6 +1,6 @@
 package com.example.matdongsan.auth.presentation.request;
 
-import com.example.matdongsan.jpa.entity.LoginType;
+import com.example.matdongsan.auth.enums.LoginType;
 import com.example.matdongsan.auth.application.dto.OauthSigninServiceDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

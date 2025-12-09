@@ -1,6 +1,6 @@
 package com.example.matdongsan.common.util.auth;
 
-import com.example.matdongsan.jpa.entity.LoginType;
+import com.example.matdongsan.auth.enums.LoginType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
