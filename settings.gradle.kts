@@ -1,6 +1,6 @@
 rootProject.name = "matdongsan"
 
-include("admin")
-include("api")
-include("domain")
-include("core")
+include("app-admin")
+include("app-api")
+include("core-domain")
+include("core-utils")

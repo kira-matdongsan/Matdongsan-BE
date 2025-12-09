@@ -51,8 +51,8 @@ subprojects {
     }
 }
 
-val libraryModules = listOf(":domain", ":core")
-val appModules = listOf(":api", ":admin")
+val libraryModules = listOf(":core-domain", ":core-utils")
+val appModules = listOf(":app-api", ":app-admin")
 
 configure(libraryModules.map { project(it) }) {
     val jar: Jar by tasks
@@ -66,7 +66,7 @@ configure(appModules.map { project(it) }) {
     jar.enabled = true
 
     dependencies {
-        implementation(project(":domain"))
-        implementation(project(":core"))
+        implementation(project(":core-domain"))
+        implementation(project(":core-utils"))
     }
 }
