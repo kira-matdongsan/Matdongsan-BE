@@ -1,10 +1,10 @@
 package com.example.matdongsan.external.opendata.service;
 
-import com.example.matdongsan.jpa.entity.external.ExternalFoodSource;
+import com.example.matdongsan.jpa.entity.external.ExternalFoodSourceEntity;
 import com.example.matdongsan.external.opendata.OpenDataFoodClient;
 import com.example.matdongsan.external.opendata.OpenDataFoodMapper;
 import com.example.matdongsan.external.opendata.dto.OpenDataFoodResponse;
-import com.example.matdongsan.jpa.repository.ExternalFoodSourceRepository;
+import com.example.matdongsan.jpa.repository.ExternalFoodSourceJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ public class ExternalFoodSyncService {
 
     private final OpenDataFoodClient openDataFoodClient;
     private final OpenDataFoodMapper openDataFoodMapper;
-    private final ExternalFoodSourceRepository externalFoodSourceRepository;
+    private final ExternalFoodSourceJpaRepository externalFoodSourceJpaRepository;
 
     @Value("${external.opendata.api-key}")
     private String apiKey;
@@ -30,11 +30,11 @@ public class ExternalFoodSyncService {
             int end = Math.min(i + pageSize - 1, total);
             OpenDataFoodResponse response = openDataFoodClient.fetchFoodData(apiKey, i, end);
 
-            List<ExternalFoodSource> entities = response.getData().getRow().stream()
+            List<ExternalFoodSourceEntity> entities = response.getData().getRow().stream()
                     .map(openDataFoodMapper::toEntity)
                     .toList();
 
-            externalFoodSourceRepository.saveAll(entities);
+            externalFoodSourceJpaRepository.saveAll(entities);
         }
     }
 }

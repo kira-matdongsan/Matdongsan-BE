@@ -37,7 +37,7 @@ public class FoodStoryController {
             @PathVariable Long id,
             @RequestBody @Valid SeasonalNoteCreateRequest request
     ) {
-        return RestApiResponse.success(ResponseCode.OK, foodStoryService.createSeasonalNoteStory(id, request.toServiceDto()));
+        return RestApiResponse.success(ResponseCode.OK, StoryResponse.from(foodStoryService.createSeasonalNoteStory(id, request.toParam()), true));
     }
 
     @Operation(summary = "레시피 작성", description = "제철 음식 ID로 제철음식 이야기 작성")
@@ -48,7 +48,7 @@ public class FoodStoryController {
             @PathVariable Long id,
             @RequestBody @Valid RecipeCreateRequest request
     ) {
-        return RestApiResponse.success(ResponseCode.OK, foodStoryService.createRecipeStory(id, request.toServiceDto()));
+        return RestApiResponse.success(ResponseCode.OK, StoryResponse.from(foodStoryService.createRecipeStory(id, request.toParam()), true));
     }
 
     @Operation(summary = "플레이스 작성", description = "제철 음식 ID로 제철음식 이야기 작성")
@@ -59,7 +59,7 @@ public class FoodStoryController {
             @PathVariable Long id,
             @RequestBody @Valid PlaceCreateRequest request
     ) {
-        return RestApiResponse.success(ResponseCode.OK, foodStoryService.createPlaceStory(id, request.toServiceDto()));
+        return RestApiResponse.success(ResponseCode.OK, StoryResponse.from(foodStoryService.createPlaceStory(id, request.toParam()), true));
     }
 
     // 이야기 수정

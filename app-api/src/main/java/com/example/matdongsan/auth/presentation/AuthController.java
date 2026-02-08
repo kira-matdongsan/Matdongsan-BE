@@ -1,5 +1,6 @@
 package com.example.matdongsan.auth.presentation;
 
+import com.example.matdongsan.auth.application.dto.TokenServiceDto;
 import com.example.matdongsan.auth.presentation.request.OauthSigninRequest;
 import com.example.matdongsan.auth.presentation.request.ReissueRequest;
 import com.example.matdongsan.auth.presentation.request.SigninRequest;
@@ -20,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "인증 API", description = "인증 관련 API")
 @Validated
 @RequiredArgsConstructor
@@ -33,7 +36,11 @@ public class AuthController {
     @Operation(summary = "약관 목록 조회", description = "전체 약관 목록 조회 (상세 내용 포함)")
     @GetMapping("/terms")
     public ResponseEntity<RestApiResponse<ListResponse<TermsResponse>>> getAllTerms() {
-        return RestApiResponse.successList(ResponseCode.OK, authService.getAllTerms());
+        List<TermsResponse> responses = authService.getAllTerms()
+                .stream()
+                .map(TermsResponse::from)
+                .toList();
+        return RestApiResponse.successList(ResponseCode.OK, responses);
     }
 
     // 인증 번호 메일 발송
@@ -74,7 +81,7 @@ public class AuthController {
     @Operation(summary = "이메일 회원가입")
     @PostMapping("/signup")
     public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> signup(@RequestBody @Valid SignupRequest requestDto) {
-        authService.signup(requestDto.toServiceDto());
+        authService.signup(requestDto.toParam());
         return RestApiResponse.successResult(ResponseCode.OK, true);
     }
 
@@ -82,20 +89,23 @@ public class AuthController {
     @Operation(summary = "이메일 로그인")
     @PostMapping("/signin")
     public ResponseEntity<RestApiResponse<SigninResponse>> signin(@RequestBody @Valid SigninRequest requestDto) {
-        return RestApiResponse.success(ResponseCode.OK, authService.signin(requestDto.toServiceDto()));
+        TokenServiceDto tokenDto = authService.signin(requestDto.toParam());
+        return RestApiResponse.success(ResponseCode.OK, SigninResponse.from(tokenDto));
     }
 
     // Oauth2 로그인
     @Operation(summary = "Oauth2 (카카오/네이버) 로그인")
     @PostMapping("/oauth/signin")
     public ResponseEntity<RestApiResponse<SigninResponse>> oauthSignin(@RequestBody @Valid OauthSigninRequest requestDto) {
-        return RestApiResponse.success(ResponseCode.OK, authService.oauthSignin(requestDto.toServiceDto()));
+        TokenServiceDto tokenDto = authService.oauthSignin(requestDto.toParam());
+        return RestApiResponse.success(ResponseCode.OK, SigninResponse.from(tokenDto));
     }
 
     // 토큰 재발급 (이메일 로그인)
     @Operation(summary = "토큰 재발급 (이메일 로그인)")
     @PostMapping("/reissue")
     public ResponseEntity<RestApiResponse<SigninResponse>> reissue(@RequestBody @Valid ReissueRequest requestDto) {
-        return RestApiResponse.success(ResponseCode.OK, authService.reissue(requestDto.toServiceDto()));
+        TokenServiceDto tokenDto = authService.reissue(requestDto.toParam());
+        return RestApiResponse.success(ResponseCode.OK, SigninResponse.from(tokenDto));
     }
 }

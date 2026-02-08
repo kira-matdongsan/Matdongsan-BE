@@ -1,6 +1,6 @@
 package com.example.matdongsan.dish.presentation.response;
 
-import com.example.matdongsan.jpa.entity.dish.DishVoteImage;
+import com.example.matdongsan.dish.application.dto.DishVoteImageServiceDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,10 +16,10 @@ public class DishVoteImageResponse {
     @Schema(description = "투표 이미지 URL", example = "")
     private final String imageUrl;
 
-    public static DishVoteImageResponse of (DishVoteImage dishVoteImage) {
+    public static DishVoteImageResponse from(DishVoteImageServiceDto dto) {
         return DishVoteImageResponse.builder()
-                .imageId(dishVoteImage.getId())
-                .imageUrl(dishVoteImage.getImageUrl())
+                .imageId(dto.getId())
+                .imageUrl(dto.getImageUrl())
                 .build();
     }
 }

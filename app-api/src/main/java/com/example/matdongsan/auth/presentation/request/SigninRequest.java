@@ -1,6 +1,6 @@
 package com.example.matdongsan.auth.presentation.request;
 
-import com.example.matdongsan.auth.application.dto.SigninServiceDto;
+import com.example.matdongsan.auth.application.dto.SigninParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -19,8 +19,8 @@ public class SigninRequest {
     @NotBlank(message = "비밀번호를 입력해주세요.")
     private String password;
 
-    public SigninServiceDto toServiceDto() {
-        return SigninServiceDto.builder()
+    public SigninParam toParam() {
+        return SigninParam.builder()
                 .email(email)
                 .password(password)
                 .build();

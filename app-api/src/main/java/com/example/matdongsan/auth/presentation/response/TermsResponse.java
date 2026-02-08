@@ -1,6 +1,6 @@
 package com.example.matdongsan.auth.presentation.response;
 
-import com.example.matdongsan.jpa.entity.auth.Terms;
+import com.example.matdongsan.auth.application.dto.TermsServiceDto;
 import com.example.matdongsan.auth.enums.TermsType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -26,13 +26,13 @@ public class TermsResponse {
     @Schema(description = "약관 필수 여부", example = "true")
     private final Boolean required;
 
-    public static TermsResponse of(Terms terms) {
+    public static TermsResponse from(TermsServiceDto dto) {
         return TermsResponse.builder()
-                .id(terms.getId())
-                .type(terms.getType())
-                .title(terms.getTitle())
-                .content(terms.getContent())
-                .required(terms.getRequired())
+                .id(dto.getId())
+                .type(dto.getType())
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .required(dto.getRequired())
                 .build();
     }
 }

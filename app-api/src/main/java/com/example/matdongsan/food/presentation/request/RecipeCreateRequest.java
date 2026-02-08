@@ -1,6 +1,6 @@
 package com.example.matdongsan.food.presentation.request;
 
-import com.example.matdongsan.food.application.dto.RecipeServiceDto;
+import com.example.matdongsan.food.application.dto.CreateRecipeParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -24,8 +24,8 @@ public class RecipeCreateRequest {
 
     private List<String> imageUrls;
 
-    public RecipeServiceDto toServiceDto() {
-        return RecipeServiceDto.builder()
+    public CreateRecipeParam toParam() {
+        return CreateRecipeParam.builder()
                 .name(name)
                 .ingredients(ingredients)
                 .instructions(instructions)

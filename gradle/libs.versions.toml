@@ -5,6 +5,9 @@ springCloud = "2024.0.0"
 springdoc = "2.8.6"
 jjwt = "0.12.6"
 awsSdk = "2.27.21"
+querydsl = "5.1.0"
+mapstruct = "1.6.3"
+lombokMapstructBinding = "0.2.0"
 javaLanguage = "21"
 
 [libraries]
@@ -31,6 +34,15 @@ springdoc-openapi-starter-webmvc-ui = { module = "org.springdoc:springdoc-openap
 jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
 jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
 jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
+
+# QueryDSL
+querydsl-jpa = { module = "com.querydsl:querydsl-jpa", version.ref = "querydsl" }
+querydsl-apt = { module = "com.querydsl:querydsl-apt", version.ref = "querydsl" }
+
+# MapStruct
+mapstruct = { module = "org.mapstruct:mapstruct", version.ref = "mapstruct" }
+mapstruct-processor = { module = "org.mapstruct:mapstruct-processor", version.ref = "mapstruct" }
+lombok-mapstruct-binding = { module = "org.projectlombok:lombok-mapstruct-binding", version.ref = "lombokMapstructBinding" }
 
 # AWS SDK
 aws-sdk-s3 = { module = "software.amazon.awssdk:s3", version.ref = "awsSdk" }

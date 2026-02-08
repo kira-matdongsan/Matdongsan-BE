@@ -1,15 +1,21 @@
 package com.example.matdongsan.food.application.service;
 
+import com.example.matdongsan.dish.domain.Dish;
+import com.example.matdongsan.dish.domain.DishVoteImage;
+import com.example.matdongsan.dish.repository.DishQueryRepository;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
+import com.example.matdongsan.food.application.dto.FoodServiceDto;
+import com.example.matdongsan.food.application.dto.FoodStoryServiceDto;
+import com.example.matdongsan.food.domain.FeaturedFood;
+import com.example.matdongsan.food.domain.Food;
+import com.example.matdongsan.food.domain.FoodStory;
+import com.example.matdongsan.food.domain.FoodStoryImage;
 import com.example.matdongsan.food.presentation.response.*;
-import com.example.matdongsan.jpa.entity.dish.Dish;
-import com.example.matdongsan.jpa.entity.dish.DishVoteImage;
-import com.example.matdongsan.jpa.entity.food.FeaturedFood;
-import com.example.matdongsan.jpa.entity.food.Food;
-import com.example.matdongsan.jpa.repository.*;
+import com.example.matdongsan.food.repository.FoodQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,26 +29,24 @@ import java.util.stream.IntStream;
 @Service
 public class FoodService {
 
-    private final FoodRepository foodRepository;
-    private final FoodStoryRepository foodStoryRepository;
-    private final FoodStoryImageRepository foodStoryImageRepository;
-    private final FeaturedFoodRepository featuredFoodRepository;
-    private final DishRepository dishRepository;
+    private final FoodQueryRepository foodQueryRepository;
+    private final DishQueryRepository dishQueryRepository;
 
-    public FoodInfoResponse getFoodInfoById(Long id) {
-        Food food = foodRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
-        return FoodInfoResponse.of(food, true);
+    public FoodServiceDto getFoodInfoById(Long id) {
+        Food food = foodQueryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
+        return FoodServiceDto.from(food);
     }
 
     // TODO: 맛동산 Pick 제철요리 투표 관련 기능 논의중
     public DishPickResponse getAllDishesByFoodId(Long id) {
-        Food food = foodRepository.findById(id)
+        Food food = foodQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        FeaturedFood featuredFood = featuredFoodRepository.findFirstByFoodOrderByStartAtDesc(food)
+        FeaturedFood featuredFood = foodQueryRepository.findLatestFeaturedFoodByFoodId(food.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.FEATURED_FOOD_NOT_FOUND));
 
-        List<Dish> dishes = dishRepository.findAllByFeaturedFoodOrderByVoteCountDesc(featuredFood);
+        List<Dish> dishes = dishQueryRepository.findAllByFeaturedFoodIdOrderByVoteCountDesc(featuredFood.getId());
 
         List<DishResponse> contents =
                 IntStream.range(0, dishes.size())
@@ -50,7 +54,7 @@ public class FoodService {
                             Dish dish = dishes.get(i);
                             List<DishVoteImage> images = dish.getImages();
                             DishVoteImage dishVoteImage = null;
-                            if (!images.isEmpty()) {
+                            if (images != null && !images.isEmpty()) {
                                 dishVoteImage = images.get(new Random().nextInt(images.size()));
                             }
 
@@ -79,16 +83,21 @@ public class FoodService {
                 .build();
     }
 
-    public Page<StoryResponse> getAllStoriesByFoodId(Long id, Pageable pageable) {
-        Food food = foodRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
-        return foodStoryRepository.findAllByFoodAndDeletedAtIsNull(food, pageable)
-                .map(foodStory -> {
-                    List<StoryImageResponse> images = foodStoryImageRepository.findAllByFoodStoryAndDeletedAtIsNull(foodStory)
-                            .stream()
-                            .map(StoryImageResponse::of)
-                            .toList();
-                    return StoryResponse.of(foodStory, images, true);
-                });
+    public Page<FoodStoryServiceDto> getAllStoriesByFoodId(Long id, Pageable pageable) {
+        foodQueryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
+
+        List<FoodStory> stories = foodQueryRepository.findAllStoriesByFoodId(id, pageable.getPageNumber(), pageable.getPageSize());
+        long totalCount = foodQueryRepository.countStoriesByFoodId(id);
+
+        List<FoodStoryServiceDto> dtos = stories.stream()
+                .map(story -> {
+                    List<FoodStoryImage> images = foodQueryRepository.findAllImagesByStoryId(story.getId());
+                    return FoodStoryServiceDto.from(story, images);
+                })
+                .toList();
+
+        return new PageImpl<>(dtos, pageable, totalCount);
     }
 
     // TODO: [User] 계정 작업 후 구현 가능

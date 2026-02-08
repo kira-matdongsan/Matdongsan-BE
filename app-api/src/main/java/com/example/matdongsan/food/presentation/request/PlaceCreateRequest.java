@@ -1,6 +1,6 @@
 package com.example.matdongsan.food.presentation.request;
 
-import com.example.matdongsan.food.application.dto.PlaceServiceDto;
+import com.example.matdongsan.food.application.dto.CreatePlaceParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -29,8 +29,8 @@ public class PlaceCreateRequest {
 
     private List<String> imageUrls;
 
-    public PlaceServiceDto toServiceDto() {
-        return PlaceServiceDto.builder()
+    public CreatePlaceParam toParam() {
+        return CreatePlaceParam.builder()
                 .name(name)
                 .content(content)
                 .category(category)

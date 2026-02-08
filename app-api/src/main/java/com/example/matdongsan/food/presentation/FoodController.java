@@ -4,6 +4,7 @@ import com.example.matdongsan.response.RestApiResponse;
 import com.example.matdongsan.response.PageResponse;
 import com.example.matdongsan.response.ResponseCode;
 import com.example.matdongsan.response.ResultResponse;
+import com.example.matdongsan.food.application.dto.FoodStoryServiceDto;
 import com.example.matdongsan.food.presentation.response.DishPickResponse;
 import com.example.matdongsan.food.presentation.request.DishRequest;
 import com.example.matdongsan.food.presentation.response.FoodInfoResponse;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -35,7 +37,7 @@ public class FoodController {
             @Parameter(name = "id", description = "조회할 제철 음식 ID", example = "1")
             @PathVariable Long id
     ) {
-        return RestApiResponse.success(ResponseCode.OK, foodService.getFoodInfoById(id));
+        return RestApiResponse.success(ResponseCode.OK, FoodInfoResponse.from(foodService.getFoodInfoById(id), true));
     }
 
     @Operation(summary = "맛동산 Pick 제철요리 목록 조회", description = "제철 음식 ID로 제철요리 조회")
@@ -54,7 +56,7 @@ public class FoodController {
             @PathVariable Long id,
             @RequestBody DishRequest requestDto
     ) {
-        dishService.createDish(id, requestDto.toServiceDto());
+        dishService.createDish(id, requestDto.toParam());
         return RestApiResponse.successResult(ResponseCode.OK, true);
     }
 
@@ -64,7 +66,9 @@ public class FoodController {
             @Parameter(name = "id", description = "조회할 제철 음식 ID", example = "1") @PathVariable Long id,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        return RestApiResponse.successPage(ResponseCode.OK, foodService.getAllStoriesByFoodId(id, pageable));
+        Page<StoryResponse> storyResponses = foodService.getAllStoriesByFoodId(id, pageable)
+                .map(dto -> StoryResponse.from(dto, true));
+        return RestApiResponse.successPage(ResponseCode.OK, storyResponses);
     }
 
     @Operation(summary = "제철 음식 좋아요 추가/취소", description = "제철 음식 ID로 제철음식 좋아요/취소")

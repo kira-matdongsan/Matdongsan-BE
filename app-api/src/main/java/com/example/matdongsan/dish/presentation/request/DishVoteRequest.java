@@ -1,6 +1,6 @@
 package com.example.matdongsan.dish.presentation.request;
 
-import com.example.matdongsan.dish.application.dto.DishVoteServiceDto;
+import com.example.matdongsan.dish.application.dto.VoteDishParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,8 +14,8 @@ public class DishVoteRequest {
 
     private List<String> imageUrls;
 
-    public DishVoteServiceDto toServiceDto() {
-        return DishVoteServiceDto.builder()
+    public VoteDishParam toParam() {
+        return VoteDishParam.builder()
                 .imageUrls(imageUrls)
                 .build();
     }

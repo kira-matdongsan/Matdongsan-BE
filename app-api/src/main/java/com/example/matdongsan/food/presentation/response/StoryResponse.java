@@ -1,10 +1,7 @@
 package com.example.matdongsan.food.presentation.response;
 
+import com.example.matdongsan.food.application.dto.FoodStoryServiceDto;
 import com.example.matdongsan.food.enums.FoodStoryType;
-import com.example.matdongsan.jpa.entity.food.FoodStory;
-import com.example.matdongsan.jpa.entity.food.FoodStoryPlace;
-import com.example.matdongsan.jpa.entity.food.FoodStoryRecipe;
-import com.example.matdongsan.jpa.entity.food.FoodStorySeasonalNote;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -31,7 +28,7 @@ public class StoryResponse {
     @Schema(description = "이야기 타입", example = "SEASONAL_NOTE")
     private final FoodStoryType type;
 
-    @Schema(description = "글(제철 기록), 한줄평(플레이스)", example = "길가에 트럭을 보면 그냥 지나치지 못하고 항상 옥수수를 사먹는데 이태원 길가에 있던 옥수수 사장님이 오늘 개시 손님이라고 해서 뭔가 기분이 좋았당! 집에 가서 먹으려고 했는데 못참고 길옥수수를 했다.")
+    @Schema(description = "글(제철 기록), 한줄평(플레이스)")
     private final String content;
 
     @Schema(description = "좋아요 수", example = "3")
@@ -70,83 +67,36 @@ public class StoryResponse {
     @Schema(description = "가게 네이버 지도 URL", example = "")
     private final String naverUrl;
 
-    public static StoryResponse of(FoodStory foodStory, List<StoryImageResponse> images, Boolean isLiked) {
-        StoryResponse.StoryResponseBuilder builder = StoryResponse.builder()
-                .id(foodStory.getId())
+    public static StoryResponse from(FoodStoryServiceDto dto, Boolean isLiked) {
+        List<StoryImageResponse> imageResponses = dto.getImages() != null
+                ? dto.getImages().stream().map(StoryImageResponse::from).toList()
+                : List.of();
+
+        StoryResponseBuilder builder = StoryResponse.builder()
+                .id(dto.getId())
                 .nickname("도란도란")
                 .profileImageUrl("https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/profile-image/sample.jpg")
-                .type(foodStory.getType())  // enum이라면 FoodStoryType
-                .likeCount(foodStory.getLikeCount())
+                .type(dto.getType())
+                .likeCount(dto.getLikeCount())
                 .isLiked(isLiked)
-                .images(images)
-                .createdAt(foodStory.getCreatedAt());
+                .images(imageResponses)
+                .createdAt(dto.getCreatedAt());
 
-        if (foodStory instanceof FoodStorySeasonalNote seasonalNote) {
-            builder.recordedDate(seasonalNote.getRecordedDate());
-
-        } else if (foodStory instanceof FoodStoryRecipe recipe) {
-            builder.name(recipe.getRecipeName());
-            builder.ingredients(recipe.getIngredients());
-            builder.instructions(recipe.getInstructions());
-
-        } else if (foodStory instanceof FoodStoryPlace place) {
-            builder.name(place.getPlaceName());
-            builder.content(place.getContent());  // 이건 부모랑 겹칠 수도 있음
-            builder.category(place.getCategory());
-            builder.address(place.getAddress());
-            builder.naverUrl(place.getNaverUrl());
+        if (dto.getType() == FoodStoryType.SEASONAL_NOTE) {
+            builder.content(dto.getContent());
+            builder.recordedDate(dto.getRecordedDate());
+        } else if (dto.getType() == FoodStoryType.RECIPE) {
+            builder.name(dto.getRecipeName());
+            builder.ingredients(dto.getIngredients());
+            builder.instructions(dto.getInstructions());
+        } else if (dto.getType() == FoodStoryType.PLACE) {
+            builder.name(dto.getPlaceName());
+            builder.content(dto.getPlaceContent());
+            builder.category(dto.getCategory());
+            builder.address(dto.getAddress());
+            builder.naverUrl(dto.getNaverUrl());
         }
 
         return builder.build();
     }
-
-    public static StoryResponse ofSeasonalNoteStory(FoodStorySeasonalNote foodStorySeasonalNote, List<StoryImageResponse> images) {
-        return StoryResponse.builder()
-                .id(foodStorySeasonalNote.getId())
-                .nickname("도란도란")
-                .profileImageUrl("https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/profile-image/sample.jpg")
-                .type(FoodStoryType.SEASONAL_NOTE)
-                .content(foodStorySeasonalNote.getContent())
-                .likeCount(foodStorySeasonalNote.getLikeCount())
-                .isLiked(true)
-                .images(images)
-                .createdAt(foodStorySeasonalNote.getCreatedAt())
-                .recordedDate(foodStorySeasonalNote.getRecordedDate())
-                .build();
-    }
-
-    public static StoryResponse ofRecipeStory(FoodStoryRecipe foodStoryRecipe, List<StoryImageResponse> images) {
-        return StoryResponse.builder()
-                .id(foodStoryRecipe.getId())
-                .nickname("도란도란")
-                .profileImageUrl("https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/profile-image/sample.jpg")
-                .type(FoodStoryType.RECIPE)
-                .likeCount(foodStoryRecipe.getLikeCount())
-                .isLiked(true)
-                .images(images)
-                .createdAt(foodStoryRecipe.getCreatedAt())
-                .name(foodStoryRecipe.getRecipeName())
-                .ingredients(foodStoryRecipe.getIngredients())
-                .instructions(foodStoryRecipe.getInstructions())
-                .build();
-    }
-
-    public static StoryResponse ofPlaceStory(FoodStoryPlace foodStoryPlace, List<StoryImageResponse> images) {
-        return StoryResponse.builder()
-                .id(foodStoryPlace.getId())
-                .nickname("도란도란")
-                .profileImageUrl("https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/profile-image/sample.jpg")
-                .type(FoodStoryType.RECIPE)
-                .content(foodStoryPlace.getContent())
-                .likeCount(foodStoryPlace.getLikeCount())
-                .isLiked(true)
-                .images(images)
-                .createdAt(foodStoryPlace.getCreatedAt())
-                .name(foodStoryPlace.getPlaceName())
-                .category(foodStoryPlace.getCategory())
-                .address(foodStoryPlace.getAddress())
-                .naverUrl(foodStoryPlace.getNaverUrl())
-                .build();
-    }
-
 }

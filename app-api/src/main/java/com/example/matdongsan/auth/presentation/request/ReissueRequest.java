@@ -1,6 +1,6 @@
 package com.example.matdongsan.auth.presentation.request;
 
-import com.example.matdongsan.auth.application.dto.ReissueServiceDto;
+import com.example.matdongsan.auth.application.dto.ReissueParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -17,8 +17,8 @@ public class ReissueRequest {
     @NotBlank
     private String refreshToken;
 
-    public ReissueServiceDto toServiceDto() {
-        return ReissueServiceDto.builder()
+    public ReissueParam toParam() {
+        return ReissueParam.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

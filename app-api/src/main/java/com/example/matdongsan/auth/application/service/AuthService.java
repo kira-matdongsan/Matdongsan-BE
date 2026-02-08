@@ -1,29 +1,25 @@
 package com.example.matdongsan.auth.application.service;
 
-import com.example.matdongsan.auth.application.dto.OauthSigninServiceDto;
-import com.example.matdongsan.auth.application.dto.ReissueServiceDto;
-import com.example.matdongsan.auth.application.dto.SigninServiceDto;
-import com.example.matdongsan.auth.application.dto.SignupServiceDto;
+import com.example.matdongsan.auth.application.dto.*;
+import com.example.matdongsan.auth.domain.UserLoginCredential;
 import com.example.matdongsan.auth.enums.LoginType;
-import com.example.matdongsan.auth.presentation.response.SigninResponse;
-import com.example.matdongsan.auth.presentation.response.TermsResponse;
+import com.example.matdongsan.auth.repository.AuthCommandRepository;
+import com.example.matdongsan.auth.repository.AuthQueryRepository;
 import com.example.matdongsan.common.util.auth.JwtUtil;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
 import com.example.matdongsan.external.oauth.OauthService;
 import com.example.matdongsan.external.oauth.dto.OauthResponseDto;
-import com.example.matdongsan.jpa.entity.auth.Terms;
-import com.example.matdongsan.jpa.entity.auth.UserLoginCredential;
-import com.example.matdongsan.jpa.entity.user.User;
-import com.example.matdongsan.jpa.entity.user.UserAgreement;
-import com.example.matdongsan.jpa.entity.user.UserProfile;
-import com.example.matdongsan.jpa.repository.*;
 import com.example.matdongsan.redis.entity.EmailVerification;
 import com.example.matdongsan.redis.entity.RefreshToken;
 import com.example.matdongsan.redis.entity.VerifiedEmail;
 import com.example.matdongsan.redis.repository.EmailVerificationRepository;
 import com.example.matdongsan.redis.repository.RefreshTokenRepository;
 import com.example.matdongsan.redis.repository.VerifiedEmailRepository;
+import com.example.matdongsan.user.domain.User;
+import com.example.matdongsan.user.domain.UserAgreement;
+import com.example.matdongsan.user.domain.UserProfile;
+import com.example.matdongsan.user.repository.UserCommandRepository;
 import com.example.matdongsan.util.email.EmailSender;
 import com.example.matdongsan.util.email.EmailTemplateRenderer;
 import io.jsonwebtoken.Claims;
@@ -49,25 +45,25 @@ public class AuthService {
 
     private final OauthService oauthService;
 
-    private final TermsRepository termsRepository;
-    private final UserRepository userRepository;
-    private final UserLoginCredentialRepository userLoginCredentialRepository;
-    private final UserAgreementRepository userAgreementRepository;
-    private final UserProfileRepository userProfileRepository;
+    private final AuthQueryRepository authQueryRepository;
+    private final AuthCommandRepository authCommandRepository;
+    private final UserCommandRepository userCommandRepository;
 
     private final EmailVerificationRepository emailVerificationRepository;
     private final VerifiedEmailRepository verifiedEmailRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 약관 목록 조회
-    public List<TermsResponse> getAllTerms() {
-        List<Terms> terms = termsRepository.findAllByActiveTrueOrderByOrderNumAsc();
-        return terms.stream().map(TermsResponse::of).toList();
+    public List<TermsServiceDto> getAllTerms() {
+        return authQueryRepository.findAllActiveTerms()
+                .stream()
+                .map(TermsServiceDto::from)
+                .toList();
     }
 
     // 이메일 중복 검사
     public boolean checkEmailAvailable(String email) {
-        return !userLoginCredentialRepository.existsByEmail(email);
+        return !authQueryRepository.existsCredentialByEmail(email);
     }
 
     // 인증 번호 메일 발송
@@ -111,16 +107,16 @@ public class AuthService {
 
     // 이메일 회원가입
     @Transactional
-    public void signup(SignupServiceDto serviceDto) {
-        String email = serviceDto.getEmail();
+    public void signup(SignupParam param) {
+        String email = param.getEmail();
 
         // 이메일 인증 확인
         VerifiedEmail verifiedEmail = verifiedEmailRepository.findById(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "이메일 인증이 필요합니다."));
 
         // 약관 동의 확인
-        Set<Long> requiredTermsIds = termsRepository.findRequiredTermsIds();
-        List<Long> agreedTermsIds = serviceDto.getTermsIds();
+        Set<Long> requiredTermsIds = authQueryRepository.findRequiredTermsIds();
+        List<Long> agreedTermsIds = param.getTermsIds();
 
         boolean agreedAllRequired = new HashSet<>(agreedTermsIds).containsAll(requiredTermsIds);
         if (!agreedAllRequired) {
@@ -128,91 +124,83 @@ public class AuthService {
         }
 
         // 이메일 중복 확인
-        if (userLoginCredentialRepository.existsByEmail(email)) throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+        if (authQueryRepository.existsCredentialByEmail(email)) throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
 
         // 유저 생성 로직
-        String encodedPassword = passwordEncoder.encode(serviceDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(param.getPassword());
 
         User user = User.create();
-        UserProfile profile = UserProfile.createDefault(user);
-        UserLoginCredential credential = UserLoginCredential.createEmailLogin(user, email, encodedPassword);
-        List<UserAgreement> agreements = termsRepository.findAllById(serviceDto.getTermsIds())
-                .stream()
-                .map(term -> UserAgreement.from(user, term))
+        User savedUser = userCommandRepository.save(user);
+
+        UserProfile profile = UserProfile.createDefault(savedUser.getId());
+        userCommandRepository.saveProfile(profile);
+
+        UserLoginCredential credential = UserLoginCredential.createEmailLogin(savedUser.getId(), email, encodedPassword);
+        authCommandRepository.saveCredential(credential);
+
+        List<UserAgreement> agreements = param.getTermsIds().stream()
+                .map(termsId -> UserAgreement.create(savedUser.getId(), termsId))
                 .toList();
-
-        user.setProfile(profile);
-        user.setLoginCredentials(List.of(credential));
-        user.setAgreements(agreements);
-
-        userRepository.save(user);
+        userCommandRepository.saveAllAgreements(agreements);
 
         // 가입 완료 후 인증 상태 삭제
         verifiedEmailRepository.delete(verifiedEmail);
     }
 
     // 이메일 로그인
-    public SigninResponse signin(SigninServiceDto serviceDto) {
-        String email = serviceDto.getEmail();
-        String password = serviceDto.getPassword();
+    public TokenServiceDto signin(SigninParam param) {
+        String email = param.getEmail();
+        String password = param.getPassword();
 
-        UserLoginCredential userLoginCredential = userLoginCredentialRepository.findByLoginTypeAndEmail(LoginType.EMAIL, email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        User user = userLoginCredential.getUser();
+        UserLoginCredential credential = authQueryRepository.findCredentialByLoginTypeAndEmail(LoginType.EMAIL, email)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(password, userLoginCredential.getPassword())) {
+        if (!passwordEncoder.matches(password, credential.getPassword())) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
 
-        String[] tokens = generateTokens(user, LoginType.EMAIL, email);
-
-        return SigninResponse.builder()
-                .accessToken(tokens[0])
-                .refreshToken(tokens[1])
-                .build();
+        return generateTokens(credential.getUserId(), LoginType.EMAIL, email);
     }
 
     // Oauth2 (카카오/네이버) 로그인
     @Transactional
-    public SigninResponse oauthSignin(OauthSigninServiceDto serviceDto) {
-        LoginType loginType = serviceDto.getLoginType();
-        String token = serviceDto.getToken();
+    public TokenServiceDto oauthSignin(OauthSigninParam param) {
+        LoginType loginType = param.getLoginType();
+        String token = param.getToken();
 
         OauthResponseDto oauthResponseDto = oauthService.signin(loginType, token);
         String email = oauthResponseDto.getEmail();
 
-        User user;
+        Long userId;
 
-        if (userLoginCredentialRepository.existsByLoginTypeAndEmail(loginType, email)) {
+        if (authQueryRepository.existsCredentialByLoginTypeAndEmail(loginType, email)) {
             // 로그인
-            UserLoginCredential userLoginCredential = userLoginCredentialRepository.findByLoginTypeAndEmail(loginType, email).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-            user = userLoginCredential.getUser();
+            UserLoginCredential credential = authQueryRepository.findCredentialByLoginTypeAndEmail(loginType, email)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+            userId = credential.getUserId();
         } else {
             // 회원가입
-            if (userLoginCredentialRepository.existsByEmail(email))
+            if (authQueryRepository.existsCredentialByEmail(email))
                 throw new CustomException(ErrorCode.DUPLICATED_EMAIL, "이미 회원가입한 이메일입니다. 다른 방법으로 로그인을 시도해주세요.");
 
-            user = User.create();
-            UserProfile profile = UserProfile.createOauth(user, oauthResponseDto.getNickname(), oauthResponseDto.getProfileImageUrl());
-            UserLoginCredential credential = UserLoginCredential.createOauthLogin(user, loginType, email, oauthResponseDto.getOauthId());
+            User user = User.create();
+            User savedUser = userCommandRepository.save(user);
+            userId = savedUser.getId();
 
-            user.setProfile(profile);
-            user.setLoginCredentials(List.of(credential));
+            UserProfile profile = UserProfile.createOauth(savedUser.getId(), oauthResponseDto.getNickname(), oauthResponseDto.getProfileImageUrl());
+            userCommandRepository.saveProfile(profile);
 
-            userRepository.save(user);
+            UserLoginCredential credential = UserLoginCredential.createOauthLogin(savedUser.getId(), loginType, email, oauthResponseDto.getOauthId());
+            authCommandRepository.saveCredential(credential);
         }
 
-        String[] tokens = generateTokens(user, loginType, email);
-
-        return SigninResponse.builder()
-                .accessToken(tokens[0])
-                .refreshToken(tokens[1])
-                .build();
+        return generateTokens(userId, loginType, email);
     }
 
     // 토큰 재발급 (이메일 로그인)
-    public SigninResponse reissue(ReissueServiceDto serviceDto) {
-        String accessToken = serviceDto.getAccessToken();
-        String refreshToken = serviceDto.getRefreshToken();
+    public TokenServiceDto reissue(ReissueParam param) {
+        String accessToken = param.getAccessToken();
+        String refreshToken = param.getRefreshToken();
 
         Long userId = jwtUtil.getUserId(accessToken);
         LoginType loginType = jwtUtil.getLoginType(accessToken);
@@ -236,26 +224,23 @@ public class AuthService {
 
         refreshTokenRepository.save(RefreshToken.of(userId, loginType, newAccessJti, newRefreshToken));
 
-        return SigninResponse.builder()
-                .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
-                .build();
+        return TokenServiceDto.of(newAccessToken, newRefreshToken);
     }
 
     private String generateCode() {
         return String.format("%04d", new Random().nextInt(9999));
     }
 
-    private String[] generateTokens(User user, LoginType loginType, String email) {
-        String accessToken = jwtUtil.generateAccessToken(user.getId(), loginType, email);
+    private TokenServiceDto generateTokens(Long userId, LoginType loginType, String email) {
+        String accessToken = jwtUtil.generateAccessToken(userId, loginType, email);
         Claims accessTokenClaim = jwtUtil.parseClaims(accessToken);
         String accessTokenJti = accessTokenClaim.getId();
 
-        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), loginType);
+        String refreshToken = jwtUtil.generateRefreshToken(userId, loginType);
 
-        refreshTokenRepository.save(RefreshToken.of(user.getId(), loginType, accessTokenJti, refreshToken));
+        refreshTokenRepository.save(RefreshToken.of(userId, loginType, accessTokenJti, refreshToken));
 
-        return new String[]{accessToken, refreshToken};
+        return TokenServiceDto.of(accessToken, refreshToken);
     }
 
 }

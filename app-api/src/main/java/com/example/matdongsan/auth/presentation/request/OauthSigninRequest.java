@@ -1,7 +1,7 @@
 package com.example.matdongsan.auth.presentation.request;
 
 import com.example.matdongsan.auth.enums.LoginType;
-import com.example.matdongsan.auth.application.dto.OauthSigninServiceDto;
+import com.example.matdongsan.auth.application.dto.OauthSigninParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,8 +21,8 @@ public class OauthSigninRequest {
     @NotBlank(message = "token 값을 입력해주세요.")
     private String token;
 
-    public OauthSigninServiceDto toServiceDto() {
-        return OauthSigninServiceDto.builder()
+    public OauthSigninParam toParam() {
+        return OauthSigninParam.builder()
                 .loginType(provider)
                 .token(token)
                 .build();

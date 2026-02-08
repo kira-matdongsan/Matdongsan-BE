@@ -1,7 +1,7 @@
 package com.example.matdongsan.external.opendata.converter;
 
-import com.example.matdongsan.jpa.entity.external.ExternalFoodSource;
-import com.example.matdongsan.jpa.entity.food.Food;
+import com.example.matdongsan.jpa.entity.external.ExternalFoodSourceEntity;
+import com.example.matdongsan.food.domain.Food;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Component
 public class ExternalFoodSourceToFoodConverter {
 
-    public Food convert(ExternalFoodSource source) {
+    public Food convert(ExternalFoodSourceEntity source) {
         return Food.builder()
                 .name(source.getName())
                 .englishName(null)
@@ -23,7 +23,7 @@ public class ExternalFoodSourceToFoodConverter {
                 .benefits(cleanText(source.getBenefits()))
                 .buyingTips(cleanText(source.getBuyingTips()))
                 .preparationTips(cleanText(source.getPreparationTips()))
-                .nutrients(null) // 이후 계산 가능하면 여기에 Map<String, Object>로
+                .nutrients(null)
                 .isFeatured(false)
                 .lastFeaturedAt(null)
                 .build();
@@ -33,7 +33,7 @@ public class ExternalFoodSourceToFoodConverter {
         if (raw == null || raw.isBlank()) return List.of();
         return Arrays.stream(raw.split(","))
                 .map(String::trim)
-                .map(s -> s.replaceAll("^0", "")) // "01" → "1"
+                .map(s -> s.replaceAll("^0", ""))
                 .map(Integer::parseInt)
                 .collect(Collectors.toList());
     }

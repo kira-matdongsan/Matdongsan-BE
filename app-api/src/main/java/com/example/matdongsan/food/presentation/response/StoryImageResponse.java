@@ -1,6 +1,6 @@
 package com.example.matdongsan.food.presentation.response;
 
-import com.example.matdongsan.jpa.entity.food.FoodStoryImage;
+import com.example.matdongsan.food.application.dto.FoodStoryImageServiceDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,10 +16,10 @@ public class StoryImageResponse {
     @Schema(description = "썸네일 이미지 URL", example = "")
     private final String thumbnailUrl;
 
-    public static StoryImageResponse of(FoodStoryImage foodStoryImage) {
+    public static StoryImageResponse from(FoodStoryImageServiceDto dto) {
         return StoryImageResponse.builder()
-                .imageUrl(foodStoryImage.getImageUrl())
-                .thumbnailUrl(foodStoryImage.getThumbnailUrl())
+                .imageUrl(dto.getImageUrl())
+                .thumbnailUrl(dto.getThumbnailUrl())
                 .build();
     }
 

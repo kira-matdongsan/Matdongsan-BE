@@ -1,90 +1,67 @@
 package com.example.matdongsan.dish.application.service;
 
-import com.example.matdongsan.dish.application.dto.DishServiceDto;
-import com.example.matdongsan.dish.application.dto.DishVoteServiceDto;
-import com.example.matdongsan.dish.presentation.response.DishVoteImageResponse;
+import com.example.matdongsan.dish.application.dto.CreateDishParam;
+import com.example.matdongsan.dish.application.dto.DishVoteImageServiceDto;
+import com.example.matdongsan.dish.application.dto.VoteDishParam;
+import com.example.matdongsan.dish.domain.Dish;
+import com.example.matdongsan.dish.domain.DishVote;
+import com.example.matdongsan.dish.domain.DishVoteImage;
+import com.example.matdongsan.dish.repository.DishCommandRepository;
+import com.example.matdongsan.dish.repository.DishQueryRepository;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
-import com.example.matdongsan.jpa.entity.dish.Dish;
-import com.example.matdongsan.jpa.entity.dish.DishVote;
-import com.example.matdongsan.jpa.entity.dish.DishVoteImage;
-import com.example.matdongsan.jpa.entity.food.FeaturedFood;
-import com.example.matdongsan.jpa.entity.food.Food;
-import com.example.matdongsan.jpa.repository.*;
+import com.example.matdongsan.food.domain.FeaturedFood;
+import com.example.matdongsan.food.domain.Food;
+import com.example.matdongsan.food.repository.FoodQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class DishService {
 
-    private final FoodRepository foodRepository;
-    private final FeaturedFoodRepository featuredFoodRepository;
-    private final DishRepository dishRepository;
-    private final DishVoteRepository dishVoteRepository;
-    private final DishVoteImageRepository dishVoteImageRepository;
+    private final FoodQueryRepository foodQueryRepository;
+    private final DishCommandRepository dishCommandRepository;
+    private final DishQueryRepository dishQueryRepository;
 
-    public List<DishVoteImageResponse> getAllImagesById(Long id) {
-        Dish dish = dishRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.DISH_NOT_FOUND));
+    public List<DishVoteImageServiceDto> getAllImagesById(Long id) {
+        Dish dish = dishQueryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.DISH_NOT_FOUND));
 
-        List<DishVoteImage> dishVoteImages = dishVoteImageRepository.findAllByDishAndDeletedAtIsNullOrderByCreatedAtDesc(dish);
-        return dishVoteImages.stream().map(DishVoteImageResponse::of).toList();
+        List<DishVoteImage> dishVoteImages = dishQueryRepository.findAllActiveImagesByDishId(dish.getId());
+        return dishVoteImages.stream().map(DishVoteImageServiceDto::from).toList();
     }
 
     @Transactional
-    public void createDish(Long foodId, DishServiceDto serviceDto) {
-        Food food = foodRepository.findById(foodId).orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
+    public void createDish(Long foodId, CreateDishParam param) {
+        Food food = foodQueryRepository.findById(foodId)
+                .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
         if (!food.getIsFeatured()) throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        FeaturedFood featuredFood = featuredFoodRepository.findFirstByFoodOrderByStartAtDesc(food)
+        FeaturedFood featuredFood = foodQueryRepository.findLatestFeaturedFoodByFoodId(food.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.FEATURED_FOOD_NOT_FOUND));
 
-        Dish dish = serviceDto.toDish(food, featuredFood);
-        dishRepository.save(dish);
+        Dish dish = Dish.create(food.getId(), featuredFood.getId(), param.getName());
+        Dish savedDish = dishCommandRepository.save(dish);
 
-        DishVote dishVote = DishVote.builder()
-                .dish(dish)
-                .userId(1L)
-                .build();
-        dishVoteRepository.save(dishVote);
-
-        List<DishVoteImage> images = IntStream.range(0, serviceDto.getImageUrls().size()).mapToObj(i -> DishVoteImage.builder()
-                .dish(dish)
-                .dishVote(dishVote)
-                .imageUrl(serviceDto.getImageUrls().get(i))
-                .orderNum(i + 1)
-                .build()).collect(Collectors.toList());
-        dishVoteImageRepository.saveAll(images);
+        DishVote vote = DishVote.create(savedDish.getId(), 1L, param.getImageUrls());
+        dishCommandRepository.saveVote(vote);
     }
 
     @Transactional
-    public void voteDish(Long id, DishVoteServiceDto serviceDto) {
-        Dish dish = dishRepository.findById(id).orElseThrow(() -> new CustomException(ErrorCode.DISH_NOT_FOUND));
-        Food food = dish.getFood();
+    public void voteDish(Long id, VoteDishParam param) {
+        Dish dish = dishQueryRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.DISH_NOT_FOUND));
 
-        DishVote dishVote = DishVote.builder()
-                .dish(dish)
-                .userId(1L)
-                .build();
-        dishVoteRepository.save(dishVote);
-
-        List<DishVoteImage> images = IntStream.range(0, serviceDto.getImageUrls().size()).mapToObj(i -> {
-            return DishVoteImage.builder()
-                    .dish(dish)
-                    .dishVote(dishVote)
-                    .imageUrl(serviceDto.getImageUrls().get(i))
-                    .orderNum(i + 1)
-                    .build();
-        }).collect(Collectors.toList());
-        dishVoteImageRepository.saveAll(images);
+        DishVote vote = DishVote.create(dish.getId(), 1L, param.getImageUrls());
+        dishCommandRepository.saveVote(vote);
 
         dish.plusVoteCount();
+        dishCommandRepository.save(dish);
     }
 
     // TODO: [User] 계정 작업 후 구현 가능
@@ -92,5 +69,4 @@ public class DishService {
     public void reportVoteImage(Long imageId) {
 
     }
-
 }

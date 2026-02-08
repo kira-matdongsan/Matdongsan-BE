@@ -1,6 +1,6 @@
 package com.example.matdongsan.auth.presentation.request;
 
-import com.example.matdongsan.auth.application.dto.SignupServiceDto;
+import com.example.matdongsan.auth.application.dto.SignupParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -24,8 +24,8 @@ public class SignupRequest {
     @Schema(description = "동의하는 약관 ID 목록", example = "[1,2,3]")
     private List<Long> termsIds;
 
-    public SignupServiceDto toServiceDto() {
-        return SignupServiceDto.builder()
+    public SignupParam toParam() {
+        return SignupParam.builder()
                 .email(email)
                 .password(password)
                 .termsIds(termsIds)

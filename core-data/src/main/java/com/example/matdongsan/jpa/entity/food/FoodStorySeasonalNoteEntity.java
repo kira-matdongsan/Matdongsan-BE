@@ -1,0 +1,32 @@
+package com.example.matdongsan.jpa.entity.food;
+
+import com.example.matdongsan.food.enums.FoodStoryType;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.time.LocalDate;
+
+@SuperBuilder
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@DiscriminatorValue("SEASONAL_NOTE")
+@Entity
+public class FoodStorySeasonalNoteEntity extends FoodStoryEntity {
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    private LocalDate recordedDate;
+
+    @Override
+    public FoodStoryType getType() {
+        return FoodStoryType.SEASONAL_NOTE;
+    }
+}

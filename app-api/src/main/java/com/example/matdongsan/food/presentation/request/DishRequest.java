@@ -1,6 +1,6 @@
 package com.example.matdongsan.food.presentation.request;
 
-import com.example.matdongsan.dish.application.dto.DishServiceDto;
+import com.example.matdongsan.dish.application.dto.CreateDishParam;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
@@ -18,8 +18,8 @@ public class DishRequest {
 
     private List<String> imageUrls;
 
-    public DishServiceDto toServiceDto() {
-        return DishServiceDto.builder()
+    public CreateDishParam toParam() {
+        return CreateDishParam.builder()
                 .name(name)
                 .imageUrls(imageUrls)
                 .build();

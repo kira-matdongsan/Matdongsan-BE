@@ -1,0 +1,93 @@
+package com.example.matdongsan.food.repository;
+
+import com.example.matdongsan.food.domain.*;
+import com.example.matdongsan.food.mapper.FoodMapper;
+import com.example.matdongsan.jpa.entity.food.*;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+@RequiredArgsConstructor
+public class FoodQueryRepositoryImpl implements FoodQueryRepository {
+
+    private final JPAQueryFactory queryFactory;
+    private final FoodMapper foodMapper;
+
+    private static final QFoodEntity food = QFoodEntity.foodEntity;
+    private static final QFeaturedFoodEntity featuredFood = QFeaturedFoodEntity.featuredFoodEntity;
+    private static final QFoodStoryEntity story = QFoodStoryEntity.foodStoryEntity;
+    private static final QFoodStoryImageEntity storyImage = QFoodStoryImageEntity.foodStoryImageEntity;
+
+    @Override
+    public Optional<Food> findById(Long id) {
+        FoodEntity entity = queryFactory
+                .selectFrom(food)
+                .where(food.id.eq(id))
+                .fetchOne();
+        return Optional.ofNullable(entity).map(foodMapper::toFoodDomain);
+    }
+
+    @Override
+    public boolean existsByName(String name) {
+        FoodEntity entity = queryFactory
+                .selectFrom(food)
+                .where(food.name.eq(name))
+                .fetchFirst();
+        return entity != null;
+    }
+
+    @Override
+    public Optional<FeaturedFood> findLatestFeaturedFoodByFoodId(Long foodId) {
+        FeaturedFoodEntity entity = queryFactory
+                .selectFrom(featuredFood)
+                .where(featuredFood.food.id.eq(foodId))
+                .orderBy(featuredFood.startAt.desc())
+                .fetchFirst();
+        return Optional.ofNullable(entity).map(foodMapper::toFeaturedFoodDomain);
+    }
+
+    @Override
+    public List<FoodStory> findAllStoriesByFoodId(Long foodId, int page, int size) {
+        List<FoodStoryEntity> entities = queryFactory
+                .selectFrom(story)
+                .where(
+                        story.food.id.eq(foodId),
+                        story.deletedAt.isNull()
+                )
+                .orderBy(story.createdAt.desc())
+                .offset((long) page * size)
+                .limit(size)
+                .fetch();
+        return entities.stream().map(foodMapper::toStoryDomain).toList();
+    }
+
+    @Override
+    public long countStoriesByFoodId(Long foodId) {
+        Long count = queryFactory
+                .select(story.count())
+                .from(story)
+                .where(
+                        story.food.id.eq(foodId),
+                        story.deletedAt.isNull()
+                )
+                .fetchOne();
+        return count != null ? count : 0L;
+    }
+
+    @Override
+    public List<FoodStoryImage> findAllImagesByStoryId(Long storyId) {
+        List<FoodStoryImageEntity> entities = queryFactory
+                .selectFrom(storyImage)
+                .where(
+                        storyImage.foodStory.id.eq(storyId),
+                        storyImage.deletedAt.isNull()
+                )
+                .orderBy(storyImage.orderNum.asc())
+                .fetch();
+        return foodMapper.toStoryImageDomainList(entities);
+    }
+}

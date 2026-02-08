@@ -1,14 +1,14 @@
 package com.example.matdongsan.external.opendata;
 
-import com.example.matdongsan.jpa.entity.external.ExternalFoodSource;
+import com.example.matdongsan.jpa.entity.external.ExternalFoodSourceEntity;
 import com.example.matdongsan.external.opendata.dto.OpenDataFoodItem;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OpenDataFoodMapper {
 
-    public ExternalFoodSource toEntity(OpenDataFoodItem item) {
-        return ExternalFoodSource.builder()
+    public ExternalFoodSourceEntity toEntity(OpenDataFoodItem item) {
+        return ExternalFoodSourceEntity.builder()
                 .externalId(item.getExternalId())
                 .name(item.getName())
                 .monthLabel(item.getMonthLabel())

@@ -1,6 +1,6 @@
 package com.example.matdongsan.food.presentation.request;
 
-import com.example.matdongsan.food.application.dto.SeasonalNoteServiceDto;
+import com.example.matdongsan.food.application.dto.CreateSeasonalNoteParam;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -25,8 +25,8 @@ public class SeasonalNoteCreateRequest {
 
     private List<String> imageUrls;
 
-    public SeasonalNoteServiceDto toServiceDto() {
-        return SeasonalNoteServiceDto.builder()
+    public CreateSeasonalNoteParam toParam() {
+        return CreateSeasonalNoteParam.builder()
                 .content(content)
                 .recordedDate(recordedDate)
                 .imageUrls(imageUrls)
