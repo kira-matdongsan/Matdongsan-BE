@@ -2,12 +2,19 @@ package com.example.matdongsan.common.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${swagger.server-url}")
+    private String serverUrl;
 
     @Bean
     public OpenAPI openAPI() {
@@ -16,8 +23,12 @@ public class SwaggerConfig {
                 .version("v1")
                 .description("Matdongsan Application API 명세서입니다.");
 
+        Server server = new Server()
+                .url(serverUrl);
+
         return new OpenAPI()
-                .info(info);
+                .info(info)
+                .servers(List.of(server));
     }
 
     @Bean

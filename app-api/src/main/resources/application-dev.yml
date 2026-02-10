@@ -49,6 +49,9 @@ mail:
     email: ${MAIL_FROM_EMAIL}
     name: ${MAIL_FROM_NAME}
 
+swagger:
+  server-url: ${SWAGGER_SERVER_URL}
+
 jwt:
   secret: ${JWT_SECRET}
   access-token-expire: ${ACCESS_TOKEN_EXPIRE_TIME}
