@@ -65,10 +65,16 @@ public class OauthService {
     private OauthResponseDto appleLogin(String identityToken) {
         Map<String, String> userInfo = appleIdentityTokenValidator.validate(identityToken);
 
+        String email = userInfo.get("email");
+        String nickname = Optional.ofNullable(email)
+                .filter(e -> e.contains("@"))
+                .map(e -> e.substring(0, e.indexOf("@")))
+                .orElse(null);
+
         return OauthResponseDto.builder()
                 .oauthId(userInfo.get("sub"))
-                .email(userInfo.get("email"))
-                .nickname(null)
+                .email(email)
+                .nickname(nickname)
                 .profileImageUrl(null)
                 .build();
     }
