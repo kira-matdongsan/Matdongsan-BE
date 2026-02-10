@@ -41,7 +41,8 @@ public enum ErrorCode {
 
     // 외부 API
     KAKAO_OAUTH_FAILED(401, "카카오 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
-    NAVER_OAUTH_FAILED(401, "네이버 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED);
+    NAVER_OAUTH_FAILED(401, "네이버 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
+    APPLE_OAUTH_FAILED(401, "애플 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED);
 
     private final int code;
     private final String message;

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class UserEntity extends BaseTimeEntityWithSoftDelete {
 
     @Id

@@ -16,10 +16,14 @@ public class SigninResponse {
     @Schema(description = "Refresh Token 값")
     private final String refreshToken;
 
+    @Schema(description = "신규 가입 여부")
+    private final boolean isNewUser;
+
     public static SigninResponse from(TokenServiceDto dto) {
         return SigninResponse.builder()
                 .accessToken(dto.getAccessToken())
                 .refreshToken(dto.getRefreshToken())
+                .isNewUser(dto.isNewUser())
                 .build();
     }
 }

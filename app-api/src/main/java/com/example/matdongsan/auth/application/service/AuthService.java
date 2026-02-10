@@ -159,10 +159,10 @@ public class AuthService {
             throw new CustomException(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
 
-        return generateTokens(credential.getUserId(), LoginType.EMAIL, email);
+        return generateTokens(credential.getUserId(), LoginType.EMAIL, email, false);
     }
 
-    // Oauth2 (카카오/네이버) 로그인
+    // Oauth2 (카카오/네이버/애플) 로그인
     @Transactional
     public TokenServiceDto oauthSignin(OauthSigninParam param) {
         LoginType loginType = param.getLoginType();
@@ -172,6 +172,7 @@ public class AuthService {
         String email = oauthResponseDto.getEmail();
 
         Long userId;
+        boolean isNewUser = false;
 
         if (authQueryRepository.existsCredentialByLoginTypeAndEmail(loginType, email)) {
             // 로그인
@@ -180,6 +181,8 @@ public class AuthService {
             userId = credential.getUserId();
         } else {
             // 회원가입
+            isNewUser = true;
+
             if (authQueryRepository.existsCredentialByEmail(email))
                 throw new CustomException(ErrorCode.DUPLICATED_EMAIL, "이미 회원가입한 이메일입니다. 다른 방법으로 로그인을 시도해주세요.");
 
@@ -194,7 +197,7 @@ public class AuthService {
             authCommandRepository.saveCredential(credential);
         }
 
-        return generateTokens(userId, loginType, email);
+        return generateTokens(userId, loginType, email, isNewUser);
     }
 
     // 토큰 재발급 (이메일 로그인)
@@ -224,14 +227,30 @@ public class AuthService {
 
         refreshTokenRepository.save(RefreshToken.of(userId, loginType, newAccessJti, newRefreshToken));
 
-        return TokenServiceDto.of(newAccessToken, newRefreshToken);
+        return TokenServiceDto.of(newAccessToken, newRefreshToken, false);
+    }
+
+    // 약관 동의
+    @Transactional
+    public void agreeTerms(Long userId, List<Long> termsIds) {
+        // 필수 약관 동의 여부 검증
+        Set<Long> requiredTermsIds = authQueryRepository.findRequiredTermsIds();
+        boolean agreedAllRequired = new HashSet<>(termsIds).containsAll(requiredTermsIds);
+        if (!agreedAllRequired) {
+            throw new CustomException(ErrorCode.BAD_REQUEST, "필수 약관에 동의해야 합니다.");
+        }
+
+        List<UserAgreement> agreements = termsIds.stream()
+                .map(termsId -> UserAgreement.create(userId, termsId))
+                .toList();
+        userCommandRepository.saveAllAgreements(agreements);
     }
 
     private String generateCode() {
         return String.format("%04d", new Random().nextInt(9999));
     }
 
-    private TokenServiceDto generateTokens(Long userId, LoginType loginType, String email) {
+    private TokenServiceDto generateTokens(Long userId, LoginType loginType, String email, boolean isNewUser) {
         String accessToken = jwtUtil.generateAccessToken(userId, loginType, email);
         Claims accessTokenClaim = jwtUtil.parseClaims(accessToken);
         String accessTokenJti = accessTokenClaim.getId();
@@ -240,7 +259,7 @@ public class AuthService {
 
         refreshTokenRepository.save(RefreshToken.of(userId, loginType, accessTokenJti, refreshToken));
 
-        return TokenServiceDto.of(accessToken, refreshToken);
+        return TokenServiceDto.of(accessToken, refreshToken, isNewUser);
     }
 
 }

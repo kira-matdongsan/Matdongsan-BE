@@ -9,11 +9,13 @@ public class TokenServiceDto {
 
     private final String accessToken;
     private final String refreshToken;
+    private final boolean isNewUser;
 
-    public static TokenServiceDto of(String accessToken, String refreshToken) {
+    public static TokenServiceDto of(String accessToken, String refreshToken, boolean isNewUser) {
         return TokenServiceDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .isNewUser(isNewUser)
                 .build();
     }
 }

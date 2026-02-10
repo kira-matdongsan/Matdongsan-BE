@@ -2,6 +2,7 @@ package com.example.matdongsan.external.oauth;
 
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
+import com.example.matdongsan.external.oauth.apple.AppleIdentityTokenValidator;
 import com.example.matdongsan.external.oauth.dto.OauthResponseDto;
 import com.example.matdongsan.external.oauth.kakao.KakaoOauthClient;
 import com.example.matdongsan.external.oauth.kakao.dto.KakaoAccount;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -24,12 +26,15 @@ public class OauthService {
 
     private final KakaoOauthClient kakaoOauthClient;
     private final NaverOauthClient naverOauthClient;
+    private final AppleIdentityTokenValidator appleIdentityTokenValidator;
 
     public OauthResponseDto signin(LoginType type, String token) {
         if (type.equals(LoginType.KAKAO)) {
             return kakaoLogin(token);
         } else if (type.equals(LoginType.NAVER)) {
             return naverLogin(token);
+        } else if (type.equals(LoginType.APPLE)) {
+            return appleLogin(token);
         } else {
             throw new CustomException(ErrorCode.BAD_REQUEST, "올바른 Provider 값을 입력하세요.");
         }
@@ -54,6 +59,17 @@ public class OauthService {
                 .email(response.getKakaoAccount().getEmail())
                 .nickname(nickname)
                 .profileImageUrl(profileImageUrl)
+                .build();
+    }
+
+    private OauthResponseDto appleLogin(String identityToken) {
+        Map<String, String> userInfo = appleIdentityTokenValidator.validate(identityToken);
+
+        return OauthResponseDto.builder()
+                .oauthId(userInfo.get("sub"))
+                .email(userInfo.get("email"))
+                .nickname(null)
+                .profileImageUrl(null)
                 .build();
     }
 

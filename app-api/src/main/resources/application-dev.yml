@@ -41,6 +41,9 @@ external:
       client-id: ${KAKAO_OAUTH_CLIENT_ID}
       client-secret: ${KAKAO_OAUTH_CLIENT_SECRET}
 
+apple:
+  bundle-id: ${APPLE_BUNDLE_ID}
+
 mail:
   from:
     email: ${MAIL_FROM_EMAIL}

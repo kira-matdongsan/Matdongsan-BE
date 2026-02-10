@@ -1,12 +1,10 @@
 package com.example.matdongsan.auth.presentation;
 
 import com.example.matdongsan.auth.application.dto.TokenServiceDto;
-import com.example.matdongsan.auth.presentation.request.OauthSigninRequest;
-import com.example.matdongsan.auth.presentation.request.ReissueRequest;
-import com.example.matdongsan.auth.presentation.request.SigninRequest;
-import com.example.matdongsan.auth.presentation.request.SignupRequest;
+import com.example.matdongsan.auth.presentation.request.*;
 import com.example.matdongsan.auth.presentation.response.SigninResponse;
 import com.example.matdongsan.auth.presentation.response.TermsResponse;
+import com.example.matdongsan.common.util.auth.CustomUserDetails;
 import com.example.matdongsan.response.RestApiResponse;
 import com.example.matdongsan.response.ListResponse;
 import com.example.matdongsan.response.ResponseCode;
@@ -18,6 +16,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,7 +93,7 @@ public class AuthController {
     }
 
     // Oauth2 로그인
-    @Operation(summary = "Oauth2 (카카오/네이버) 로그인")
+    @Operation(summary = "Oauth2 (카카오/네이버/애플) 로그인")
     @PostMapping("/oauth/signin")
     public ResponseEntity<RestApiResponse<SigninResponse>> oauthSignin(@RequestBody @Valid OauthSigninRequest requestDto) {
         TokenServiceDto tokenDto = authService.oauthSignin(requestDto.toParam());
@@ -107,5 +106,16 @@ public class AuthController {
     public ResponseEntity<RestApiResponse<SigninResponse>> reissue(@RequestBody @Valid ReissueRequest requestDto) {
         TokenServiceDto tokenDto = authService.reissue(requestDto.toParam());
         return RestApiResponse.success(ResponseCode.OK, SigninResponse.from(tokenDto));
+    }
+
+    // 약관 동의
+    @Operation(summary = "약관 동의", description = "소셜 로그인 후 약관 동의 처리")
+    @PostMapping("/terms/agree")
+    public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> agreeTerms(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestBody @Valid AgreeTermsRequest request
+    ) {
+        authService.agreeTerms(userDetails.getUser().getId(), request.getTermsIds());
+        return RestApiResponse.successResult(ResponseCode.OK, true);
     }
 }
