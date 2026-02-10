@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -33,7 +34,10 @@ public class JwtUtil {
     }
 
     public String generateAccessToken(Long userId, LoginType loginType, String email) {
-        return createToken(userId, Map.of("loginType", loginType, "templates/email", email), accessTokenExpTime);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("loginType", loginType);
+        claims.put("email", email);
+        return createToken(userId, claims, accessTokenExpTime);
     }
 
     public String generateRefreshToken(Long userId, LoginType loginType) {
@@ -65,7 +69,7 @@ public class JwtUtil {
     }
 
     public String getEmail(String token) {
-        return parseClaims(token).get("templates/email", String.class);
+        return parseClaims(token).get("email", String.class);
     }
 
     public boolean validateToken(String token) {

@@ -4,19 +4,20 @@ import com.example.matdongsan.auth.application.dto.TokenServiceDto;
 import com.example.matdongsan.auth.presentation.request.*;
 import com.example.matdongsan.auth.presentation.response.SigninResponse;
 import com.example.matdongsan.auth.presentation.response.TermsResponse;
-import com.example.matdongsan.common.util.auth.CustomUserDetails;
+import com.example.matdongsan.common.util.auth.CurrentUser;
 import com.example.matdongsan.response.RestApiResponse;
 import com.example.matdongsan.response.ListResponse;
 import com.example.matdongsan.response.ResponseCode;
 import com.example.matdongsan.response.ResultResponse;
 import com.example.matdongsan.auth.application.service.AuthService;
+import com.example.matdongsan.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,12 +111,13 @@ public class AuthController {
 
     // 약관 동의
     @Operation(summary = "약관 동의", description = "소셜 로그인 후 약관 동의 처리")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/terms/agree")
     public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> agreeTerms(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @CurrentUser User user,
             @RequestBody @Valid AgreeTermsRequest request
     ) {
-        authService.agreeTerms(userDetails.getUser().getId(), request.getTermsIds());
+        authService.agreeTerms(user.getId(), request.getTermsIds());
         return RestApiResponse.successResult(ResponseCode.OK, true);
     }
 }
