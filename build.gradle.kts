@@ -51,12 +51,14 @@ subprojects {
     }
 }
 
-val libraryModules = listOf(":core-domain", "core-data", ":core-utils")
+val libraryModules = listOf(":core-domain", ":core-data", ":core-utils")
 val appModules = listOf(":app-api", ":app-admin")
 
 configure(libraryModules.map { project(it) }) {
     val jar: Jar by tasks
+    val bootJar: BootJar by tasks
     jar.enabled = true
+    bootJar.enabled = false
 }
 
 configure(appModules.map { project(it) }) {
@@ -70,4 +72,10 @@ configure(appModules.map { project(it) }) {
         implementation(project(":core-data"))
         implementation(project(":core-utils"))
     }
+}
+
+// app-admin은 아직 소스가 없으므로 bootJar 비활성화
+project(":app-admin") {
+    val bootJar: BootJar by tasks
+    bootJar.enabled = false
 }
