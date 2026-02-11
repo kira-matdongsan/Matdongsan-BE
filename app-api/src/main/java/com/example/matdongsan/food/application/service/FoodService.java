@@ -52,7 +52,7 @@ public class FoodService {
                 IntStream.range(0, dishes.size())
                         .mapToObj(i -> {
                             Dish dish = dishes.get(i);
-                            List<DishVoteImage> images = dish.getImages();
+                            List<DishVoteImage> images = dishQueryRepository.findAllActiveImagesByDishId(dish.getId());
                             DishVoteImage dishVoteImage = null;
                             if (images != null && !images.isEmpty()) {
                                 dishVoteImage = images.get(new Random().nextInt(images.size()));

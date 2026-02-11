@@ -17,7 +17,6 @@ public interface UserMapper {
     @Mapping(source = "user.id", target = "userId")
     UserProfile toProfileDomain(UserProfileEntity entity);
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "term.id", target = "termsId")
+    @Mapping(source = "termId", target = "termsId")
     UserAgreement toAgreementDomain(UserAgreementEntity entity);
 }

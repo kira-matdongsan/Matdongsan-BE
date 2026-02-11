@@ -22,9 +22,8 @@ public class FeaturedFoodEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "food_id")
-    private FoodEntity food;
+    @Column(name = "food_id")
+    private Long foodId;
 
     private Integer year;
     private Integer week;

@@ -31,4 +31,8 @@ public class FoodStoryImageEntity extends BaseTimeEntityWithSoftDelete {
     private String thumbnailUrl;
 
     private Integer orderNum = 0;
+
+    void setFoodStory(FoodStoryEntity foodStory) {
+        this.foodStory = foodStory;
+    }
 }

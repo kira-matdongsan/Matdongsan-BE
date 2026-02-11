@@ -22,7 +22,6 @@ public interface FoodMapper {
 
     // === FeaturedFood ===
 
-    @Mapping(target = "foodId", source = "food.id")
     FeaturedFood toFeaturedFoodDomain(FeaturedFoodEntity entity);
 
     // === FoodStory ===
@@ -32,7 +31,7 @@ public interface FoodMapper {
 
         FoodStory.FoodStoryBuilder builder = FoodStory.builder()
                 .id(entity.getId())
-                .foodId(entity.getFood().getId())
+                .foodId(entity.getFoodId())
                 .userId(entity.getUserId())
                 .type(entity.getType())
                 .likeCount(entity.getLikeCount())

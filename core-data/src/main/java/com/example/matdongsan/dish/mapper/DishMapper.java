@@ -18,16 +18,10 @@ public interface DishMapper {
 
     // === Dish ===
 
-    @Mapping(target = "foodId", source = "food.id")
-    @Mapping(target = "featuredFoodId", source = "featuredFood.id")
-    @Mapping(target = "images", source = "images")
     Dish toDomain(DishEntity entity);
 
     List<Dish> toDomainList(List<DishEntity> entities);
 
-    @Mapping(target = "food", ignore = true)
-    @Mapping(target = "featuredFood", ignore = true)
-    @Mapping(target = "images", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
@@ -35,11 +29,10 @@ public interface DishMapper {
 
     // === DishVote ===
 
-    @Mapping(target = "dishId", source = "dish.id")
-    @Mapping(target = "images", ignore = true)
+    @Mapping(target = "images", source = "images")
     DishVote toVoteDomain(DishVoteEntity entity);
 
-    @Mapping(target = "dish", ignore = true)
+    @Mapping(target = "images", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
@@ -47,13 +40,11 @@ public interface DishMapper {
 
     // === DishVoteImage ===
 
-    @Mapping(target = "dishId", source = "dish.id")
     @Mapping(target = "dishVoteId", source = "dishVote.id")
     DishVoteImage toVoteImageDomain(DishVoteImageEntity entity);
 
     List<DishVoteImage> toVoteImageDomainList(List<DishVoteImageEntity> entities);
 
-    @Mapping(target = "dish", ignore = true)
     @Mapping(target = "dishVote", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -64,10 +55,8 @@ public interface DishMapper {
 
     // === DishVoteImageReport ===
 
-    @Mapping(target = "voteImageId", source = "voteImage.id")
     DishVoteImageReport toVoteImageReportDomain(DishVoteImageReportEntity entity);
 
-    @Mapping(target = "voteImage", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)

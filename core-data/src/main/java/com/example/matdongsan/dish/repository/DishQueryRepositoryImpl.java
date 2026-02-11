@@ -37,7 +37,7 @@ public class DishQueryRepositoryImpl implements DishQueryRepository {
     public List<Dish> findAllByFeaturedFoodIdOrderByVoteCountDesc(Long featuredFoodId) {
         List<DishEntity> entities = queryFactory
                 .selectFrom(dish)
-                .where(dish.featuredFood.id.eq(featuredFoodId))
+                .where(dish.featuredFoodId.eq(featuredFoodId))
                 .orderBy(dish.voteCount.desc())
                 .fetch();
         return dishMapper.toDomainList(entities);
@@ -48,7 +48,7 @@ public class DishQueryRepositoryImpl implements DishQueryRepository {
         List<DishVoteImageEntity> entities = queryFactory
                 .selectFrom(voteImage)
                 .where(
-                        voteImage.dish.id.eq(dishId),
+                        voteImage.dishId.eq(dishId),
                         voteImage.deletedAt.isNull()
                 )
                 .orderBy(voteImage.createdAt.desc())

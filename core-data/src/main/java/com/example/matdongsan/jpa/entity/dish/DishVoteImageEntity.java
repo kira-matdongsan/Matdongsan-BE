@@ -20,9 +20,8 @@ public class DishVoteImageEntity extends BaseTimeEntityWithSoftDelete {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dish_id", nullable = false)
-    private DishEntity dish;
+    @Column(name = "dish_id", nullable = false)
+    private Long dishId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vote_id", nullable = false)
@@ -37,4 +36,8 @@ public class DishVoteImageEntity extends BaseTimeEntityWithSoftDelete {
     private Integer orderNum = 1;
 
     private Integer reportCount = 0;
+
+    void setDishVote(DishVoteEntity dishVote) {
+        this.dishVote = dishVote;
+    }
 }

@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Builder
@@ -15,7 +14,6 @@ public class Dish {
     private Long featuredFoodId;
     private String name;
     private Integer voteCount;
-    private List<DishVoteImage> images;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;

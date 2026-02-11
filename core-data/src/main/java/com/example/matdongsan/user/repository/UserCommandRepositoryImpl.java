@@ -1,10 +1,8 @@
 package com.example.matdongsan.user.repository;
 
-import com.example.matdongsan.jpa.entity.auth.TermsEntity;
 import com.example.matdongsan.jpa.entity.user.UserAgreementEntity;
 import com.example.matdongsan.jpa.entity.user.UserEntity;
 import com.example.matdongsan.jpa.entity.user.UserProfileEntity;
-import com.example.matdongsan.jpa.repository.TermsJpaRepository;
 import com.example.matdongsan.jpa.repository.UserAgreementJpaRepository;
 import com.example.matdongsan.jpa.repository.UserJpaRepository;
 import com.example.matdongsan.jpa.repository.UserProfileJpaRepository;
@@ -24,7 +22,6 @@ public class UserCommandRepositoryImpl implements UserCommandRepository {
     private final UserJpaRepository userJpaRepository;
     private final UserProfileJpaRepository profileJpaRepository;
     private final UserAgreementJpaRepository agreementJpaRepository;
-    private final TermsJpaRepository termsJpaRepository;
     private final UserMapper userMapper;
 
     @Override
@@ -56,16 +53,11 @@ public class UserCommandRepositoryImpl implements UserCommandRepository {
     @Override
     public List<UserAgreement> saveAllAgreements(List<UserAgreement> agreements) {
         List<UserAgreementEntity> entities = agreements.stream()
-                .map(agreement -> {
-                    UserEntity userRef = userJpaRepository.getReferenceById(agreement.getUserId());
-                    TermsEntity termsRef = termsJpaRepository.getReferenceById(agreement.getTermsId());
-
-                    return UserAgreementEntity.builder()
-                            .user(userRef)
-                            .term(termsRef)
-                            .agreedAt(agreement.getAgreedAt())
-                            .build();
-                })
+                .map(agreement -> UserAgreementEntity.builder()
+                        .userId(agreement.getUserId())
+                        .termId(agreement.getTermsId())
+                        .agreedAt(agreement.getAgreedAt())
+                        .build())
                 .toList();
 
         return agreementJpaRepository.saveAll(entities)

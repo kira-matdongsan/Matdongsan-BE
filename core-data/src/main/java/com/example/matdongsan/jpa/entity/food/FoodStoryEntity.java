@@ -3,11 +3,11 @@ package com.example.matdongsan.jpa.entity.food;
 import com.example.matdongsan.jpa.entity.common.BaseTimeEntityWithSoftDelete;
 import com.example.matdongsan.food.enums.FoodStoryType;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuperBuilder
 @Getter
@@ -23,9 +23,8 @@ public abstract class FoodStoryEntity extends BaseTimeEntityWithSoftDelete {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "food_id", nullable = false)
-    private FoodEntity food;
+    @Column(name = "food_id", nullable = false)
+    private Long foodId;
 
     private Long userId;
 
@@ -33,5 +32,14 @@ public abstract class FoodStoryEntity extends BaseTimeEntityWithSoftDelete {
 
     private Integer reportCount = 0;
 
+    @OneToMany(mappedBy = "foodStory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<FoodStoryImageEntity> images = new ArrayList<>();
+
     public abstract FoodStoryType getType();
+
+    public void addImage(FoodStoryImageEntity image) {
+        images.add(image);
+        image.setFoodStory(this);
+    }
 }

@@ -43,13 +43,11 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
 
     @Override
     public FoodStory saveStory(FoodStory story) {
-        FoodEntity foodRef = foodJpaRepository.getReferenceById(story.getFoodId());
-
         FoodStoryEntity savedEntity;
 
         if (story.getType() == FoodStoryType.SEASONAL_NOTE) {
             FoodStorySeasonalNoteEntity entity = FoodStorySeasonalNoteEntity.builder()
-                    .food(foodRef)
+                    .foodId(story.getFoodId())
                     .userId(story.getUserId())
                     .content(story.getContent())
                     .recordedDate(story.getRecordedDate())
@@ -59,7 +57,7 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
             savedEntity = seasonalNoteJpaRepository.save(entity);
         } else if (story.getType() == FoodStoryType.RECIPE) {
             FoodStoryRecipeEntity entity = FoodStoryRecipeEntity.builder()
-                    .food(foodRef)
+                    .foodId(story.getFoodId())
                     .userId(story.getUserId())
                     .recipeName(story.getRecipeName())
                     .ingredients(story.getIngredients())
@@ -70,7 +68,7 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
             savedEntity = recipeJpaRepository.save(entity);
         } else {
             FoodStoryPlaceEntity entity = FoodStoryPlaceEntity.builder()
-                    .food(foodRef)
+                    .foodId(story.getFoodId())
                     .userId(story.getUserId())
                     .placeName(story.getPlaceName())
                     .content(story.getPlaceContent())

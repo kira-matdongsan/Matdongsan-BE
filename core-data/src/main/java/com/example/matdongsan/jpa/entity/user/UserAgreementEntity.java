@@ -1,6 +1,5 @@
 package com.example.matdongsan.jpa.entity.user;
 
-import com.example.matdongsan.jpa.entity.auth.TermsEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,11 +20,9 @@ public class UserAgreementEntity {
     private LocalDateTime agreedAt;
     private LocalDateTime withdrawnAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
+    @Column(name = "user_id")
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "term_id")
-    private TermsEntity term;
+    @Column(name = "term_id")
+    private Long termId;
 }

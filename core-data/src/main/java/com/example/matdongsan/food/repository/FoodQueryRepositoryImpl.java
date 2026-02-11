@@ -44,7 +44,7 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
     public Optional<FeaturedFood> findLatestFeaturedFoodByFoodId(Long foodId) {
         FeaturedFoodEntity entity = queryFactory
                 .selectFrom(featuredFood)
-                .where(featuredFood.food.id.eq(foodId))
+                .where(featuredFood.foodId.eq(foodId))
                 .orderBy(featuredFood.startAt.desc())
                 .fetchFirst();
         return Optional.ofNullable(entity).map(foodMapper::toFeaturedFoodDomain);
@@ -55,7 +55,7 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
         List<FoodStoryEntity> entities = queryFactory
                 .selectFrom(story)
                 .where(
-                        story.food.id.eq(foodId),
+                        story.foodId.eq(foodId),
                         story.deletedAt.isNull()
                 )
                 .orderBy(story.createdAt.desc())
@@ -71,7 +71,7 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
                 .select(story.count())
                 .from(story)
                 .where(
-                        story.food.id.eq(foodId),
+                        story.foodId.eq(foodId),
                         story.deletedAt.isNull()
                 )
                 .fetchOne();

@@ -20,9 +20,8 @@ public class FoodStoryLikeEntity extends BaseTimeEntityWithSoftDelete {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "story_id", nullable = false)
-    private FoodStoryEntity foodStory;
+    @Column(name = "story_id", nullable = false)
+    private Long foodStoryId;
 
     private Long userId;
 }
