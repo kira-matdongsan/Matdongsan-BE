@@ -13,6 +13,9 @@ import java.time.LocalDate;
 @Getter
 public class FoodInfoResponse {
 
+    @Schema(description = "주차 텍스트", example = "2026년 2월 셋째주")
+    private final String weekText;
+
     @Schema(description = "제철 음식 ID", example = "1")
     private final Long id;
 
@@ -64,6 +67,7 @@ public class FoodInfoResponse {
 
     public static FoodInfoResponse from(FoodServiceDto dto, Boolean isLiked) {
         return FoodInfoResponse.builder()
+                .weekText(dto.getWeekText())
                 .id(dto.getId())
                 .name(dto.getName())
                 .englishName(dto.getEnglishName())

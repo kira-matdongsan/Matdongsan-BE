@@ -90,4 +90,14 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
                 .fetch();
         return foodMapper.toStoryImageDomainList(entities);
     }
+
+    @Override
+    public Optional<Food> findCurrentFeaturedFood() {
+        FoodEntity entity = queryFactory
+                .selectFrom(food)
+                .where(food.isFeatured.isTrue())
+                .orderBy(food.lastFeaturedAt.desc())
+                .fetchFirst();
+        return Optional.ofNullable(entity).map(foodMapper::toFoodDomain);
+    }
 }

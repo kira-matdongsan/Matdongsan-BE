@@ -21,6 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.temporal.WeekFields;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -36,7 +39,12 @@ public class FoodService {
     public FoodServiceDto getFoodInfoById(Long id) {
         Food food = foodQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
-        return FoodServiceDto.from(food);
+
+        String weekText = foodQueryRepository.findLatestFeaturedFoodByFoodId(id)
+                .map(ff -> calculateWeekText(ff.getYear(), ff.getWeek()))
+                .orElse(null);
+
+        return FoodServiceDto.from(food, weekText);
     }
 
     // TODO: 맛동산 Pick 제철요리 투표 관련 기능 논의중
@@ -107,4 +115,25 @@ public class FoodService {
 
     }
 
+    private String calculateWeekText(int year, int weekOfYear) {
+        // ISO 8601: 목요일이 속한 달을 기준으로 주차 결정
+        // 1월 4일은 항상 ISO 1주차에 속함
+        LocalDate thursday = LocalDate.of(year, 1, 4)
+                .with(DayOfWeek.THURSDAY)
+                .plusWeeks(weekOfYear - 1);
+
+        int month = thursday.getMonthValue();
+        int weekOfMonth = thursday.get(WeekFields.ISO.weekOfMonth());
+
+        String weekOrdinal = switch (weekOfMonth) {
+            case 1 -> "첫째주";
+            case 2 -> "둘째주";
+            case 3 -> "셋째주";
+            case 4 -> "넷째주";
+            case 5 -> "다섯째주";
+            default -> weekOfMonth + "째주";
+        };
+
+        return year + "년 " + month + "월 " + weekOrdinal;
+    }
 }

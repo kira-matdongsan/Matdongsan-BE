@@ -29,8 +29,9 @@ public class FoodServiceDto {
     private final String buyingTips;
     private final String preparationTips;
     private final Map<String, Object> nutrients;
+    private final String weekText;
 
-    public static FoodServiceDto from(Food food) {
+    public static FoodServiceDto from(Food food, String weekText) {
         return FoodServiceDto.builder()
                 .id(food.getId())
                 .name(food.getName())
@@ -49,6 +50,7 @@ public class FoodServiceDto {
                 .buyingTips(food.getBuyingTips())
                 .preparationTips(food.getPreparationTips())
                 .nutrients(food.getNutrients())
+                .weekText(weekText)
                 .build();
     }
 }
