@@ -1,9 +1,14 @@
 package com.example.matdongsan.common.config;
 
+import com.example.matdongsan.common.util.auth.CurrentUser;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springdoc.core.utils.SpringDocUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +17,10 @@ import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
+
+    static {
+        SpringDocUtils.getConfig().addAnnotationsToIgnore(CurrentUser.class);
+    }
 
     @Value("${swagger.server-url}")
     private String serverUrl;
@@ -26,9 +35,18 @@ public class SwaggerConfig {
         Server server = new Server()
                 .url(serverUrl);
 
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER)
+                .name("Authorization");
+
         return new OpenAPI()
                 .info(info)
-                .servers(List.of(server));
+                .servers(List.of(server))
+                .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     }
 
     @Bean

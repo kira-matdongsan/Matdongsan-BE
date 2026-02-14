@@ -37,7 +37,7 @@ public class DishService {
     }
 
     @Transactional
-    public void createDish(Long foodId, CreateDishParam param) {
+    public void createDish(Long foodId, Long userId, CreateDishParam param) {
         Food food = foodQueryRepository.findById(foodId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
@@ -48,16 +48,16 @@ public class DishService {
         Dish dish = Dish.create(food.getId(), featuredFood.getId(), param.getName());
         Dish savedDish = dishCommandRepository.save(dish);
 
-        DishVote vote = DishVote.create(savedDish.getId(), 1L, param.getImageUrls());
+        DishVote vote = DishVote.create(savedDish.getId(), userId, param.getImageUrls());
         dishCommandRepository.saveVote(vote);
     }
 
     @Transactional
-    public void voteDish(Long id, VoteDishParam param) {
+    public void voteDish(Long id, Long userId, VoteDishParam param) {
         Dish dish = dishQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.DISH_NOT_FOUND));
 
-        DishVote vote = DishVote.create(dish.getId(), 1L, param.getImageUrls());
+        DishVote vote = DishVote.create(dish.getId(), userId, param.getImageUrls());
         dishCommandRepository.saveVote(vote);
 
         dish.plusVoteCount();

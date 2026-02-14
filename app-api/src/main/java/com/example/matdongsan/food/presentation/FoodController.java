@@ -14,12 +14,15 @@ import com.example.matdongsan.food.application.service.FoodService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.example.matdongsan.common.util.auth.CurrentUser;
+import com.example.matdongsan.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "제철 음식 상세 API", description = "제철 음식 상세 페이지 API")
@@ -50,13 +53,15 @@ public class FoodController {
     }
 
     @Operation(summary = "맛동산 Pick 제철요리 등록 및 투표", description = "이미지를 등록하여 제철 요리 등록 및 투표")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/dishes")
     public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> createDish(
             @Parameter(name = "id", description = "제철 요리를 등록할 제철 음식 ID", example = "1")
             @PathVariable Long id,
+            @CurrentUser User user,
             @RequestBody DishRequest requestDto
     ) {
-        dishService.createDish(id, requestDto.toParam());
+        dishService.createDish(id, user.getId(), requestDto.toParam());
         return RestApiResponse.successResult(ResponseCode.OK, true);
     }
 

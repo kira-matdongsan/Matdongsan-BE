@@ -8,11 +8,14 @@ import com.example.matdongsan.dish.application.dto.DishVoteImageServiceDto;
 import com.example.matdongsan.dish.presentation.response.DishVoteImageResponse;
 import com.example.matdongsan.dish.presentation.request.DishVoteRequest;
 import com.example.matdongsan.dish.application.service.DishService;
+import com.example.matdongsan.common.util.auth.CurrentUser;
+import com.example.matdongsan.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -47,13 +50,15 @@ public class DishController {
     }
 
     @Operation(summary = "제철 요리 투표", description = "이미지를 등록하여 제철 요리 투표")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}/vote")
     public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> voteDish(
             @Parameter(name = "id", description = "투표할 제철 요리 ID", example = "1")
             @PathVariable Long id,
+            @CurrentUser User user,
             @RequestBody DishVoteRequest requestDto
     ) {
-        dishService.voteDish(id, requestDto.toParam());
+        dishService.voteDish(id, user.getId(), requestDto.toParam());
         return RestApiResponse.successResult(ResponseCode.OK, true);
     }
 }
