@@ -1,5 +1,6 @@
 package com.example.matdongsan.food.presentation.response;
 
+import com.example.matdongsan.food.application.dto.DishServiceDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,4 +25,13 @@ public class DishResponse {
     @Schema(description = "제철요리 투표 수", example = "13")
     private final Integer voteCount;
 
+    public static DishResponse from(DishServiceDto dto) {
+        return DishResponse.builder()
+                .id(dto.getId())
+                .name(dto.getName())
+                .thumbnailUrl(dto.getThumbnailUrl())
+                .rank(dto.getRank())
+                .voteCount(dto.getVoteCount())
+                .build();
+    }
 }

@@ -49,7 +49,7 @@ public class FoodController {
             @Parameter(name = "id", description = "조회할 제철 음식 ID", example = "1")
             @PathVariable Long id
     ) {
-        return RestApiResponse.success(ResponseCode.OK, foodService.getAllDishesByFoodId(id));
+        return RestApiResponse.success(ResponseCode.OK, DishPickResponse.from(foodService.getAllDishesByFoodId(id)));
     }
 
     @Operation(summary = "맛동산 Pick 제철요리 등록 및 투표", description = "이미지를 등록하여 제철 요리 등록 및 투표")

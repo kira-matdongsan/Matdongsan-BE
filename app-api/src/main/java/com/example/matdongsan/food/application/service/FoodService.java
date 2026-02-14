@@ -5,13 +5,14 @@ import com.example.matdongsan.dish.domain.DishVoteImage;
 import com.example.matdongsan.dish.repository.DishQueryRepository;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
+import com.example.matdongsan.food.application.dto.DishPickServiceDto;
+import com.example.matdongsan.food.application.dto.DishServiceDto;
 import com.example.matdongsan.food.application.dto.FoodServiceDto;
 import com.example.matdongsan.food.application.dto.FoodStoryServiceDto;
 import com.example.matdongsan.food.domain.FeaturedFood;
 import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
-import com.example.matdongsan.food.presentation.response.*;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,7 +40,7 @@ public class FoodService {
     }
 
     // TODO: 맛동산 Pick 제철요리 투표 관련 기능 논의중
-    public DishPickResponse getAllDishesByFoodId(Long id) {
+    public DishPickServiceDto getAllDishesByFoodId(Long id) {
         Food food = foodQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
@@ -48,7 +49,7 @@ public class FoodService {
 
         List<Dish> dishes = dishQueryRepository.findAllByFeaturedFoodIdOrderByVoteCountDesc(featuredFood.getId());
 
-        List<DishResponse> contents =
+        List<DishServiceDto> contents =
                 IntStream.range(0, dishes.size())
                         .mapToObj(i -> {
                             Dish dish = dishes.get(i);
@@ -65,7 +66,7 @@ public class FoodService {
                                         : dishVoteImage.getImageUrl();
                             }
 
-                            return DishResponse.builder()
+                            return DishServiceDto.builder()
                                     .id(dish.getId())
                                     .name(dish.getName())
                                     .thumbnailUrl(thumbnailUrl)
@@ -75,7 +76,7 @@ public class FoodService {
                         })
                         .toList();
 
-        return DishPickResponse.builder()
+        return DishPickServiceDto.builder()
                 .voteStartDate(featuredFood.getStartAt().toLocalDate())
                 .voteEndDate(featuredFood.getEndAt().toLocalDate())
                 .totalVoteCount(featuredFood.getDishVoteCount())
