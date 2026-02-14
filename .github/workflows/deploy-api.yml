@@ -88,14 +88,18 @@ jobs:
           
             docker stop ${{ secrets.AWS_ECR_REPOSITORY }} || true
             docker rm ${{ secrets.AWS_ECR_REPOSITORY }} || true
-          
+
             docker pull $IMAGE_URI
-          
+
             docker run -d \
               --name ${{ secrets.AWS_ECR_REPOSITORY }} \
               --network host \
+              --memory=512m \
+              --restart unless-stopped \
               --env-file ~/.env \
               $IMAGE_URI
+
+            docker image prune -af
           EOF
 
           rm -f key.pem

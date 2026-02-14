@@ -17,12 +17,12 @@ public class DishPickResponse {
     @Schema(description = "총 투표 수", example = "54")
     private final Integer totalVoteCount;
 
-    @Schema(description = "투표 시작일", example = "2025-07-07")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Schema(description = "투표 시작일", example = "25.07.07")
+    @JsonFormat(pattern = "yy.MM.dd", timezone = "Asia/Seoul")
     private final LocalDate voteStartDate;
 
-    @Schema(description = "투표 마감일", example = "2025-07-13")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Schema(description = "투표 마감일", example = "25.07.13")
+    @JsonFormat(pattern = "yy.MM.dd", timezone = "Asia/Seoul")
     private final LocalDate voteEndDate;
 
     @Schema(description = "제철요리 목록 (순위 정렬)")
