@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 @Schema(description = "제철 음식 상세 응답 DTO")
 @Builder
@@ -78,12 +80,19 @@ public class FoodInfoResponse {
                 .isFeatured(dto.getIsFeatured())
                 .lastFeaturedDate(dto.getLastFeaturedAt() != null ? dto.getLastFeaturedAt().toLocalDate() : null)
                 .isLiked(isLiked)
-                .seasonMonths(dto.getSeasonMonths() != null ? dto.getSeasonMonths().toString() : null)
+                .seasonMonths(formatSeasonMonths(dto.getSeasonMonths()))
                 .regions(dto.getRegions())
                 .benefits(dto.getBenefits())
                 .buyingTips(dto.getBuyingTips())
                 .preparationTips(dto.getPreparationTips())
                 .nutrients(FoodNutrientResponse.of(dto.getNutrients()))
                 .build();
+    }
+
+    private static String formatSeasonMonths(List<Integer> months) {
+        if (months == null || months.isEmpty()) return null;
+        int min = Collections.min(months);
+        int max = Collections.max(months);
+        return min == max ? min + "월" : min + "~" + max + "월";
     }
 }
