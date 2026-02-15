@@ -13,4 +13,6 @@ public interface UserCommandRepository {
     UserProfile saveProfile(UserProfile profile);
 
     List<UserAgreement> saveAllAgreements(List<UserAgreement> agreements);
+
+    void updateNickname(Long userId, String nickname);
 }

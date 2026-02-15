@@ -26,4 +26,8 @@ public class UserProfileEntity extends BaseTimeEntityWithSoftDelete {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

@@ -65,4 +65,10 @@ public class UserCommandRepositoryImpl implements UserCommandRepository {
                 .map(userMapper::toAgreementDomain)
                 .toList();
     }
+
+    @Override
+    public void updateNickname(Long userId, String nickname) {
+        profileJpaRepository.findByUserId(userId)
+                .ifPresent(entity -> entity.updateNickname(nickname));
+    }
 }
