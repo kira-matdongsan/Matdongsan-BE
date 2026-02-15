@@ -26,11 +26,11 @@ public class FoodStoryService {
     private final FoodCommandRepository foodCommandRepository;
 
     @Transactional
-    public FoodStoryServiceDto createSeasonalNoteStory(Long foodId, CreateSeasonalNoteParam param) {
+    public FoodStoryServiceDto createSeasonalNoteStory(Long foodId, Long userId, CreateSeasonalNoteParam param) {
         foodQueryRepository.findById(foodId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        FoodStory story = FoodStory.createSeasonalNote(foodId, 1L, param.getContent(), param.getRecordedDate());
+        FoodStory story = FoodStory.createSeasonalNote(foodId, userId, param.getContent(), param.getRecordedDate());
         FoodStory savedStory = foodCommandRepository.saveStory(story);
 
         List<FoodStoryImage> images = createImages(savedStory.getId(), param.getImageUrls());
@@ -40,11 +40,11 @@ public class FoodStoryService {
     }
 
     @Transactional
-    public FoodStoryServiceDto createRecipeStory(Long foodId, CreateRecipeParam param) {
+    public FoodStoryServiceDto createRecipeStory(Long foodId, Long userId, CreateRecipeParam param) {
         foodQueryRepository.findById(foodId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        FoodStory story = FoodStory.createRecipe(foodId, 1L, param.getName(), param.getIngredients(), param.getInstructions());
+        FoodStory story = FoodStory.createRecipe(foodId, userId, param.getName(), param.getIngredients(), param.getInstructions());
         FoodStory savedStory = foodCommandRepository.saveStory(story);
 
         List<FoodStoryImage> images = createImages(savedStory.getId(), param.getImageUrls());
@@ -54,17 +54,29 @@ public class FoodStoryService {
     }
 
     @Transactional
-    public FoodStoryServiceDto createPlaceStory(Long foodId, CreatePlaceParam param) {
+    public FoodStoryServiceDto createPlaceStory(Long foodId, Long userId, CreatePlaceParam param) {
         foodQueryRepository.findById(foodId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        FoodStory story = FoodStory.createPlace(foodId, 1L, param.getName(), param.getContent(), param.getCategory(), param.getAddress(), param.getNaverUrl());
+        FoodStory story = FoodStory.createPlace(foodId, userId, param.getName(), param.getContent(), param.getCategory(), param.getAddress(), param.getNaverUrl());
         FoodStory savedStory = foodCommandRepository.saveStory(story);
 
         List<FoodStoryImage> images = createImages(savedStory.getId(), param.getImageUrls());
         List<FoodStoryImage> savedImages = foodCommandRepository.saveAllImages(images);
 
         return FoodStoryServiceDto.from(savedStory, savedImages);
+    }
+
+    @Transactional
+    public void deleteStory(Long storyId, Long userId) {
+        FoodStory story = foodQueryRepository.findStoryById(storyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.STORY_NOT_FOUND));
+
+        if (!story.getUserId().equals(userId)) {
+            throw new CustomException(ErrorCode.STORY_NOT_OWNER);
+        }
+
+        foodCommandRepository.deleteStory(storyId);
     }
 
     private List<FoodStoryImage> createImages(Long storyId, List<String> imageUrls) {

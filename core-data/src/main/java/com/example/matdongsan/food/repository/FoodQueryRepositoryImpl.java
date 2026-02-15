@@ -92,6 +92,18 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
     }
 
     @Override
+    public Optional<FoodStory> findStoryById(Long storyId) {
+        FoodStoryEntity entity = queryFactory
+                .selectFrom(story)
+                .where(
+                        story.id.eq(storyId),
+                        story.deletedAt.isNull()
+                )
+                .fetchOne();
+        return Optional.ofNullable(entity).map(foodMapper::toStoryDomain);
+    }
+
+    @Override
     public List<FoodStoryImage> findAllImagesByStoryId(Long storyId) {
         List<FoodStoryImageEntity> entities = queryFactory
                 .selectFrom(storyImage)

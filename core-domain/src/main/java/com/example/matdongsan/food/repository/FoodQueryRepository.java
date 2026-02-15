@@ -21,6 +21,8 @@ public interface FoodQueryRepository {
 
     long countStoriesByFoodId(Long foodId, FoodStoryType type);
 
+    Optional<FoodStory> findStoryById(Long storyId);
+
     List<FoodStoryImage> findAllImagesByStoryId(Long storyId);
 
     Optional<Food> findCurrentFeaturedFood();

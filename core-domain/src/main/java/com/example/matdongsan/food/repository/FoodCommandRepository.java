@@ -15,4 +15,6 @@ public interface FoodCommandRepository {
     FoodStory saveStory(FoodStory story);
 
     List<FoodStoryImage> saveAllImages(List<FoodStoryImage> images);
+
+    void deleteStory(Long storyId);
 }

@@ -102,4 +102,10 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
         List<FoodStoryImageEntity> saved = storyImageJpaRepository.saveAll(entities);
         return foodMapper.toStoryImageDomainList(saved);
     }
+
+    @Override
+    public void deleteStory(Long storyId) {
+        FoodStoryEntity entity = storyJpaRepository.getReferenceById(storyId);
+        entity.softDelete();
+    }
 }
