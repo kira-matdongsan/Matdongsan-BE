@@ -9,6 +9,7 @@ import com.example.matdongsan.food.application.dto.DishPickServiceDto;
 import com.example.matdongsan.food.application.dto.DishServiceDto;
 import com.example.matdongsan.food.application.dto.FoodServiceDto;
 import com.example.matdongsan.food.application.dto.FoodStoryServiceDto;
+import com.example.matdongsan.food.application.dto.StoryParam;
 import com.example.matdongsan.food.domain.FeaturedFood;
 import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FoodStory;
@@ -17,7 +18,7 @@ import com.example.matdongsan.food.repository.FoodQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,12 +93,12 @@ public class FoodService {
                 .build();
     }
 
-    public Page<FoodStoryServiceDto> getAllStoriesByFoodId(Long id, Pageable pageable) {
+    public Page<FoodStoryServiceDto> getAllStoriesByFoodId(Long id, StoryParam param) {
         foodQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        List<FoodStory> stories = foodQueryRepository.findAllStoriesByFoodId(id, pageable.getPageNumber(), pageable.getPageSize());
-        long totalCount = foodQueryRepository.countStoriesByFoodId(id);
+        List<FoodStory> stories = foodQueryRepository.findAllStoriesByFoodId(id, param.getType(), param.getPage(), param.getSize());
+        long totalCount = foodQueryRepository.countStoriesByFoodId(id, param.getType());
 
         List<FoodStoryServiceDto> dtos = stories.stream()
                 .map(story -> {
@@ -106,7 +107,7 @@ public class FoodService {
                 })
                 .toList();
 
-        return new PageImpl<>(dtos, pageable, totalCount);
+        return new PageImpl<>(dtos, PageRequest.of(param.getPage(), param.getSize()), totalCount);
     }
 
     // TODO: [User] 계정 작업 후 구현 가능

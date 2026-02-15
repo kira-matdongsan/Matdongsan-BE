@@ -4,6 +4,7 @@ import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FeaturedFood;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
+import com.example.matdongsan.food.enums.FoodStoryType;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +17,9 @@ public interface FoodQueryRepository {
 
     Optional<FeaturedFood> findLatestFeaturedFoodByFoodId(Long foodId);
 
-    List<FoodStory> findAllStoriesByFoodId(Long foodId, int page, int size);
+    List<FoodStory> findAllStoriesByFoodId(Long foodId, FoodStoryType type, int page, int size);
 
-    long countStoriesByFoodId(Long foodId);
+    long countStoriesByFoodId(Long foodId, FoodStoryType type);
 
     List<FoodStoryImage> findAllImagesByStoryId(Long storyId);
 

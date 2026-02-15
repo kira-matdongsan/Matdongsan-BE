@@ -1,8 +1,10 @@
 package com.example.matdongsan.food.repository;
 
 import com.example.matdongsan.food.domain.*;
+import com.example.matdongsan.food.enums.FoodStoryType;
 import com.example.matdongsan.food.mapper.FoodMapper;
 import com.example.matdongsan.jpa.entity.food.*;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -51,12 +53,13 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
     }
 
     @Override
-    public List<FoodStory> findAllStoriesByFoodId(Long foodId, int page, int size) {
+    public List<FoodStory> findAllStoriesByFoodId(Long foodId, FoodStoryType type, int page, int size) {
         List<FoodStoryEntity> entities = queryFactory
                 .selectFrom(story)
                 .where(
                         story.foodId.eq(foodId),
-                        story.deletedAt.isNull()
+                        story.deletedAt.isNull(),
+                        typeEq(type)
                 )
                 .orderBy(story.createdAt.desc())
                 .offset((long) page * size)
@@ -66,16 +69,26 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
     }
 
     @Override
-    public long countStoriesByFoodId(Long foodId) {
+    public long countStoriesByFoodId(Long foodId, FoodStoryType type) {
         Long count = queryFactory
                 .select(story.count())
                 .from(story)
                 .where(
                         story.foodId.eq(foodId),
-                        story.deletedAt.isNull()
+                        story.deletedAt.isNull(),
+                        typeEq(type)
                 )
                 .fetchOne();
         return count != null ? count : 0L;
+    }
+
+    private BooleanBuilder typeEq(FoodStoryType type) {
+        if (type == null) return null;
+        return switch (type) {
+            case RECIPE -> new BooleanBuilder(story.instanceOf(FoodStoryRecipeEntity.class));
+            case PLACE -> new BooleanBuilder(story.instanceOf(FoodStoryPlaceEntity.class));
+            case SEASONAL_NOTE -> new BooleanBuilder(story.instanceOf(FoodStorySeasonalNoteEntity.class));
+        };
     }
 
     @Override

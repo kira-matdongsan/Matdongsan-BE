@@ -4,9 +4,9 @@ import com.example.matdongsan.response.RestApiResponse;
 import com.example.matdongsan.response.PageResponse;
 import com.example.matdongsan.response.ResponseCode;
 import com.example.matdongsan.response.ResultResponse;
-import com.example.matdongsan.food.application.dto.FoodStoryServiceDto;
 import com.example.matdongsan.food.presentation.response.DishPickResponse;
 import com.example.matdongsan.food.presentation.request.DishRequest;
+import com.example.matdongsan.food.presentation.request.StoryRequest;
 import com.example.matdongsan.food.presentation.response.FoodInfoResponse;
 import com.example.matdongsan.food.presentation.response.StoryResponse;
 import com.example.matdongsan.dish.application.service.DishService;
@@ -18,9 +18,6 @@ import com.example.matdongsan.common.util.auth.CurrentUser;
 import com.example.matdongsan.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -69,9 +66,9 @@ public class FoodController {
     @GetMapping("/{id}/stories")
     public ResponseEntity<RestApiResponse<PageResponse<StoryResponse>>> getAllStoriesByFoodId(
             @Parameter(name = "id", description = "조회할 제철 음식 ID", example = "1") @PathVariable Long id,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+            @ModelAttribute StoryRequest request
     ) {
-        Page<StoryResponse> storyResponses = foodService.getAllStoriesByFoodId(id, pageable)
+        Page<StoryResponse> storyResponses = foodService.getAllStoriesByFoodId(id, request.toParam())
                 .map(dto -> StoryResponse.from(dto, true));
         return RestApiResponse.successPage(ResponseCode.OK, storyResponses);
     }
