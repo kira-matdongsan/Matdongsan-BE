@@ -15,6 +15,8 @@ import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
+import com.example.matdongsan.user.domain.UserProfile;
+import com.example.matdongsan.user.repository.UserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -36,6 +38,7 @@ public class FoodService {
 
     private final FoodQueryRepository foodQueryRepository;
     private final DishQueryRepository dishQueryRepository;
+    private final UserQueryRepository userQueryRepository;
 
     public FoodServiceDto getFoodInfoById(Long id) {
         Food food = foodQueryRepository.findById(id)
@@ -103,7 +106,10 @@ public class FoodService {
         List<FoodStoryServiceDto> dtos = stories.stream()
                 .map(story -> {
                     List<FoodStoryImage> images = foodQueryRepository.findAllImagesByStoryId(story.getId());
-                    return FoodStoryServiceDto.from(story, images);
+                    UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
+                    String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
+                    String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
+                    return FoodStoryServiceDto.from(story, images, nickname, profileImageUrl);
                 })
                 .toList();
 

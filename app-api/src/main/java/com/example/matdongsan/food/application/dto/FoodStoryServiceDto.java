@@ -37,10 +37,12 @@ public class FoodStoryServiceDto {
     private final String address;
     private final String naverUrl;
 
+    private final String nickname;
+    private final String profileImageUrl;
     private final List<FoodStoryImageServiceDto> images;
     private final LocalDateTime createdAt;
 
-    public static FoodStoryServiceDto from(FoodStory story, List<FoodStoryImage> images) {
+    public static FoodStoryServiceDto from(FoodStory story, List<FoodStoryImage> images, String nickname, String profileImageUrl) {
         return FoodStoryServiceDto.builder()
                 .id(story.getId())
                 .foodId(story.getFoodId())
@@ -58,6 +60,8 @@ public class FoodStoryServiceDto {
                 .category(story.getCategory())
                 .address(story.getAddress())
                 .naverUrl(story.getNaverUrl())
+                .nickname(nickname)
+                .profileImageUrl(profileImageUrl)
                 .images(images.stream().map(FoodStoryImageServiceDto::from).toList())
                 .createdAt(story.getCreatedAt())
                 .build();

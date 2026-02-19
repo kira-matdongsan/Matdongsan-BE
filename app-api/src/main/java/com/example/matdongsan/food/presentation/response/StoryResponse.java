@@ -74,8 +74,8 @@ public class StoryResponse {
 
         StoryResponseBuilder builder = StoryResponse.builder()
                 .id(dto.getId())
-                .nickname("도란도란")
-                .profileImageUrl("https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/profile-image/sample.jpg")
+                .nickname(dto.getNickname())
+                .profileImageUrl(dto.getProfileImageUrl())
                 .type(dto.getType())
                 .likeCount(dto.getLikeCount())
                 .isLiked(isLiked)

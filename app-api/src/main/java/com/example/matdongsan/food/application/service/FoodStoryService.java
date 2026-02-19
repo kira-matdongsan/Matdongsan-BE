@@ -10,6 +10,8 @@ import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
 import com.example.matdongsan.food.repository.FoodCommandRepository;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
+import com.example.matdongsan.user.domain.UserProfile;
+import com.example.matdongsan.user.repository.UserQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ public class FoodStoryService {
 
     private final FoodQueryRepository foodQueryRepository;
     private final FoodCommandRepository foodCommandRepository;
+    private final UserQueryRepository userQueryRepository;
 
     @Transactional
     public FoodStoryServiceDto createSeasonalNoteStory(Long foodId, Long userId, CreateSeasonalNoteParam param) {
@@ -36,7 +39,10 @@ public class FoodStoryService {
         List<FoodStoryImage> images = createImages(savedStory.getId(), param.getImageUrls());
         List<FoodStoryImage> savedImages = foodCommandRepository.saveAllImages(images);
 
-        return FoodStoryServiceDto.from(savedStory, savedImages);
+        UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
+        String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
+        String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
+        return FoodStoryServiceDto.from(savedStory, savedImages, nickname, profileImageUrl);
     }
 
     @Transactional
@@ -50,7 +56,10 @@ public class FoodStoryService {
         List<FoodStoryImage> images = createImages(savedStory.getId(), param.getImageUrls());
         List<FoodStoryImage> savedImages = foodCommandRepository.saveAllImages(images);
 
-        return FoodStoryServiceDto.from(savedStory, savedImages);
+        UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
+        String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
+        String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
+        return FoodStoryServiceDto.from(savedStory, savedImages, nickname, profileImageUrl);
     }
 
     @Transactional
@@ -64,7 +73,10 @@ public class FoodStoryService {
         List<FoodStoryImage> images = createImages(savedStory.getId(), param.getImageUrls());
         List<FoodStoryImage> savedImages = foodCommandRepository.saveAllImages(images);
 
-        return FoodStoryServiceDto.from(savedStory, savedImages);
+        UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
+        String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
+        String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
+        return FoodStoryServiceDto.from(savedStory, savedImages, nickname, profileImageUrl);
     }
 
     @Transactional
