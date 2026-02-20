@@ -12,6 +12,7 @@ import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
 import com.example.matdongsan.food.domain.FeaturedFood;
 import com.example.matdongsan.food.domain.Food;
+import com.example.matdongsan.food.repository.FoodCommandRepository;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.List;
 public class DishService {
 
     private final FoodQueryRepository foodQueryRepository;
+    private final FoodCommandRepository foodCommandRepository;
     private final DishCommandRepository dishCommandRepository;
     private final DishQueryRepository dishQueryRepository;
 
@@ -50,6 +52,9 @@ public class DishService {
 
         DishVote vote = DishVote.create(savedDish.getId(), userId, param.getImageUrls());
         dishCommandRepository.saveVote(vote);
+
+        featuredFood.plusDishVoteCount();
+        foodCommandRepository.saveFeaturedFood(featuredFood);
     }
 
     @Transactional
@@ -62,6 +67,11 @@ public class DishService {
 
         dish.plusVoteCount();
         dishCommandRepository.save(dish);
+
+        FeaturedFood featuredFood = foodQueryRepository.findFeaturedFoodById(dish.getFeaturedFoodId())
+                .orElseThrow(() -> new CustomException(ErrorCode.FEATURED_FOOD_NOT_FOUND));
+        featuredFood.plusDishVoteCount();
+        foodCommandRepository.saveFeaturedFood(featuredFood);
     }
 
     // TODO: [User] 계정 작업 후 구현 가능

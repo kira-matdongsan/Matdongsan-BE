@@ -43,6 +43,15 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
     }
 
     @Override
+    public Optional<FeaturedFood> findFeaturedFoodById(Long id) {
+        FeaturedFoodEntity entity = queryFactory
+                .selectFrom(featuredFood)
+                .where(featuredFood.id.eq(id))
+                .fetchOne();
+        return Optional.ofNullable(entity).map(foodMapper::toFeaturedFoodDomain);
+    }
+
+    @Override
     public Optional<FeaturedFood> findLatestFeaturedFoodByFoodId(Long foodId) {
         FeaturedFoodEntity entity = queryFactory
                 .selectFrom(featuredFood)

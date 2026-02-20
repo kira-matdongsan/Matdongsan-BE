@@ -22,6 +22,7 @@ public class FoodStoryImage {
         return FoodStoryImage.builder()
                 .foodStoryId(foodStoryId)
                 .imageUrl(imageUrl)
+                .thumbnailUrl(imageUrl)
                 .orderNum(orderNum)
                 .build();
     }

@@ -1,5 +1,6 @@
 package com.example.matdongsan.food.repository;
 
+import com.example.matdongsan.food.domain.FeaturedFood;
 import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
@@ -23,6 +24,7 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
     private final FoodStoryRecipeJpaRepository recipeJpaRepository;
     private final FoodStoryPlaceJpaRepository placeJpaRepository;
     private final FoodStoryImageJpaRepository storyImageJpaRepository;
+    private final FeaturedFoodJpaRepository featuredFoodJpaRepository;
     private final FoodMapper foodMapper;
 
     @Override
@@ -107,5 +109,12 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
     public void deleteStory(Long storyId) {
         FoodStoryEntity entity = storyJpaRepository.getReferenceById(storyId);
         entity.softDelete();
+    }
+
+    @Override
+    public FeaturedFood saveFeaturedFood(FeaturedFood featuredFood) {
+        FeaturedFoodEntity entity = foodMapper.toFeaturedFoodEntity(featuredFood);
+        FeaturedFoodEntity saved = featuredFoodJpaRepository.save(entity);
+        return foodMapper.toFeaturedFoodDomain(saved);
     }
 }

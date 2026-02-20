@@ -20,9 +20,11 @@ public class DishVote {
     private LocalDateTime deletedAt;
 
     public static DishVote create(Long dishId, Long userId, List<String> imageUrls) {
+        LocalDateTime now = LocalDateTime.now();
         DishVote vote = DishVote.builder()
                 .dishId(dishId)
                 .userId(userId)
+                .createdAt(now)
                 .build();
 
         List<DishVoteImage> images = IntStream.range(0, imageUrls.size())

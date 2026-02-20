@@ -22,7 +22,6 @@ public interface DishMapper {
 
     List<Dish> toDomainList(List<DishEntity> entities);
 
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
     DishEntity toEntity(Dish domain);

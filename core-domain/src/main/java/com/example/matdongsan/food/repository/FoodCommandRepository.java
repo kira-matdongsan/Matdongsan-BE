@@ -1,5 +1,6 @@
 package com.example.matdongsan.food.repository;
 
+import com.example.matdongsan.food.domain.FeaturedFood;
 import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
@@ -17,4 +18,6 @@ public interface FoodCommandRepository {
     List<FoodStoryImage> saveAllImages(List<FoodStoryImage> images);
 
     void deleteStory(Long storyId);
+
+    FeaturedFood saveFeaturedFood(FeaturedFood featuredFood);
 }

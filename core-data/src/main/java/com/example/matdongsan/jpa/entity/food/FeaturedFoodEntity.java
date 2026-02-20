@@ -30,5 +30,4 @@ public class FeaturedFoodEntity extends BaseTimeEntity {
     private Integer dishVoteCount = 0;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
-
 }

@@ -24,6 +24,9 @@ public interface FoodMapper {
 
     FeaturedFood toFeaturedFoodDomain(FeaturedFoodEntity entity);
 
+    @Mapping(target = "updatedAt", ignore = true)
+    FeaturedFoodEntity toFeaturedFoodEntity(FeaturedFood domain);
+
     // === FoodStory ===
 
     default FoodStory toStoryDomain(FoodStoryEntity entity) {

@@ -18,4 +18,8 @@ public class FeaturedFood {
     private LocalDateTime endAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public void plusDishVoteCount() {
+        this.dishVoteCount++;
+    }
 }

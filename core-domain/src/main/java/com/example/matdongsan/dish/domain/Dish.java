@@ -19,11 +19,14 @@ public class Dish {
     private LocalDateTime deletedAt;
 
     public static Dish create(Long foodId, Long featuredFoodId, String name) {
+        LocalDateTime now = LocalDateTime.now();
         return Dish.builder()
                 .foodId(foodId)
                 .featuredFoodId(featuredFoodId)
                 .name(name)
                 .voteCount(1)
+                .createdAt(now)
+                .updatedAt(now)
                 .build();
     }
 

@@ -36,6 +36,28 @@ public class FoodNutrientResponse {
     private final Float fat;
 
     public static FoodNutrientResponse of(Map<String, Object> nutrients) {
-        return FoodNutrientResponse.builder().build();
+        if (nutrients == null) return null;
+        return FoodNutrientResponse.builder()
+                .servingSizeLabel((String) nutrients.get("servingSizeLabel"))
+                .servingSizeGram(toInteger(nutrients.get("servingSizeGram")))
+                .calories(toFloat(nutrients.get("calories")))
+                .carbohydrate(toFloat(nutrients.get("carbohydrate")))
+                .dietaryFiber(toFloat(nutrients.get("dietaryFiber")))
+                .sugars(toFloat(nutrients.get("sugars")))
+                .protein(toFloat(nutrients.get("protein")))
+                .fat(toFloat(nutrients.get("fat")))
+                .build();
+    }
+
+    private static Float toFloat(Object value) {
+        if (value == null) return null;
+        if (value instanceof Number n) return n.floatValue();
+        return Float.parseFloat(value.toString());
+    }
+
+    private static Integer toInteger(Object value) {
+        if (value == null) return null;
+        if (value instanceof Number n) return n.intValue();
+        return Integer.parseInt(value.toString());
     }
 }

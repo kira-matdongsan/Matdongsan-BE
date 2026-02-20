@@ -15,6 +15,8 @@ public interface FoodQueryRepository {
 
     boolean existsByName(String name);
 
+    Optional<FeaturedFood> findFeaturedFoodById(Long id);
+
     Optional<FeaturedFood> findLatestFeaturedFoodByFoodId(Long foodId);
 
     List<FoodStory> findAllStoriesByFoodId(Long foodId, FoodStoryType type, int page, int size);
