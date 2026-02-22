@@ -9,9 +9,13 @@ public interface CredentialQueryRepository {
 
     Optional<UserLoginCredential> findByLoginTypeAndEmail(LoginType loginType, String email);
 
+    Optional<UserLoginCredential> findByLoginTypeAndOauthId(LoginType loginType, String oauthId);
+
     Optional<UserLoginCredential> findByUserId(Long userId);
 
     boolean existsByEmail(String email);
 
     boolean existsByLoginTypeAndEmail(LoginType loginType, String email);
+
+    boolean existsByLoginTypeAndOauthId(LoginType loginType, String oauthId);
 }

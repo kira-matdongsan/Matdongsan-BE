@@ -23,6 +23,12 @@ public class CredentialQueryRepositoryImpl implements CredentialQueryRepository 
     }
 
     @Override
+    public Optional<UserLoginCredential> findByLoginTypeAndOauthId(LoginType loginType, String oauthId) {
+        return credentialJpaRepository.findByLoginTypeAndOauthId(loginType, oauthId)
+                .map(authMapper::toCredentialDomain);
+    }
+
+    @Override
     public Optional<UserLoginCredential> findByUserId(Long userId) {
         return credentialJpaRepository.findFirstByUserIdOrderByIdDesc(userId)
                 .map(authMapper::toCredentialDomain);
@@ -36,5 +42,10 @@ public class CredentialQueryRepositoryImpl implements CredentialQueryRepository 
     @Override
     public boolean existsByLoginTypeAndEmail(LoginType loginType, String email) {
         return credentialJpaRepository.existsByLoginTypeAndEmail(loginType, email);
+    }
+
+    @Override
+    public boolean existsByLoginTypeAndOauthId(LoginType loginType, String oauthId) {
+        return credentialJpaRepository.existsByLoginTypeAndOauthId(loginType, oauthId);
     }
 }

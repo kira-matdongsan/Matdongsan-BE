@@ -10,7 +10,10 @@ public interface UserLoginCredentialJpaRepository extends JpaRepository<UserLogi
 
     boolean existsByEmail(String email);
     boolean existsByLoginTypeAndEmail(LoginType loginType, String email);
+    boolean existsByLoginTypeAndOauthId(LoginType loginType, String oauthId);
+
     Optional<UserLoginCredentialEntity> findByLoginTypeAndEmail(LoginType loginType, String email);
+    Optional<UserLoginCredentialEntity> findByLoginTypeAndOauthId(LoginType loginType, String oauthId);
 
     Optional<UserLoginCredentialEntity> findFirstByUserIdOrderByIdDesc(Long userId);
 }

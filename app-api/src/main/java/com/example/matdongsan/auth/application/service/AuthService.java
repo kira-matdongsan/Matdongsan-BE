@@ -173,21 +173,23 @@ public class AuthService {
         String token = param.getToken();
 
         OauthResponseDto oauthResponseDto = oauthService.signin(loginType, token);
+        String oauthId = oauthResponseDto.getOauthId();
         String email = oauthResponseDto.getEmail();
 
         Long userId;
         boolean isNewUser = false;
 
-        if (credentialQueryRepository.existsByLoginTypeAndEmail(loginType, email)) {
-            // 로그인
-            UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndEmail(loginType, email)
+        if (credentialQueryRepository.existsByLoginTypeAndOauthId(loginType, oauthId)) {
+            // 기존 회원 로그인
+            UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndOauthId(loginType, oauthId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             userId = credential.getUserId();
         } else {
-            // 회원가입
+            // 신규 회원가입
             isNewUser = true;
 
-            if (credentialQueryRepository.existsByEmail(email))
+            // 이메일이 있는 경우에만 다른 로그인 방식과의 중복 검사
+            if (email != null && credentialQueryRepository.existsByEmail(email))
                 throw new CustomException(ErrorCode.DUPLICATED_EMAIL, "이미 회원가입한 이메일입니다. 다른 방법으로 로그인을 시도해주세요.");
 
             User user = User.create();
@@ -197,7 +199,7 @@ public class AuthService {
             UserProfile profile = UserProfile.createOauth(savedUser.getId(), oauthResponseDto.getNickname(), oauthResponseDto.getProfileImageUrl());
             userProfileCommandRepository.save(profile);
 
-            UserLoginCredential credential = UserLoginCredential.createOauthLogin(savedUser.getId(), loginType, email, oauthResponseDto.getOauthId());
+            UserLoginCredential credential = UserLoginCredential.createOauthLogin(savedUser.getId(), loginType, email, oauthId);
             credentialCommandRepository.save(credential);
         }
 
