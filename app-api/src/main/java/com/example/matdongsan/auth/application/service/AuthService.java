@@ -3,8 +3,9 @@ package com.example.matdongsan.auth.application.service;
 import com.example.matdongsan.auth.application.dto.*;
 import com.example.matdongsan.auth.domain.UserLoginCredential;
 import com.example.matdongsan.auth.enums.LoginType;
-import com.example.matdongsan.auth.repository.AuthCommandRepository;
-import com.example.matdongsan.auth.repository.AuthQueryRepository;
+import com.example.matdongsan.auth.repository.CredentialCommandRepository;
+import com.example.matdongsan.auth.repository.CredentialQueryRepository;
+import com.example.matdongsan.auth.repository.TermsQueryRepository;
 import com.example.matdongsan.common.util.auth.JwtUtil;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
@@ -20,6 +21,7 @@ import com.example.matdongsan.user.domain.User;
 import com.example.matdongsan.user.domain.UserAgreement;
 import com.example.matdongsan.user.domain.UserProfile;
 import com.example.matdongsan.user.repository.UserCommandRepository;
+import com.example.matdongsan.user.repository.UserProfileCommandRepository;
 import com.example.matdongsan.util.email.EmailSender;
 import com.example.matdongsan.util.email.EmailTemplateRenderer;
 import io.jsonwebtoken.Claims;
@@ -45,9 +47,11 @@ public class AuthService {
 
     private final OauthService oauthService;
 
-    private final AuthQueryRepository authQueryRepository;
-    private final AuthCommandRepository authCommandRepository;
+    private final TermsQueryRepository termsQueryRepository;
+    private final CredentialQueryRepository credentialQueryRepository;
+    private final CredentialCommandRepository credentialCommandRepository;
     private final UserCommandRepository userCommandRepository;
+    private final UserProfileCommandRepository userProfileCommandRepository;
 
     private final EmailVerificationRepository emailVerificationRepository;
     private final VerifiedEmailRepository verifiedEmailRepository;
@@ -55,7 +59,7 @@ public class AuthService {
 
     // 약관 목록 조회
     public List<TermsServiceDto> getAllTerms() {
-        return authQueryRepository.findAllActiveTerms()
+        return termsQueryRepository.findAllActive()
                 .stream()
                 .map(TermsServiceDto::from)
                 .toList();
@@ -63,7 +67,7 @@ public class AuthService {
 
     // 이메일 중복 검사
     public boolean checkEmailAvailable(String email) {
-        return !authQueryRepository.existsCredentialByEmail(email);
+        return !credentialQueryRepository.existsByEmail(email);
     }
 
     // 인증 번호 메일 발송
@@ -115,7 +119,7 @@ public class AuthService {
                 .orElseThrow(() -> new CustomException(ErrorCode.BAD_REQUEST, "이메일 인증이 필요합니다."));
 
         // 약관 동의 확인
-        Set<Long> requiredTermsIds = authQueryRepository.findRequiredTermsIds();
+        Set<Long> requiredTermsIds = termsQueryRepository.findRequiredIds();
         List<Long> agreedTermsIds = param.getTermsIds();
 
         boolean agreedAllRequired = new HashSet<>(agreedTermsIds).containsAll(requiredTermsIds);
@@ -124,7 +128,7 @@ public class AuthService {
         }
 
         // 이메일 중복 확인
-        if (authQueryRepository.existsCredentialByEmail(email)) throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
+        if (credentialQueryRepository.existsByEmail(email)) throw new CustomException(ErrorCode.DUPLICATED_EMAIL);
 
         // 유저 생성 로직
         String encodedPassword = passwordEncoder.encode(param.getPassword());
@@ -133,15 +137,15 @@ public class AuthService {
         User savedUser = userCommandRepository.save(user);
 
         UserProfile profile = UserProfile.createDefault(savedUser.getId());
-        userCommandRepository.saveProfile(profile);
+        userProfileCommandRepository.save(profile);
 
         UserLoginCredential credential = UserLoginCredential.createEmailLogin(savedUser.getId(), email, encodedPassword);
-        authCommandRepository.saveCredential(credential);
+        credentialCommandRepository.save(credential);
 
         List<UserAgreement> agreements = param.getTermsIds().stream()
                 .map(termsId -> UserAgreement.create(savedUser.getId(), termsId))
                 .toList();
-        userCommandRepository.saveAllAgreements(agreements);
+        userProfileCommandRepository.saveAllAgreements(agreements);
 
         // 가입 완료 후 인증 상태 삭제
         verifiedEmailRepository.delete(verifiedEmail);
@@ -152,7 +156,7 @@ public class AuthService {
         String email = param.getEmail();
         String password = param.getPassword();
 
-        UserLoginCredential credential = authQueryRepository.findCredentialByLoginTypeAndEmail(LoginType.EMAIL, email)
+        UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndEmail(LoginType.EMAIL, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, credential.getPassword())) {
@@ -174,16 +178,16 @@ public class AuthService {
         Long userId;
         boolean isNewUser = false;
 
-        if (authQueryRepository.existsCredentialByLoginTypeAndEmail(loginType, email)) {
+        if (credentialQueryRepository.existsByLoginTypeAndEmail(loginType, email)) {
             // 로그인
-            UserLoginCredential credential = authQueryRepository.findCredentialByLoginTypeAndEmail(loginType, email)
+            UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndEmail(loginType, email)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
             userId = credential.getUserId();
         } else {
             // 회원가입
             isNewUser = true;
 
-            if (authQueryRepository.existsCredentialByEmail(email))
+            if (credentialQueryRepository.existsByEmail(email))
                 throw new CustomException(ErrorCode.DUPLICATED_EMAIL, "이미 회원가입한 이메일입니다. 다른 방법으로 로그인을 시도해주세요.");
 
             User user = User.create();
@@ -191,10 +195,10 @@ public class AuthService {
             userId = savedUser.getId();
 
             UserProfile profile = UserProfile.createOauth(savedUser.getId(), oauthResponseDto.getNickname(), oauthResponseDto.getProfileImageUrl());
-            userCommandRepository.saveProfile(profile);
+            userProfileCommandRepository.save(profile);
 
             UserLoginCredential credential = UserLoginCredential.createOauthLogin(savedUser.getId(), loginType, email, oauthResponseDto.getOauthId());
-            authCommandRepository.saveCredential(credential);
+            credentialCommandRepository.save(credential);
         }
 
         return generateTokens(userId, loginType, email, isNewUser);
@@ -234,7 +238,7 @@ public class AuthService {
     @Transactional
     public void agreeTerms(Long userId, List<Long> termsIds) {
         // 필수 약관 동의 여부 검증
-        Set<Long> requiredTermsIds = authQueryRepository.findRequiredTermsIds();
+        Set<Long> requiredTermsIds = termsQueryRepository.findRequiredIds();
         boolean agreedAllRequired = new HashSet<>(termsIds).containsAll(requiredTermsIds);
         if (!agreedAllRequired) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "필수 약관에 동의해야 합니다.");
@@ -243,7 +247,7 @@ public class AuthService {
         List<UserAgreement> agreements = termsIds.stream()
                 .map(termsId -> UserAgreement.create(userId, termsId))
                 .toList();
-        userCommandRepository.saveAllAgreements(agreements);
+        userProfileCommandRepository.saveAllAgreements(agreements);
     }
 
     private String generateCode() {

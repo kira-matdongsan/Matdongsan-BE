@@ -2,7 +2,7 @@ package com.example.matdongsan.auth.repository;
 
 import com.example.matdongsan.auth.domain.UserLoginCredential;
 
-public interface AuthCommandRepository {
+public interface CredentialCommandRepository {
 
-    UserLoginCredential saveCredential(UserLoginCredential credential);
+    UserLoginCredential save(UserLoginCredential credential);
 }

@@ -33,9 +33,4 @@ public abstract class FoodStoryEntity extends BaseTimeEntityWithSoftDelete {
     private List<FoodStoryImageEntity> images = new ArrayList<>();
 
     public abstract FoodStoryType getType();
-
-    public void addImage(FoodStoryImageEntity image) {
-        images.add(image);
-        image.setFoodStory(this);
-    }
 }

@@ -11,14 +11,14 @@ import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
-public class AuthCommandRepositoryImpl implements AuthCommandRepository {
+public class CredentialCommandRepositoryImpl implements CredentialCommandRepository {
 
     private final UserLoginCredentialJpaRepository credentialJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final AuthMapper authMapper;
 
     @Override
-    public UserLoginCredential saveCredential(UserLoginCredential credential) {
+    public UserLoginCredential save(UserLoginCredential credential) {
         UserEntity userRef = userJpaRepository.getReferenceById(credential.getUserId());
 
         UserLoginCredentialEntity entity = UserLoginCredentialEntity.builder()

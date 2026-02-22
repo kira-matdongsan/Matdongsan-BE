@@ -1,12 +1,8 @@
 package com.example.matdongsan.food.repository;
 
-import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FeaturedFood;
-import com.example.matdongsan.food.domain.FoodStory;
-import com.example.matdongsan.food.domain.FoodStoryImage;
-import com.example.matdongsan.food.enums.FoodStoryType;
+import com.example.matdongsan.food.domain.Food;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface FoodQueryRepository {
@@ -20,18 +16,6 @@ public interface FoodQueryRepository {
     Optional<FeaturedFood> findLatestFeaturedFoodByFoodId(Long foodId);
 
     Optional<FeaturedFood> findActiveFeaturedFoodByFoodId(Long foodId);
-
-    List<FoodStory> findAllStoriesByFoodId(Long foodId, FoodStoryType type, int page, int size);
-
-    long countStoriesByFoodId(Long foodId, FoodStoryType type);
-
-    long countLikesByStoryId(Long storyId);
-
-    long countReportsByStoryId(Long storyId);
-
-    Optional<FoodStory> findStoryById(Long storyId);
-
-    List<FoodStoryImage> findAllImagesByStoryId(Long storyId);
 
     Optional<Food> findCurrentFeaturedFood();
 }

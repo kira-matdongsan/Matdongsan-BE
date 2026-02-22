@@ -2,7 +2,7 @@ package com.example.matdongsan.common.util.auth;
 
 import com.example.matdongsan.auth.domain.UserLoginCredential;
 import com.example.matdongsan.auth.enums.LoginType;
-import com.example.matdongsan.auth.repository.AuthQueryRepository;
+import com.example.matdongsan.auth.repository.CredentialQueryRepository;
 import com.example.matdongsan.user.domain.User;
 import com.example.matdongsan.user.repository.UserQueryRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +13,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService {
 
-    private final AuthQueryRepository authQueryRepository;
+    private final CredentialQueryRepository credentialQueryRepository;
     private final UserQueryRepository userQueryRepository;
 
     public CustomUserDetails loadUserByLoginTypeAndEmail(LoginType loginType, String email) {
-        UserLoginCredential credential = authQueryRepository.findCredentialByLoginTypeAndEmail(loginType, email)
+        UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndEmail(loginType, email)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다."));
 
         User user = userQueryRepository.findById(credential.getUserId())

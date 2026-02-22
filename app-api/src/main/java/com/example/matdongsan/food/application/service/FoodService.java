@@ -3,6 +3,7 @@ package com.example.matdongsan.food.application.service;
 import com.example.matdongsan.dish.domain.Dish;
 import com.example.matdongsan.dish.domain.DishVoteImage;
 import com.example.matdongsan.dish.repository.DishQueryRepository;
+import com.example.matdongsan.dish.repository.DishVoteQueryRepository;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
 import com.example.matdongsan.food.application.dto.DishPickServiceDto;
@@ -15,8 +16,9 @@ import com.example.matdongsan.food.domain.Food;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
+import com.example.matdongsan.food.repository.FoodStoryQueryRepository;
 import com.example.matdongsan.user.domain.UserProfile;
-import com.example.matdongsan.user.repository.UserQueryRepository;
+import com.example.matdongsan.user.repository.UserProfileQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,8 +41,10 @@ import java.util.stream.IntStream;
 public class FoodService {
 
     private final FoodQueryRepository foodQueryRepository;
+    private final FoodStoryQueryRepository foodStoryQueryRepository;
     private final DishQueryRepository dishQueryRepository;
-    private final UserQueryRepository userQueryRepository;
+    private final DishVoteQueryRepository dishVoteQueryRepository;
+    private final UserProfileQueryRepository userProfileQueryRepository;
 
     public FoodServiceDto getFoodInfoById(Long id) {
         Food food = foodQueryRepository.findById(id)
@@ -68,7 +72,7 @@ public class FoodService {
                 IntStream.range(0, dishes.size())
                         .mapToObj(i -> {
                             Dish dish = dishes.get(i);
-                            List<DishVoteImage> images = dishQueryRepository.findAllActiveImagesByDishId(dish.getId());
+                            List<DishVoteImage> images = dishVoteQueryRepository.findAllActiveImagesByDishId(dish.getId());
                             DishVoteImage dishVoteImage = null;
                             if (images != null && !images.isEmpty()) {
                                 dishVoteImage = images.get(new Random().nextInt(images.size()));
@@ -81,7 +85,7 @@ public class FoodService {
                                         : dishVoteImage.getImageUrl();
                             }
 
-                            long voteCount = dishQueryRepository.countVotesByDishId(dish.getId());
+                            long voteCount = dishVoteQueryRepository.countVotesByDishId(dish.getId());
 
                             return DishServiceDto.builder()
                                     .id(dish.getId())
@@ -93,7 +97,7 @@ public class FoodService {
                         })
                         .toList();
 
-        long totalVoteCount = dishQueryRepository.countTotalVotesByFeaturedFoodId(featuredFood.getId());
+        long totalVoteCount = dishVoteQueryRepository.countTotalVotesByFeaturedFoodId(featuredFood.getId());
 
         return DishPickServiceDto.builder()
                 .voteStartDate(featuredFood.getStartAt().toLocalDate())
@@ -107,14 +111,14 @@ public class FoodService {
         foodQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        List<FoodStory> stories = foodQueryRepository.findAllStoriesByFoodId(id, param.getType(), param.getPage(), param.getSize());
-        long totalCount = foodQueryRepository.countStoriesByFoodId(id, param.getType());
+        List<FoodStory> stories = foodStoryQueryRepository.findAllByFoodId(id, param.getType(), param.getPage(), param.getSize());
+        long totalCount = foodStoryQueryRepository.countByFoodId(id, param.getType());
 
         List<FoodStoryServiceDto> dtos = stories.stream()
                 .map(story -> {
-                    List<FoodStoryImage> images = foodQueryRepository.findAllImagesByStoryId(story.getId());
-                    long likeCount = foodQueryRepository.countLikesByStoryId(story.getId());
-                    UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
+                    List<FoodStoryImage> images = foodStoryQueryRepository.findAllImagesById(story.getId());
+                    long likeCount = foodStoryQueryRepository.countLikesById(story.getId());
+                    UserProfile profile = userProfileQueryRepository.findByUserId(story.getUserId()).orElse(null);
                     String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
                     String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
                     return FoodStoryServiceDto.from(story, images, (int) likeCount, nickname, profileImageUrl);

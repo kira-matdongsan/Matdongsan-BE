@@ -19,12 +19,4 @@ import java.time.LocalDateTime;
 public class BaseTimeEntityWithSoftDelete extends BaseTimeEntity {
 
     private LocalDateTime deletedAt;
-
-    public void softDelete() {
-        this.deletedAt = LocalDateTime.now();
-    }
-
-    public boolean isDeleted() {
-        return this.deletedAt != null;
-    }
 }

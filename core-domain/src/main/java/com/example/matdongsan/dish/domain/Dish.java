@@ -17,16 +17,9 @@ public class Dish {
     private LocalDateTime deletedAt;
 
     public static Dish create(Long featuredFoodId, String name) {
-        LocalDateTime now = LocalDateTime.now();
         return Dish.builder()
                 .featuredFoodId(featuredFoodId)
                 .name(name)
-                .createdAt(now)
-                .updatedAt(now)
                 .build();
-    }
-
-    public boolean isDeleted() {
-        return deletedAt != null;
     }
 }
