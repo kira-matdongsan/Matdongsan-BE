@@ -22,7 +22,6 @@ public class FoodServiceDto {
     private final String color;
     private final String subtitle;
     private final String description;
-    private final Integer likeCount;
     private final List<Integer> seasonMonths;
     private final String regions;
     private final String benefits;
@@ -31,19 +30,18 @@ public class FoodServiceDto {
     private final Map<String, Object> nutrients;
     private final String weekText;
 
-    public static FoodServiceDto from(Food food, String weekText) {
+    public static FoodServiceDto from(Food food, String weekText, Boolean isFeatured, LocalDateTime lastFeaturedAt) {
         return FoodServiceDto.builder()
                 .id(food.getId())
                 .name(food.getName())
                 .englishName(food.getEnglishName())
-                .isFeatured(food.getIsFeatured())
-                .lastFeaturedAt(food.getLastFeaturedAt())
+                .isFeatured(isFeatured)
+                .lastFeaturedAt(lastFeaturedAt)
                 .imageUrl(food.getImageUrl())
                 .thumbnailUrl(food.getThumbnailUrl())
                 .color(food.getColor())
                 .subtitle(food.getSubtitle())
                 .description(food.getDescription())
-                .likeCount(food.getLikeCount())
                 .seasonMonths(food.getSeasonMonths())
                 .regions(food.getRegions())
                 .benefits(food.getBenefits())

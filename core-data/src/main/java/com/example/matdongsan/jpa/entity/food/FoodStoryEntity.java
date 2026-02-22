@@ -28,10 +28,6 @@ public abstract class FoodStoryEntity extends BaseTimeEntityWithSoftDelete {
 
     private Long userId;
 
-    private Integer likeCount = 0;
-
-    private Integer reportCount = 0;
-
     @OneToMany(mappedBy = "foodStory", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<FoodStoryImageEntity> images = new ArrayList<>();

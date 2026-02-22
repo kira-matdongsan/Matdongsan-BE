@@ -13,13 +13,9 @@ public class FeaturedFood {
     private Long foodId;
     private Integer year;
     private Integer week;
-    private Integer dishVoteCount;
+    private Boolean active;
     private LocalDateTime startAt;
     private LocalDateTime endAt;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    public void plusDishVoteCount() {
-        this.dishVoteCount++;
-    }
 }

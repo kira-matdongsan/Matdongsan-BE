@@ -4,6 +4,8 @@ import com.example.matdongsan.food.domain.*;
 import com.example.matdongsan.food.enums.FoodStoryType;
 import com.example.matdongsan.food.mapper.FoodMapper;
 import com.example.matdongsan.jpa.entity.food.*;
+import com.example.matdongsan.jpa.entity.food.QFoodStoryLikeEntity;
+import com.example.matdongsan.jpa.entity.food.QFoodStoryReportEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
     private static final QFeaturedFoodEntity featuredFood = QFeaturedFoodEntity.featuredFoodEntity;
     private static final QFoodStoryEntity story = QFoodStoryEntity.foodStoryEntity;
     private static final QFoodStoryImageEntity storyImage = QFoodStoryImageEntity.foodStoryImageEntity;
+    private static final QFoodStoryLikeEntity storyLike = QFoodStoryLikeEntity.foodStoryLikeEntity;
+    private static final QFoodStoryReportEntity storyReport = QFoodStoryReportEntity.foodStoryReportEntity;
 
     @Override
     public Optional<Food> findById(Long id) {
@@ -101,6 +105,26 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
     }
 
     @Override
+    public long countLikesByStoryId(Long storyId) {
+        Long count = queryFactory
+                .select(storyLike.id.count())
+                .from(storyLike)
+                .where(storyLike.foodStoryId.eq(storyId), storyLike.deletedAt.isNull())
+                .fetchOne();
+        return count != null ? count : 0L;
+    }
+
+    @Override
+    public long countReportsByStoryId(Long storyId) {
+        Long count = queryFactory
+                .select(storyReport.id.count())
+                .from(storyReport)
+                .where(storyReport.foodStoryId.eq(storyId), storyReport.deletedAt.isNull())
+                .fetchOne();
+        return count != null ? count : 0L;
+    }
+
+    @Override
     public Optional<FoodStory> findStoryById(Long storyId) {
         FoodStoryEntity entity = queryFactory
                 .selectFrom(story)
@@ -127,11 +151,24 @@ public class FoodQueryRepositoryImpl implements FoodQueryRepository {
 
     @Override
     public Optional<Food> findCurrentFeaturedFood() {
+        FeaturedFoodEntity ff = queryFactory
+                .selectFrom(featuredFood)
+                .where(featuredFood.active.isTrue())
+                .fetchOne();
+        if (ff == null) return Optional.empty();
         FoodEntity entity = queryFactory
                 .selectFrom(food)
-                .where(food.isFeatured.isTrue())
-                .orderBy(food.lastFeaturedAt.desc())
-                .fetchFirst();
+                .where(food.id.eq(ff.getFoodId()))
+                .fetchOne();
         return Optional.ofNullable(entity).map(foodMapper::toFoodDomain);
+    }
+
+    @Override
+    public Optional<FeaturedFood> findActiveFeaturedFoodByFoodId(Long foodId) {
+        FeaturedFoodEntity entity = queryFactory
+                .selectFrom(featuredFood)
+                .where(featuredFood.foodId.eq(foodId), featuredFood.active.isTrue())
+                .fetchOne();
+        return Optional.ofNullable(entity).map(foodMapper::toFeaturedFoodDomain);
     }
 }

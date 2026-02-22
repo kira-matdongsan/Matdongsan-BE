@@ -28,7 +28,7 @@ public class DishVote {
                 .build();
 
         List<DishVoteImage> images = IntStream.range(0, imageUrls.size())
-                .mapToObj(i -> DishVoteImage.create(dishId, imageUrls.get(i), i + 1))
+                .mapToObj(i -> DishVoteImage.create(imageUrls.get(i), i + 1))
                 .toList();
         vote.images = images;
 

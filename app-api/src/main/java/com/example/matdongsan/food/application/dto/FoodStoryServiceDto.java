@@ -19,7 +19,6 @@ public class FoodStoryServiceDto {
     private final Long userId;
     private final FoodStoryType type;
     private final Integer likeCount;
-    private final Integer reportCount;
 
     // SeasonalNote
     private final String content;
@@ -42,14 +41,13 @@ public class FoodStoryServiceDto {
     private final List<FoodStoryImageServiceDto> images;
     private final LocalDateTime createdAt;
 
-    public static FoodStoryServiceDto from(FoodStory story, List<FoodStoryImage> images, String nickname, String profileImageUrl) {
+    public static FoodStoryServiceDto from(FoodStory story, List<FoodStoryImage> images, Integer likeCount, String nickname, String profileImageUrl) {
         return FoodStoryServiceDto.builder()
                 .id(story.getId())
                 .foodId(story.getFoodId())
                 .userId(story.getUserId())
                 .type(story.getType())
-                .likeCount(story.getLikeCount())
-                .reportCount(story.getReportCount())
+                .likeCount(likeCount)
                 .content(story.getContent())
                 .recordedDate(story.getRecordedDate())
                 .recipeName(story.getRecipeName())

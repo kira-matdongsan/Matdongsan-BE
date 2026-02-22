@@ -14,14 +14,11 @@ public class Food {
     private Long id;
     private String name;
     private String englishName;
-    private Boolean isFeatured;
-    private LocalDateTime lastFeaturedAt;
     private String imageUrl;
     private String thumbnailUrl;
     private String color;
     private String subtitle;
     private String description;
-    private Integer likeCount;
     private List<Integer> seasonMonths;
     private String regions;
     private String benefits;

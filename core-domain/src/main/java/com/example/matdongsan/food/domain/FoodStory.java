@@ -15,8 +15,6 @@ public class FoodStory {
     private Long foodId;
     private Long userId;
     private FoodStoryType type;
-    private Integer likeCount;
-    private Integer reportCount;
 
     // SeasonalNote fields
     private String content;
@@ -45,8 +43,6 @@ public class FoodStory {
                 .type(FoodStoryType.SEASONAL_NOTE)
                 .content(content)
                 .recordedDate(recordedDate)
-                .likeCount(0)
-                .reportCount(0)
                 .build();
     }
 
@@ -58,8 +54,6 @@ public class FoodStory {
                 .recipeName(recipeName)
                 .ingredients(ingredients)
                 .instructions(instructions)
-                .likeCount(0)
-                .reportCount(0)
                 .build();
     }
 
@@ -73,8 +67,6 @@ public class FoodStory {
                 .category(category)
                 .address(address)
                 .naverUrl(naverUrl)
-                .likeCount(0)
-                .reportCount(0)
                 .build();
     }
 }

@@ -19,9 +19,15 @@ public interface FoodQueryRepository {
 
     Optional<FeaturedFood> findLatestFeaturedFoodByFoodId(Long foodId);
 
+    Optional<FeaturedFood> findActiveFeaturedFoodByFoodId(Long foodId);
+
     List<FoodStory> findAllStoriesByFoodId(Long foodId, FoodStoryType type, int page, int size);
 
     long countStoriesByFoodId(Long foodId, FoodStoryType type);
+
+    long countLikesByStoryId(Long storyId);
+
+    long countReportsByStoryId(Long storyId);
 
     Optional<FoodStory> findStoryById(Long storyId);
 

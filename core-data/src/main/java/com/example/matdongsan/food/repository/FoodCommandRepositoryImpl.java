@@ -53,8 +53,6 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
                     .userId(story.getUserId())
                     .content(story.getContent())
                     .recordedDate(story.getRecordedDate())
-                    .likeCount(0)
-                    .reportCount(0)
                     .build();
             savedEntity = seasonalNoteJpaRepository.save(entity);
         } else if (story.getType() == FoodStoryType.RECIPE) {
@@ -64,8 +62,6 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
                     .recipeName(story.getRecipeName())
                     .ingredients(story.getIngredients())
                     .instructions(story.getInstructions())
-                    .likeCount(0)
-                    .reportCount(0)
                     .build();
             savedEntity = recipeJpaRepository.save(entity);
         } else {
@@ -77,8 +73,6 @@ public class FoodCommandRepositoryImpl implements FoodCommandRepository {
                     .category(story.getCategory())
                     .address(story.getAddress())
                     .naverUrl(story.getNaverUrl())
-                    .likeCount(0)
-                    .reportCount(0)
                     .build();
             savedEntity = placeJpaRepository.save(entity);
         }

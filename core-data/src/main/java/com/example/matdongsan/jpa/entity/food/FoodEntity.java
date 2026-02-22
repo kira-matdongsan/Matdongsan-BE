@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -30,10 +29,6 @@ public class FoodEntity extends BaseTimeEntity {
 
     private String englishName;
 
-    private Boolean isFeatured = false;
-
-    private LocalDateTime lastFeaturedAt;
-
     @Column(columnDefinition = "TEXT", nullable = false)
     private String imageUrl;
 
@@ -45,8 +40,6 @@ public class FoodEntity extends BaseTimeEntity {
     private String subtitle;
 
     private String description;
-
-    private Integer likeCount = 0;
 
     @Convert(converter = JsonListConverter.class)
     @Column(columnDefinition = "json")

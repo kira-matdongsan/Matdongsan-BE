@@ -12,5 +12,9 @@ public interface DishQueryRepository {
 
     List<Dish> findAllByFeaturedFoodIdOrderByVoteCountDesc(Long featuredFoodId);
 
+    long countVotesByDishId(Long dishId);
+
+    long countTotalVotesByFeaturedFoodId(Long featuredFoodId);
+
     List<DishVoteImage> findAllActiveImagesByDishId(Long dishId);
 }

@@ -24,8 +24,6 @@ public class ExternalFoodSourceToFoodConverter {
                 .buyingTips(cleanText(source.getBuyingTips()))
                 .preparationTips(cleanText(source.getPreparationTips()))
                 .nutrients(null)
-                .isFeatured(false)
-                .lastFeaturedAt(null)
                 .build();
     }
 

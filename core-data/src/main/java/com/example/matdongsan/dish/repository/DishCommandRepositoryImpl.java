@@ -44,11 +44,9 @@ public class DishCommandRepositoryImpl implements DishCommandRepository {
         if (images != null && !images.isEmpty()) {
             for (DishVoteImage image : images) {
                 DishVoteImageEntity imageEntity = DishVoteImageEntity.builder()
-                        .dishId(vote.getDishId())
                         .imageUrl(image.getImageUrl())
                         .thumbnailUrl(image.getThumbnailUrl())
                         .orderNum(image.getOrderNum())
-                        .reportCount(image.getReportCount() != null ? image.getReportCount() : 0)
                         .build();
                 voteEntity.addImage(imageEntity);
             }

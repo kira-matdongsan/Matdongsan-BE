@@ -42,7 +42,7 @@ public class FoodStoryService {
         UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
         String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
         String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
-        return FoodStoryServiceDto.from(savedStory, savedImages, nickname, profileImageUrl);
+        return FoodStoryServiceDto.from(savedStory, savedImages, 0, nickname, profileImageUrl);
     }
 
     @Transactional
@@ -59,7 +59,7 @@ public class FoodStoryService {
         UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
         String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
         String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
-        return FoodStoryServiceDto.from(savedStory, savedImages, nickname, profileImageUrl);
+        return FoodStoryServiceDto.from(savedStory, savedImages, 0, nickname, profileImageUrl);
     }
 
     @Transactional
@@ -76,7 +76,7 @@ public class FoodStoryService {
         UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
         String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
         String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
-        return FoodStoryServiceDto.from(savedStory, savedImages, nickname, profileImageUrl);
+        return FoodStoryServiceDto.from(savedStory, savedImages, 0, nickname, profileImageUrl);
     }
 
     @Transactional

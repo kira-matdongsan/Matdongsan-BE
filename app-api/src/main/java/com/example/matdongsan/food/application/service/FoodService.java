@@ -26,8 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.IntStream;
 
@@ -44,11 +46,12 @@ public class FoodService {
         Food food = foodQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        String weekText = foodQueryRepository.findLatestFeaturedFoodByFoodId(id)
-                .map(ff -> calculateWeekText(ff.getYear(), ff.getWeek()))
-                .orElse(null);
+        Optional<FeaturedFood> latestFf = foodQueryRepository.findLatestFeaturedFoodByFoodId(id);
+        String weekText = latestFf.map(ff -> calculateWeekText(ff.getYear(), ff.getWeek())).orElse(null);
+        boolean isFeatured = latestFf.map(ff -> Boolean.TRUE.equals(ff.getActive())).orElse(false);
+        LocalDateTime lastFeaturedAt = latestFf.map(FeaturedFood::getStartAt).orElse(null);
 
-        return FoodServiceDto.from(food, weekText);
+        return FoodServiceDto.from(food, weekText, isFeatured, lastFeaturedAt);
     }
 
     // TODO: 맛동산 Pick 제철요리 투표 관련 기능 논의중
@@ -78,20 +81,24 @@ public class FoodService {
                                         : dishVoteImage.getImageUrl();
                             }
 
+                            long voteCount = dishQueryRepository.countVotesByDishId(dish.getId());
+
                             return DishServiceDto.builder()
                                     .id(dish.getId())
                                     .name(dish.getName())
                                     .thumbnailUrl(thumbnailUrl)
                                     .rank(i + 1)
-                                    .voteCount(dish.getVoteCount())
+                                    .voteCount((int) voteCount)
                                     .build();
                         })
                         .toList();
 
+        long totalVoteCount = dishQueryRepository.countTotalVotesByFeaturedFoodId(featuredFood.getId());
+
         return DishPickServiceDto.builder()
                 .voteStartDate(featuredFood.getStartAt().toLocalDate())
                 .voteEndDate(featuredFood.getEndAt().toLocalDate())
-                .totalVoteCount(featuredFood.getDishVoteCount())
+                .totalVoteCount((int) totalVoteCount)
                 .contents(contents)
                 .build();
     }
@@ -106,10 +113,11 @@ public class FoodService {
         List<FoodStoryServiceDto> dtos = stories.stream()
                 .map(story -> {
                     List<FoodStoryImage> images = foodQueryRepository.findAllImagesByStoryId(story.getId());
+                    long likeCount = foodQueryRepository.countLikesByStoryId(story.getId());
                     UserProfile profile = userQueryRepository.findProfileByUserId(story.getUserId()).orElse(null);
                     String nickname = (profile != null && profile.getNickname() != null) ? profile.getNickname() : "도란도란";
                     String profileImageUrl = (profile != null && profile.getProfileImageUrl() != null) ? profile.getProfileImageUrl() : "https://matdongsan-dev-bucket.s3.ap-northeast-2.amazonaws.com/public/profile-image/default.png";
-                    return FoodStoryServiceDto.from(story, images, nickname, profileImageUrl);
+                    return FoodStoryServiceDto.from(story, images, (int) likeCount, nickname, profileImageUrl);
                 })
                 .toList();
 

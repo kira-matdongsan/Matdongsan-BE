@@ -37,8 +37,6 @@ public interface FoodMapper {
                 .foodId(entity.getFoodId())
                 .userId(entity.getUserId())
                 .type(entity.getType())
-                .likeCount(entity.getLikeCount())
-                .reportCount(entity.getReportCount())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .deletedAt(entity.getDeletedAt());

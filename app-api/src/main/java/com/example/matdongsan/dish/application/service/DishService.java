@@ -11,8 +11,6 @@ import com.example.matdongsan.dish.repository.DishQueryRepository;
 import com.example.matdongsan.exception.CustomException;
 import com.example.matdongsan.exception.ErrorCode;
 import com.example.matdongsan.food.domain.FeaturedFood;
-import com.example.matdongsan.food.domain.Food;
-import com.example.matdongsan.food.repository.FoodCommandRepository;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ import java.util.List;
 public class DishService {
 
     private final FoodQueryRepository foodQueryRepository;
-    private final FoodCommandRepository foodCommandRepository;
     private final DishCommandRepository dishCommandRepository;
     private final DishQueryRepository dishQueryRepository;
 
@@ -40,21 +37,14 @@ public class DishService {
 
     @Transactional
     public void createDish(Long foodId, Long userId, CreateDishParam param) {
-        Food food = foodQueryRepository.findById(foodId)
-                .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
-
-        if (!food.getIsFeatured()) throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        FeaturedFood featuredFood = foodQueryRepository.findLatestFeaturedFoodByFoodId(food.getId())
+        FeaturedFood featuredFood = foodQueryRepository.findActiveFeaturedFoodByFoodId(foodId)
                 .orElseThrow(() -> new CustomException(ErrorCode.FEATURED_FOOD_NOT_FOUND));
 
-        Dish dish = Dish.create(food.getId(), featuredFood.getId(), param.getName());
+        Dish dish = Dish.create(featuredFood.getId(), param.getName());
         Dish savedDish = dishCommandRepository.save(dish);
 
         DishVote vote = DishVote.create(savedDish.getId(), userId, param.getImageUrls());
         dishCommandRepository.saveVote(vote);
-
-        featuredFood.plusDishVoteCount();
-        foodCommandRepository.saveFeaturedFood(featuredFood);
     }
 
     @Transactional
@@ -64,14 +54,6 @@ public class DishService {
 
         DishVote vote = DishVote.create(dish.getId(), userId, param.getImageUrls());
         dishCommandRepository.saveVote(vote);
-
-        dish.plusVoteCount();
-        dishCommandRepository.save(dish);
-
-        FeaturedFood featuredFood = foodQueryRepository.findFeaturedFoodById(dish.getFeaturedFoodId())
-                .orElseThrow(() -> new CustomException(ErrorCode.FEATURED_FOOD_NOT_FOUND));
-        featuredFood.plusDishVoteCount();
-        foodCommandRepository.saveFeaturedFood(featuredFood);
     }
 
     // TODO: [User] 계정 작업 후 구현 가능

@@ -27,7 +27,10 @@ public class FeaturedFoodEntity extends BaseTimeEntity {
 
     private Integer year;
     private Integer week;
-    private Integer dishVoteCount = 0;
+
+    @Column(nullable = false)
+    private Boolean active = false;
+
     private LocalDateTime startAt;
     private LocalDateTime endAt;
 }

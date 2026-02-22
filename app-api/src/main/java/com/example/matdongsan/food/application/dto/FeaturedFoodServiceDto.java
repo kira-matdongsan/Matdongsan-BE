@@ -14,7 +14,6 @@ public class FeaturedFoodServiceDto {
     private final Long foodId;
     private final Integer year;
     private final Integer week;
-    private final Integer dishVoteCount;
     private final LocalDateTime startAt;
     private final LocalDateTime endAt;
 
@@ -24,7 +23,6 @@ public class FeaturedFoodServiceDto {
                 .foodId(featuredFood.getFoodId())
                 .year(featuredFood.getYear())
                 .week(featuredFood.getWeek())
-                .dishVoteCount(featuredFood.getDishVoteCount())
                 .startAt(featuredFood.getStartAt())
                 .endAt(featuredFood.getEndAt())
                 .build();
