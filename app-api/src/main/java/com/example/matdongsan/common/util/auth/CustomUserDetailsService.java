@@ -1,7 +1,6 @@
 package com.example.matdongsan.common.util.auth;
 
 import com.example.matdongsan.auth.domain.UserLoginCredential;
-import com.example.matdongsan.auth.enums.LoginType;
 import com.example.matdongsan.auth.repository.CredentialQueryRepository;
 import com.example.matdongsan.user.domain.User;
 import com.example.matdongsan.user.repository.UserQueryRepository;
@@ -16,11 +15,11 @@ public class CustomUserDetailsService {
     private final CredentialQueryRepository credentialQueryRepository;
     private final UserQueryRepository userQueryRepository;
 
-    public CustomUserDetails loadUserByLoginTypeAndEmail(LoginType loginType, String email) {
-        UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndEmail(loginType, email)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일의 사용자를 찾을 수 없습니다."));
+    public CustomUserDetails loadUserByUserId(Long userId) {
+        UserLoginCredential credential = credentialQueryRepository.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
-        User user = userQueryRepository.findById(credential.getUserId())
+        User user = userQueryRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
         return new CustomUserDetails(user, credential);

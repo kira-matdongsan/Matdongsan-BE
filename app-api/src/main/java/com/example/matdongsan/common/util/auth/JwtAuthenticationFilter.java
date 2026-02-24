@@ -1,6 +1,5 @@
 package com.example.matdongsan.common.util.auth;
 
-import com.example.matdongsan.auth.enums.LoginType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,10 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = resolveToken(request);
 
         if (token != null && jwtUtil.validateToken(token)) {
-            LoginType loginType = jwtUtil.getLoginType(token);
-            String email = jwtUtil.getEmail(token);
+            Long userId = jwtUtil.getUserId(token);
 
-            UserDetails userDetails = customUserDetailsService.loadUserByLoginTypeAndEmail(loginType, email);
+            UserDetails userDetails = customUserDetailsService.loadUserByUserId(userId);
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
