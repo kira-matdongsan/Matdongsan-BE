@@ -66,10 +66,11 @@ public class FoodController {
     @GetMapping("/{id}/stories")
     public ResponseEntity<RestApiResponse<PageResponse<StoryResponse>>> getAllStoriesByFoodId(
             @Parameter(name = "id", description = "조회할 제철 음식 ID", example = "1") @PathVariable Long id,
+            @CurrentUser User user,
             @ModelAttribute StoryRequest request
     ) {
         Page<StoryResponse> storyResponses = foodService.getAllStoriesByFoodId(id, request.toParam())
-                .map(dto -> StoryResponse.from(dto, true));
+                .map(dto -> StoryResponse.from(dto, true, user != null && user.getId().equals(dto.getUserId())));
         return RestApiResponse.successPage(ResponseCode.OK, storyResponses);
     }
 

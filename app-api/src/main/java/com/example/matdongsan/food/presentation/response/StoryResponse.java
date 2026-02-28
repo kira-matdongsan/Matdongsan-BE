@@ -37,16 +37,19 @@ public class StoryResponse {
     @Schema(description = "좋아요 여부", example = "TRUE")
     private final Boolean isLiked;
 
+    @Schema(description = "내가 작성한 스토리 여부", example = "TRUE")
+    private final Boolean isOwner;
+
     @Schema(description = "이미지 목록")
     private final List<StoryImageResponse> images;
 
-    @Schema(description = "작성일시", example = "2025-05-07 10:00:00")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    @Schema(description = "작성일시", example = "2025.05.07")
+    @JsonFormat(pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     private final LocalDateTime createdAt;
 
     // 제철 기록
-    @Schema(description = "기록일", example = "2025-05-06")
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
+    @Schema(description = "기록일", example = "2025.05.06")
+    @JsonFormat(pattern = "yyyy.MM.dd", timezone = "Asia/Seoul")
     private final LocalDate recordedDate;
 
     // 레시피 + 플레이스
@@ -67,7 +70,7 @@ public class StoryResponse {
     @Schema(description = "가게 네이버 지도 URL", example = "")
     private final String naverUrl;
 
-    public static StoryResponse from(FoodStoryServiceDto dto, Boolean isLiked) {
+    public static StoryResponse from(FoodStoryServiceDto dto, Boolean isLiked, Boolean isOwner) {
         List<StoryImageResponse> imageResponses = dto.getImages() != null
                 ? dto.getImages().stream().map(StoryImageResponse::from).toList()
                 : List.of();
@@ -79,6 +82,7 @@ public class StoryResponse {
                 .type(dto.getType())
                 .likeCount(dto.getLikeCount())
                 .isLiked(isLiked)
+                .isOwner(isOwner)
                 .images(imageResponses)
                 .createdAt(dto.getCreatedAt());
 
