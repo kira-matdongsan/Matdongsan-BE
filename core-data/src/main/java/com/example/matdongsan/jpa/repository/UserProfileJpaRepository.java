@@ -15,4 +15,8 @@ public interface UserProfileJpaRepository extends JpaRepository<UserProfileEntit
     @Modifying
     @Query("UPDATE UserProfileEntity p SET p.nickname = :nickname WHERE p.user.id = :userId")
     void updateNicknameByUserId(@Param("userId") Long userId, @Param("nickname") String nickname);
+
+    @Modifying
+    @Query("UPDATE UserProfileEntity p SET p.deletedAt = CURRENT_TIMESTAMP, p.nickname = '탈퇴한 회원' WHERE p.user.id = :userId")
+    void softDeleteByUserId(@Param("userId") Long userId);
 }

@@ -57,4 +57,9 @@ public class UserProfileCommandRepositoryImpl implements UserProfileCommandRepos
     public void updateNickname(Long userId, String nickname) {
         profileJpaRepository.updateNicknameByUserId(userId, nickname);
     }
+
+    @Override
+    public void softDeleteByUserId(Long userId) {
+        profileJpaRepository.softDeleteByUserId(userId);
+    }
 }

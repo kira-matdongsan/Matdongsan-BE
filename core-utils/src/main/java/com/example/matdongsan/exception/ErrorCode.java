@@ -19,6 +19,7 @@ public enum ErrorCode {
     FORBIDDEN(403, "접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
     INVALID_TOKEN(401, "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED),
     EXPIRED_TOKEN(401, "토큰이 만료되었습니다.", HttpStatus.UNAUTHORIZED),
+    WITHDRAWN_USER(403, "탈퇴한 회원입니다.", HttpStatus.FORBIDDEN),
 
     // 파일 처리
     FILE_UPLOAD_FAIL(500, "파일 업로드에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),

@@ -18,34 +18,34 @@ public class CredentialQueryRepositoryImpl implements CredentialQueryRepository 
 
     @Override
     public Optional<UserLoginCredential> findByLoginTypeAndEmail(LoginType loginType, String email) {
-        return credentialJpaRepository.findByLoginTypeAndEmail(loginType, email)
+        return credentialJpaRepository.findByLoginTypeAndEmailAndDeletedAtIsNull(loginType, email)
                 .map(authMapper::toCredentialDomain);
     }
 
     @Override
     public Optional<UserLoginCredential> findByLoginTypeAndOauthId(LoginType loginType, String oauthId) {
-        return credentialJpaRepository.findByLoginTypeAndOauthId(loginType, oauthId)
+        return credentialJpaRepository.findByLoginTypeAndOauthIdAndDeletedAtIsNull(loginType, oauthId)
                 .map(authMapper::toCredentialDomain);
     }
 
     @Override
     public Optional<UserLoginCredential> findByUserId(Long userId) {
-        return credentialJpaRepository.findFirstByUserIdOrderByIdDesc(userId)
+        return credentialJpaRepository.findFirstByUserIdAndDeletedAtIsNullOrderByIdDesc(userId)
                 .map(authMapper::toCredentialDomain);
     }
 
     @Override
     public boolean existsByEmail(String email) {
-        return credentialJpaRepository.existsByEmail(email);
+        return credentialJpaRepository.existsByEmailAndDeletedAtIsNull(email);
     }
 
     @Override
     public boolean existsByLoginTypeAndEmail(LoginType loginType, String email) {
-        return credentialJpaRepository.existsByLoginTypeAndEmail(loginType, email);
+        return credentialJpaRepository.existsByLoginTypeAndEmailAndDeletedAtIsNull(loginType, email);
     }
 
     @Override
     public boolean existsByLoginTypeAndOauthId(LoginType loginType, String oauthId) {
-        return credentialJpaRepository.existsByLoginTypeAndOauthId(loginType, oauthId);
+        return credentialJpaRepository.existsByLoginTypeAndOauthIdAndDeletedAtIsNull(loginType, oauthId);
     }
 }

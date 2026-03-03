@@ -32,4 +32,9 @@ public class CredentialCommandRepositoryImpl implements CredentialCommandReposit
         UserLoginCredentialEntity saved = credentialJpaRepository.save(entity);
         return authMapper.toCredentialDomain(saved);
     }
+
+    @Override
+    public void softDeleteByUserId(Long userId) {
+        credentialJpaRepository.softDeleteByUserId(userId);
+    }
 }

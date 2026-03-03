@@ -159,6 +159,10 @@ public class AuthService {
         UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndEmail(LoginType.EMAIL, email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        if (credential.getDeletedAt() != null) {
+            throw new CustomException(ErrorCode.USER_NOT_FOUND);
+        }
+
         if (!passwordEncoder.matches(password, credential.getPassword())) {
             throw new CustomException(ErrorCode.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
@@ -183,6 +187,11 @@ public class AuthService {
             // 기존 회원 로그인
             UserLoginCredential credential = credentialQueryRepository.findByLoginTypeAndOauthId(loginType, oauthId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+            if (credential.getDeletedAt() != null) {
+                throw new CustomException(ErrorCode.USER_NOT_FOUND);
+            }
+
             userId = credential.getUserId();
         } else {
             // 신규 회원가입

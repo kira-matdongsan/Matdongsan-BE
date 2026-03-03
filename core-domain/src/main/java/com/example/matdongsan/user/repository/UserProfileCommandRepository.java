@@ -12,4 +12,6 @@ public interface UserProfileCommandRepository {
     List<UserAgreement> saveAllAgreements(List<UserAgreement> agreements);
 
     void updateNickname(Long userId, String nickname);
+
+    void softDeleteByUserId(Long userId);
 }

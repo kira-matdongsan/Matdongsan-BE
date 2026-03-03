@@ -43,4 +43,14 @@ public class ProfileController {
         profileService.updateNickname(user.getId(), request.getNickname());
         return RestApiResponse.successResult(ResponseCode.OK, true);
     }
+
+    @Operation(summary = "회원 탈퇴", description = "로그인한 사용자의 계정을 탈퇴 처리")
+    @PreAuthorize("isAuthenticated()")
+    @DeleteMapping
+    public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> withdraw(
+            @CurrentUser User user
+    ) {
+        profileService.withdraw(user.getId());
+        return RestApiResponse.successResult(ResponseCode.OK, true);
+    }
 }

@@ -25,4 +25,9 @@ public class UserCommandRepositoryImpl implements UserCommandRepository {
         UserEntity saved = userJpaRepository.save(entity);
         return userMapper.toUserDomain(saved);
     }
+
+    @Override
+    public void softDeleteById(Long userId) {
+        userJpaRepository.softDeleteById(userId);
+    }
 }
