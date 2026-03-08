@@ -8,6 +8,7 @@ import com.example.matdongsan.user.domain.User;
 import com.example.matdongsan.food.presentation.request.PlaceCreateRequest;
 import com.example.matdongsan.food.presentation.request.RecipeCreateRequest;
 import com.example.matdongsan.food.presentation.request.SeasonalNoteCreateRequest;
+import com.example.matdongsan.food.presentation.request.StoryReportRequest;
 import com.example.matdongsan.food.presentation.response.StoryResponse;
 import com.example.matdongsan.food.application.service.FoodStoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,6 +84,18 @@ public class FoodStoryController {
     }
 
     // 이야기 신고
+    @Operation(summary = "이야기 신고", description = "제철음식 이야기 신고")
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/stories/{storyId}/report")
+    public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> reportStory(
+            @Parameter(name = "storyId", description = "신고할 이야기 ID", example = "1")
+            @PathVariable Long storyId,
+            @CurrentUser User user,
+            @RequestBody @Valid StoryReportRequest request
+    ) {
+        foodStoryService.reportStory(storyId, user.getId(), request.getReason());
+        return RestApiResponse.successResult(ResponseCode.OK, true);
+    }
 
     // 사용자 차단
 }

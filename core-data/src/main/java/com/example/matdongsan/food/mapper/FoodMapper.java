@@ -37,6 +37,7 @@ public interface FoodMapper {
                 .foodId(entity.getFoodId())
                 .userId(entity.getUserId())
                 .type(entity.getType())
+                .visibility(entity.getVisibility())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())
                 .deletedAt(entity.getDeletedAt());
@@ -73,4 +74,13 @@ public interface FoodMapper {
     FoodStoryImageEntity toStoryImageEntity(FoodStoryImage domain);
 
     List<FoodStoryImageEntity> toStoryImageEntityList(List<FoodStoryImage> domains);
+
+    // === FoodStoryReport ===
+
+    FoodStoryReport toStoryReportDomain(FoodStoryReportEntity entity);
+
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "deletedAt", ignore = true)
+    FoodStoryReportEntity toStoryReportEntity(FoodStoryReport domain);
 }

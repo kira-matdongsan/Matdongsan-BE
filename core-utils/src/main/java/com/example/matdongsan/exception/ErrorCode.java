@@ -39,6 +39,7 @@ public enum ErrorCode {
     FOOD_NOT_FOUND(404, "제철 음식을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     FEATURED_FOOD_NOT_FOUND(404, "특집 제철 음식을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     STORY_NOT_FOUND(404, "이야기를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    STORY_ALREADY_REPORTED(409, "이미 신고한 이야기입니다.", HttpStatus.CONFLICT),
     STORY_NOT_OWNER(403, "본인이 작성한 이야기만 삭제할 수 있습니다.", HttpStatus.FORBIDDEN),
     DISH_NOT_FOUND(404, "제철 요리를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
 

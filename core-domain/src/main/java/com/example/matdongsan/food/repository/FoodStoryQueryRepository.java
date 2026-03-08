@@ -17,6 +17,8 @@ public interface FoodStoryQueryRepository {
 
     long countReportsById(Long storyId);
 
+    boolean existsReportByStoryIdAndUserId(Long storyId, Long userId);
+
     Optional<FoodStory> findById(Long storyId);
 
     List<FoodStoryImage> findAllImagesById(Long storyId);

@@ -8,6 +8,8 @@ import com.example.matdongsan.food.application.dto.CreateSeasonalNoteParam;
 import com.example.matdongsan.food.application.dto.FoodStoryServiceDto;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
+import com.example.matdongsan.food.domain.FoodStoryReport;
+import com.example.matdongsan.food.enums.FoodStoryVisibility;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
 import com.example.matdongsan.food.repository.FoodStoryCommandRepository;
 import com.example.matdongsan.food.repository.FoodStoryQueryRepository;
@@ -24,6 +26,8 @@ import java.util.stream.IntStream;
 @Transactional(readOnly = true)
 @Service
 public class FoodStoryService {
+    private static final long STORY_REPORT_HIDE_THRESHOLD = 3L;
+
 
     private final FoodQueryRepository foodQueryRepository;
     private final FoodStoryQueryRepository foodStoryQueryRepository;
@@ -91,6 +95,24 @@ public class FoodStoryService {
         }
 
         foodStoryCommandRepository.deleteById(storyId);
+    }
+
+    @Transactional
+    public void reportStory(Long storyId, Long userId, String reason) {
+        foodStoryQueryRepository.findById(storyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.STORY_NOT_FOUND));
+
+        if (foodStoryQueryRepository.existsReportByStoryIdAndUserId(storyId, userId)) {
+            throw new CustomException(ErrorCode.STORY_ALREADY_REPORTED);
+        }
+
+        FoodStoryReport report = FoodStoryReport.create(storyId, userId, reason);
+        foodStoryCommandRepository.saveReport(report);
+
+        long reportCount = foodStoryQueryRepository.countReportsById(storyId);
+        if (reportCount >= STORY_REPORT_HIDE_THRESHOLD) {
+            foodStoryCommandRepository.updateVisibility(storyId, FoodStoryVisibility.HIDDEN);
+        }
     }
 
     private List<FoodStoryImage> createImages(Long storyId, List<String> imageUrls) {

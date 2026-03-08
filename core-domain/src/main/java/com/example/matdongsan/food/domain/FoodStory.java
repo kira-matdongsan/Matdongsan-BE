@@ -1,6 +1,7 @@
 package com.example.matdongsan.food.domain;
 
 import com.example.matdongsan.food.enums.FoodStoryType;
+import com.example.matdongsan.food.enums.FoodStoryVisibility;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,6 +16,7 @@ public class FoodStory {
     private Long foodId;
     private Long userId;
     private FoodStoryType type;
+    private FoodStoryVisibility visibility;
 
     // SeasonalNote fields
     private String content;
@@ -41,6 +43,7 @@ public class FoodStory {
                 .foodId(foodId)
                 .userId(userId)
                 .type(FoodStoryType.SEASONAL_NOTE)
+                .visibility(FoodStoryVisibility.VISIBLE)
                 .content(content)
                 .recordedDate(recordedDate)
                 .build();
@@ -51,6 +54,7 @@ public class FoodStory {
                 .foodId(foodId)
                 .userId(userId)
                 .type(FoodStoryType.RECIPE)
+                .visibility(FoodStoryVisibility.VISIBLE)
                 .recipeName(recipeName)
                 .ingredients(ingredients)
                 .instructions(instructions)
@@ -62,6 +66,7 @@ public class FoodStory {
                 .foodId(foodId)
                 .userId(userId)
                 .type(FoodStoryType.PLACE)
+                .visibility(FoodStoryVisibility.VISIBLE)
                 .placeName(placeName)
                 .placeContent(placeContent)
                 .category(category)

@@ -3,6 +3,7 @@ package com.example.matdongsan.food.repository;
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
 import com.example.matdongsan.food.enums.FoodStoryType;
+import com.example.matdongsan.food.enums.FoodStoryVisibility;
 import com.example.matdongsan.food.mapper.FoodMapper;
 import com.example.matdongsan.jpa.entity.food.FoodStoryEntity;
 import com.example.matdongsan.jpa.entity.food.FoodStoryImageEntity;
@@ -40,6 +41,7 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
                 .where(
                         story.foodId.eq(foodId),
                         story.deletedAt.isNull(),
+                        story.visibility.eq(FoodStoryVisibility.VISIBLE),
                         typeEq(type)
                 )
                 .orderBy(story.createdAt.desc())
@@ -57,6 +59,7 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
                 .where(
                         story.foodId.eq(foodId),
                         story.deletedAt.isNull(),
+                        story.visibility.eq(FoodStoryVisibility.VISIBLE),
                         typeEq(type)
                 )
                 .fetchOne();
@@ -81,6 +84,20 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
                 .where(storyReport.foodStoryId.eq(storyId), storyReport.deletedAt.isNull())
                 .fetchOne();
         return count != null ? count : 0L;
+    }
+
+    @Override
+    public boolean existsReportByStoryIdAndUserId(Long storyId, Long userId) {
+        Integer fetched = queryFactory
+                .selectOne()
+                .from(storyReport)
+                .where(
+                        storyReport.foodStoryId.eq(storyId),
+                        storyReport.userId.eq(userId),
+                        storyReport.deletedAt.isNull()
+                )
+                .fetchFirst();
+        return fetched != null;
     }
 
     @Override

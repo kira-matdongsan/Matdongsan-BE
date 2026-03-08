@@ -2,6 +2,7 @@ package com.example.matdongsan.jpa.entity.food;
 
 import com.example.matdongsan.jpa.entity.common.BaseTimeEntityWithSoftDelete;
 import com.example.matdongsan.food.enums.FoodStoryType;
+import com.example.matdongsan.food.enums.FoodStoryVisibility;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -27,6 +28,10 @@ public abstract class FoodStoryEntity extends BaseTimeEntityWithSoftDelete {
     private Long foodId;
 
     private Long userId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility", nullable = false, length = 20)
+    private FoodStoryVisibility visibility;
 
     @OneToMany(mappedBy = "foodStory", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

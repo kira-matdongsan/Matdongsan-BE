@@ -23,5 +23,9 @@ public class FoodStoryReportEntity extends BaseTimeEntityWithSoftDelete {
     @Column(name = "story_id", nullable = false)
     private Long foodStoryId;
 
+    @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @Column(name = "reason", nullable = false)
+    private String reason;
 }

@@ -2,17 +2,21 @@ package com.example.matdongsan.food.repository;
 
 import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
+import com.example.matdongsan.food.domain.FoodStoryReport;
 import com.example.matdongsan.food.enums.FoodStoryType;
+import com.example.matdongsan.food.enums.FoodStoryVisibility;
 import com.example.matdongsan.food.mapper.FoodMapper;
 import com.example.matdongsan.jpa.entity.food.FoodStoryEntity;
 import com.example.matdongsan.jpa.entity.food.FoodStoryImageEntity;
 import com.example.matdongsan.jpa.entity.food.FoodStoryPlaceEntity;
 import com.example.matdongsan.jpa.entity.food.FoodStoryRecipeEntity;
+import com.example.matdongsan.jpa.entity.food.FoodStoryReportEntity;
 import com.example.matdongsan.jpa.entity.food.FoodStorySeasonalNoteEntity;
 import com.example.matdongsan.jpa.repository.FoodStoryImageJpaRepository;
 import com.example.matdongsan.jpa.repository.FoodStoryJpaRepository;
 import com.example.matdongsan.jpa.repository.FoodStoryPlaceJpaRepository;
 import com.example.matdongsan.jpa.repository.FoodStoryRecipeJpaRepository;
+import com.example.matdongsan.jpa.repository.FoodStoryReportJpaRepository;
 import com.example.matdongsan.jpa.repository.FoodStorySeasonalNoteJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -29,6 +33,7 @@ public class FoodStoryCommandRepositoryImpl implements FoodStoryCommandRepositor
     private final FoodStoryRecipeJpaRepository recipeJpaRepository;
     private final FoodStoryPlaceJpaRepository placeJpaRepository;
     private final FoodStoryImageJpaRepository storyImageJpaRepository;
+    private final FoodStoryReportJpaRepository storyReportJpaRepository;
     private final FoodMapper foodMapper;
 
     @Override
@@ -39,6 +44,7 @@ public class FoodStoryCommandRepositoryImpl implements FoodStoryCommandRepositor
             FoodStorySeasonalNoteEntity entity = FoodStorySeasonalNoteEntity.builder()
                     .foodId(story.getFoodId())
                     .userId(story.getUserId())
+                    .visibility(story.getVisibility())
                     .content(story.getContent())
                     .recordedDate(story.getRecordedDate())
                     .build();
@@ -47,6 +53,7 @@ public class FoodStoryCommandRepositoryImpl implements FoodStoryCommandRepositor
             FoodStoryRecipeEntity entity = FoodStoryRecipeEntity.builder()
                     .foodId(story.getFoodId())
                     .userId(story.getUserId())
+                    .visibility(story.getVisibility())
                     .recipeName(story.getRecipeName())
                     .ingredients(story.getIngredients())
                     .instructions(story.getInstructions())
@@ -56,6 +63,7 @@ public class FoodStoryCommandRepositoryImpl implements FoodStoryCommandRepositor
             FoodStoryPlaceEntity entity = FoodStoryPlaceEntity.builder()
                     .foodId(story.getFoodId())
                     .userId(story.getUserId())
+                    .visibility(story.getVisibility())
                     .placeName(story.getPlaceName())
                     .content(story.getPlaceContent())
                     .category(story.getCategory())
@@ -85,6 +93,22 @@ public class FoodStoryCommandRepositoryImpl implements FoodStoryCommandRepositor
                 .collect(Collectors.toList());
         List<FoodStoryImageEntity> saved = storyImageJpaRepository.saveAll(entities);
         return foodMapper.toStoryImageDomainList(saved);
+    }
+
+    @Override
+    public FoodStoryReport saveReport(FoodStoryReport report) {
+        FoodStoryReportEntity entity = FoodStoryReportEntity.builder()
+                .foodStoryId(report.getFoodStoryId())
+                .userId(report.getUserId())
+                .reason(report.getReason())
+                .build();
+        FoodStoryReportEntity saved = storyReportJpaRepository.saveAndFlush(entity);
+        return foodMapper.toStoryReportDomain(saved);
+    }
+
+    @Override
+    public void updateVisibility(Long storyId, FoodStoryVisibility visibility) {
+        storyJpaRepository.updateVisibilityById(storyId, visibility);
     }
 
     @Override
