@@ -41,6 +41,8 @@ public enum ErrorCode {
     STORY_NOT_FOUND(404, "이야기를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     STORY_ALREADY_REPORTED(409, "이미 신고한 이야기입니다.", HttpStatus.CONFLICT),
     STORY_NOT_OWNER(403, "본인이 작성한 이야기만 삭제할 수 있습니다.", HttpStatus.FORBIDDEN),
+    USER_ALREADY_BLOCKED(409, "이미 차단한 사용자입니다.", HttpStatus.CONFLICT),
+    USER_BLOCK_SELF(400, "자기 자신을 차단할 수 없습니다.", HttpStatus.BAD_REQUEST),
     DISH_NOT_FOUND(404, "제철 요리를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
 
     // 외부 API

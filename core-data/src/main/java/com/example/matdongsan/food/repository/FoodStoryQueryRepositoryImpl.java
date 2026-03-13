@@ -35,14 +35,15 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
     private static final QFoodStoryReportEntity storyReport = QFoodStoryReportEntity.foodStoryReportEntity;
 
     @Override
-    public List<FoodStory> findAllByFoodId(Long foodId, FoodStoryType type, int page, int size) {
+    public List<FoodStory> findAllByFoodId(Long foodId, FoodStoryType type, int page, int size, List<Long> blockedUserIds) {
         List<FoodStoryEntity> entities = queryFactory
                 .selectFrom(story)
                 .where(
                         story.foodId.eq(foodId),
                         story.deletedAt.isNull(),
                         story.visibility.eq(FoodStoryVisibility.VISIBLE),
-                        typeEq(type)
+                        typeEq(type),
+                        blockedUsersNotIn(blockedUserIds)
                 )
                 .orderBy(story.createdAt.desc())
                 .offset((long) page * size)
@@ -52,7 +53,7 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
     }
 
     @Override
-    public long countByFoodId(Long foodId, FoodStoryType type) {
+    public long countByFoodId(Long foodId, FoodStoryType type, List<Long> blockedUserIds) {
         Long count = queryFactory
                 .select(story.count())
                 .from(story)
@@ -60,7 +61,8 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
                         story.foodId.eq(foodId),
                         story.deletedAt.isNull(),
                         story.visibility.eq(FoodStoryVisibility.VISIBLE),
-                        typeEq(type)
+                        typeEq(type),
+                        blockedUsersNotIn(blockedUserIds)
                 )
                 .fetchOne();
         return count != null ? count : 0L;
@@ -132,5 +134,10 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
             case PLACE -> new BooleanBuilder(story.instanceOf(FoodStoryPlaceEntity.class));
             case SEASONAL_NOTE -> new BooleanBuilder(story.instanceOf(FoodStorySeasonalNoteEntity.class));
         };
+    }
+
+    private BooleanBuilder blockedUsersNotIn(List<Long> blockedUserIds) {
+        if (blockedUserIds == null || blockedUserIds.isEmpty()) return null;
+        return new BooleanBuilder(story.userId.notIn(blockedUserIds));
     }
 }

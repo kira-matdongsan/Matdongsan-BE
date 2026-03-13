@@ -13,7 +13,10 @@ import com.example.matdongsan.food.enums.FoodStoryVisibility;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
 import com.example.matdongsan.food.repository.FoodStoryCommandRepository;
 import com.example.matdongsan.food.repository.FoodStoryQueryRepository;
+import com.example.matdongsan.user.domain.UserBlock;
 import com.example.matdongsan.user.domain.UserProfile;
+import com.example.matdongsan.user.repository.UserBlockCommandRepository;
+import com.example.matdongsan.user.repository.UserBlockQueryRepository;
 import com.example.matdongsan.user.repository.UserProfileQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,8 @@ public class FoodStoryService {
     private final FoodStoryQueryRepository foodStoryQueryRepository;
     private final FoodStoryCommandRepository foodStoryCommandRepository;
     private final UserProfileQueryRepository userProfileQueryRepository;
+    private final UserBlockCommandRepository userBlockCommandRepository;
+    private final UserBlockQueryRepository userBlockQueryRepository;
 
     @Transactional
     public FoodStoryServiceDto createSeasonalNoteStory(Long foodId, Long userId, CreateSeasonalNoteParam param) {
@@ -113,6 +118,24 @@ public class FoodStoryService {
         if (reportCount >= STORY_REPORT_HIDE_THRESHOLD) {
             foodStoryCommandRepository.updateVisibility(storyId, FoodStoryVisibility.HIDDEN);
         }
+    }
+
+    @Transactional
+    public void blockUser(Long storyId, Long blockerId) {
+        FoodStory story = foodStoryQueryRepository.findById(storyId)
+                .orElseThrow(() -> new CustomException(ErrorCode.STORY_NOT_FOUND));
+
+        Long blockedId = story.getUserId();
+
+        if (blockerId.equals(blockedId)) {
+            throw new CustomException(ErrorCode.USER_BLOCK_SELF);
+        }
+
+        if (userBlockQueryRepository.existsByBlockerIdAndBlockedId(blockerId, blockedId)) {
+            throw new CustomException(ErrorCode.USER_ALREADY_BLOCKED);
+        }
+
+        userBlockCommandRepository.save(UserBlock.create(blockerId, blockedId));
     }
 
     private List<FoodStoryImage> createImages(Long storyId, List<String> imageUrls) {

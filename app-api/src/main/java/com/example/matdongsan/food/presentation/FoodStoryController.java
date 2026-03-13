@@ -98,4 +98,15 @@ public class FoodStoryController {
     }
 
     // 사용자 차단
+    @Operation(summary = "사용자 차단", description = "이야기 ID로 해당 이야기 작성자 차단 (차단 후 해당 사용자의 모든 이야기가 목록에서 숨겨짐)")
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping("/stories/{storyId}/block")
+    public ResponseEntity<RestApiResponse<ResultResponse<Boolean>>> blockUser(
+            @Parameter(name = "storyId", description = "차단할 작성자의 이야기 ID", example = "1")
+            @PathVariable Long storyId,
+            @CurrentUser User user
+    ) {
+        foodStoryService.blockUser(storyId, user.getId());
+        return RestApiResponse.successResult(ResponseCode.OK, true);
+    }
 }

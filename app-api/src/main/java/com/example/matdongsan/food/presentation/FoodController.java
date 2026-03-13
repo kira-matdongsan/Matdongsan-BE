@@ -69,8 +69,9 @@ public class FoodController {
             @CurrentUser User user,
             @ModelAttribute StoryRequest request
     ) {
-        Page<StoryResponse> storyResponses = foodService.getAllStoriesByFoodId(id, request.toParam())
-                .map(dto -> StoryResponse.from(dto, true, user != null && user.getId().equals(dto.getUserId())));
+        Long userId = user != null ? user.getId() : null;
+        Page<StoryResponse> storyResponses = foodService.getAllStoriesByFoodId(id, userId, request.toParam())
+                .map(dto -> StoryResponse.from(dto, true, userId != null && userId.equals(dto.getUserId())));
         return RestApiResponse.successPage(ResponseCode.OK, storyResponses);
     }
 

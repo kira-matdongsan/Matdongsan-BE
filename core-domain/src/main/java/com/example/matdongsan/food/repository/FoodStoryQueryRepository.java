@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface FoodStoryQueryRepository {
 
-    List<FoodStory> findAllByFoodId(Long foodId, FoodStoryType type, int page, int size);
+    List<FoodStory> findAllByFoodId(Long foodId, FoodStoryType type, int page, int size, List<Long> blockedUserIds);
 
-    long countByFoodId(Long foodId, FoodStoryType type);
+    long countByFoodId(Long foodId, FoodStoryType type, List<Long> blockedUserIds);
 
     long countLikesById(Long storyId);
 

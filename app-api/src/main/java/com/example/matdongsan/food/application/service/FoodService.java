@@ -18,6 +18,7 @@ import com.example.matdongsan.food.domain.FoodStoryImage;
 import com.example.matdongsan.food.repository.FoodQueryRepository;
 import com.example.matdongsan.food.repository.FoodStoryQueryRepository;
 import com.example.matdongsan.user.domain.UserProfile;
+import com.example.matdongsan.user.repository.UserBlockQueryRepository;
 import com.example.matdongsan.user.repository.UserProfileQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -45,6 +46,7 @@ public class FoodService {
     private final DishQueryRepository dishQueryRepository;
     private final DishVoteQueryRepository dishVoteQueryRepository;
     private final UserProfileQueryRepository userProfileQueryRepository;
+    private final UserBlockQueryRepository userBlockQueryRepository;
 
     public FoodServiceDto getFoodInfoById(Long id) {
         Food food = foodQueryRepository.findById(id)
@@ -107,12 +109,16 @@ public class FoodService {
                 .build();
     }
 
-    public Page<FoodStoryServiceDto> getAllStoriesByFoodId(Long id, StoryParam param) {
+    public Page<FoodStoryServiceDto> getAllStoriesByFoodId(Long id, Long requestUserId, StoryParam param) {
         foodQueryRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
 
-        List<FoodStory> stories = foodStoryQueryRepository.findAllByFoodId(id, param.getType(), param.getPage(), param.getSize());
-        long totalCount = foodStoryQueryRepository.countByFoodId(id, param.getType());
+        List<Long> blockedUserIds = requestUserId != null
+                ? userBlockQueryRepository.findBlockedUserIdsByBlockerId(requestUserId)
+                : List.of();
+
+        List<FoodStory> stories = foodStoryQueryRepository.findAllByFoodId(id, param.getType(), param.getPage(), param.getSize(), blockedUserIds);
+        long totalCount = foodStoryQueryRepository.countByFoodId(id, param.getType(), blockedUserIds);
 
         List<FoodStoryServiceDto> dtos = stories.stream()
                 .map(story -> {
