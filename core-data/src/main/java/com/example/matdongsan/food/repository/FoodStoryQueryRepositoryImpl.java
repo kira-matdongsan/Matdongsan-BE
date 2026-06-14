@@ -14,13 +14,17 @@ import com.example.matdongsan.jpa.entity.food.QFoodStoryEntity;
 import com.example.matdongsan.jpa.entity.food.QFoodStoryImageEntity;
 import com.example.matdongsan.jpa.entity.food.QFoodStoryLikeEntity;
 import com.example.matdongsan.jpa.entity.food.QFoodStoryReportEntity;
+import com.example.matdongsan.jpa.entity.food.QFoodStorySeasonalNoteEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Repository
 @RequiredArgsConstructor
@@ -125,6 +129,41 @@ public class FoodStoryQueryRepositoryImpl implements FoodStoryQueryRepository {
                 .orderBy(storyImage.orderNum.asc())
                 .fetch();
         return foodMapper.toStoryImageDomainList(entities);
+    }
+
+    @Override
+    public List<FoodStory> findByUserIdAndEffectiveDate(Long userId, LocalDate date) {
+        LocalDateTime dayStart = date.atStartOfDay();
+        LocalDateTime dayEnd = date.plusDays(1).atStartOfDay();
+
+        List<FoodStoryEntity> recipePlace = queryFactory
+                .selectFrom(story)
+                .where(
+                        story.userId.eq(userId),
+                        story.deletedAt.isNull(),
+                        story.instanceOf(FoodStoryRecipeEntity.class)
+                                .or(story.instanceOf(FoodStoryPlaceEntity.class)),
+                        story.createdAt.goe(dayStart),
+                        story.createdAt.lt(dayEnd)
+                )
+                .fetch();
+
+        QFoodStorySeasonalNoteEntity note = QFoodStorySeasonalNoteEntity.foodStorySeasonalNoteEntity;
+        List<FoodStorySeasonalNoteEntity> seasonalNotes = queryFactory
+                .selectFrom(note)
+                .where(
+                        note.userId.eq(userId),
+                        note.deletedAt.isNull(),
+                        note.recordedDate.eq(date)
+                                .or(note.recordedDate.isNull()
+                                        .and(note.createdAt.goe(dayStart))
+                                        .and(note.createdAt.lt(dayEnd)))
+                )
+                .fetch();
+
+        return Stream.concat(recipePlace.stream(), seasonalNotes.stream())
+                .map(foodMapper::toStoryDomain)
+                .toList();
     }
 
     private BooleanBuilder typeEq(FoodStoryType type) {
