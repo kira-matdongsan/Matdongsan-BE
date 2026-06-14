@@ -45,6 +45,10 @@ public enum ErrorCode {
     USER_BLOCK_SELF(400, "자기 자신을 차단할 수 없습니다.", HttpStatus.BAD_REQUEST),
     DISH_NOT_FOUND(404, "제철 요리를 찾을 수 없습니다", HttpStatus.NOT_FOUND),
 
+    // 제철기록장 (SeasonalDiary)
+    SEASONAL_DIARY_NOT_FOUND(404, "제철기록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    SEASONAL_DIARY_NOT_OWNER(403, "본인이 작성한 제철기록만 수정/삭제할 수 있습니다.", HttpStatus.FORBIDDEN),
+
     // 외부 API
     KAKAO_OAUTH_FAILED(401, "카카오 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
     NAVER_OAUTH_FAILED(401, "네이버 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),

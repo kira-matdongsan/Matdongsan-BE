@@ -4,6 +4,7 @@ import com.example.matdongsan.food.domain.FoodStory;
 import com.example.matdongsan.food.domain.FoodStoryImage;
 import com.example.matdongsan.food.enums.FoodStoryType;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,6 @@ public interface FoodStoryQueryRepository {
     Optional<FoodStory> findById(Long storyId);
 
     List<FoodStoryImage> findAllImagesById(Long storyId);
+
+    List<FoodStory> findByUserIdAndEffectiveDate(Long userId, LocalDate date);
 }
