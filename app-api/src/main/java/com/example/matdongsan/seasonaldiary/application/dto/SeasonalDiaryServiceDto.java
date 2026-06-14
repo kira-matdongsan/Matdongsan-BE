@@ -1,7 +1,6 @@
 package com.example.matdongsan.seasonaldiary.application.dto;
 
 import com.example.matdongsan.seasonaldiary.domain.SeasonalDiary;
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,14 +12,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SeasonalDiaryServiceDto {
     private Long id;
-    private SeasonalDiarySticker sticker;
+    private Long stickerId;
+    private String stickerImageUrl;
     private String content;
     private LocalDateTime createdAt;
 
-    public static SeasonalDiaryServiceDto from(SeasonalDiary d) {
+    public static SeasonalDiaryServiceDto from(SeasonalDiary d, String stickerImageUrl) {
         return SeasonalDiaryServiceDto.builder()
                 .id(d.getId())
-                .sticker(d.getSticker())
+                .stickerId(d.getStickerId())
+                .stickerImageUrl(stickerImageUrl)
                 .content(d.getContent())
                 .createdAt(d.getCreatedAt())
                 .build();

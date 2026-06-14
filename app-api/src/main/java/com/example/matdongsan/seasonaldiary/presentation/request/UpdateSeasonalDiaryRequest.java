@@ -1,7 +1,6 @@
 package com.example.matdongsan.seasonaldiary.presentation.request;
 
 import com.example.matdongsan.seasonaldiary.application.dto.UpdateSeasonalDiaryParam;
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,7 +10,7 @@ import lombok.Getter;
 public class UpdateSeasonalDiaryRequest {
 
     @NotNull
-    private SeasonalDiarySticker sticker;
+    private Long stickerId;
 
     @NotBlank
     @Size(max = 40)
@@ -19,7 +18,7 @@ public class UpdateSeasonalDiaryRequest {
 
     public UpdateSeasonalDiaryParam toParam() {
         return UpdateSeasonalDiaryParam.builder()
-                .sticker(sticker)
+                .stickerId(stickerId)
                 .content(content)
                 .build();
     }

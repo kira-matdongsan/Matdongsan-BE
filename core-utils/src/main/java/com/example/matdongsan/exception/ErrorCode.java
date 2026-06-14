@@ -49,6 +49,10 @@ public enum ErrorCode {
     SEASONAL_DIARY_NOT_FOUND(404, "제철기록을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     SEASONAL_DIARY_NOT_OWNER(403, "본인이 작성한 제철기록만 수정/삭제할 수 있습니다.", HttpStatus.FORBIDDEN),
 
+    // 스티커 (Sticker)
+    STICKER_NOT_FOUND(404, "스티커를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    STICKER_NOT_AVAILABLE(400, "사용할 수 없는 스티커입니다.", HttpStatus.BAD_REQUEST),
+
     // 외부 API
     KAKAO_OAUTH_FAILED(401, "카카오 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
     NAVER_OAUTH_FAILED(401, "네이버 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),

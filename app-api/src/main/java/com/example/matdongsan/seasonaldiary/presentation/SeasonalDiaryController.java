@@ -1,6 +1,7 @@
 package com.example.matdongsan.seasonaldiary.presentation;
 
 import com.example.matdongsan.common.util.auth.CurrentUser;
+import com.example.matdongsan.response.ListResponse;
 import com.example.matdongsan.response.ResponseCode;
 import com.example.matdongsan.response.RestApiResponse;
 import com.example.matdongsan.response.ResultResponse;
@@ -9,6 +10,7 @@ import com.example.matdongsan.seasonaldiary.presentation.request.CreateSeasonalD
 import com.example.matdongsan.seasonaldiary.presentation.request.UpdateSeasonalDiaryRequest;
 import com.example.matdongsan.seasonaldiary.presentation.response.CalendarDiaryResponse;
 import com.example.matdongsan.seasonaldiary.presentation.response.DailyDiaryResponse;
+import com.example.matdongsan.seasonaldiary.presentation.response.StickerResponse;
 import com.example.matdongsan.seasonaldiary.presentation.response.WeeklyDiaryResponse;
 import com.example.matdongsan.user.domain.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +23,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name = "제철기록장 / 캘린더 API", description = "비공개 제철음식 기록 및 캘린더 관련 API")
 @RequiredArgsConstructor
@@ -29,6 +32,14 @@ import java.time.LocalDate;
 public class SeasonalDiaryController {
 
     private final SeasonalDiaryService service;
+
+    @Operation(summary = "스티커 팔레트 조회", description = "현재 활성화된 스티커 목록 (인증 불필요)")
+    @GetMapping("/stickers")
+    public ResponseEntity<RestApiResponse<ListResponse<StickerResponse>>> stickers() {
+        List<StickerResponse> stickers = service.getActiveStickers().stream()
+                .map(StickerResponse::from).toList();
+        return RestApiResponse.successList(ResponseCode.OK, stickers);
+    }
 
     @Operation(summary = "제철기록 생성", description = "스티커와 내용으로 제철음식 기록 생성")
     @PreAuthorize("isAuthenticated()")

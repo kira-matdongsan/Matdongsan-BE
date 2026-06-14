@@ -1,6 +1,5 @@
 package com.example.matdongsan.seasonaldiary.domain;
 
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,18 +13,18 @@ public class SeasonalDiary {
     private Long id;
     private Long userId;
     private LocalDate recordDate;
-    private SeasonalDiarySticker sticker;
+    private Long stickerId;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
     public static SeasonalDiary create(Long userId, LocalDate recordDate,
-                                       SeasonalDiarySticker sticker, String content) {
+                                       Long stickerId, String content) {
         return SeasonalDiary.builder()
                 .userId(userId)
                 .recordDate(recordDate)
-                .sticker(sticker)
+                .stickerId(stickerId)
                 .content(content)
                 .build();
     }

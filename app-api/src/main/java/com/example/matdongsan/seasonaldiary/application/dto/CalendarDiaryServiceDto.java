@@ -1,6 +1,5 @@
 package com.example.matdongsan.seasonaldiary.application.dto;
 
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +20,7 @@ public class CalendarDiaryServiceDto {
     @AllArgsConstructor
     public static class Marker {
         private LocalDate date;
-        private SeasonalDiarySticker sticker;
+        private Long stickerId;
+        private String stickerImageUrl;
     }
 }

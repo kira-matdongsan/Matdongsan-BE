@@ -1,7 +1,6 @@
 package com.example.matdongsan.seasonaldiary.presentation.response;
 
 import com.example.matdongsan.seasonaldiary.application.dto.CalendarDiaryServiceDto;
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +22,8 @@ public class CalendarDiaryResponse {
     @AllArgsConstructor
     public static class MarkerResponse {
         private LocalDate date;
-        private SeasonalDiarySticker sticker;
+        private Long stickerId;
+        private String stickerImageUrl;
     }
 
     public static CalendarDiaryResponse from(CalendarDiaryServiceDto dto) {
@@ -32,7 +32,8 @@ public class CalendarDiaryResponse {
                 .month(dto.getMonth())
                 .days(dto.getDays().stream().map(m -> MarkerResponse.builder()
                         .date(m.getDate())
-                        .sticker(m.getSticker())
+                        .stickerId(m.getStickerId())
+                        .stickerImageUrl(m.getStickerImageUrl())
                         .build()).toList())
                 .build();
     }

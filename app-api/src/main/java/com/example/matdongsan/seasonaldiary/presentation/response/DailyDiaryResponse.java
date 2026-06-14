@@ -2,7 +2,6 @@ package com.example.matdongsan.seasonaldiary.presentation.response;
 
 import com.example.matdongsan.food.enums.FoodStoryType;
 import com.example.matdongsan.seasonaldiary.application.dto.DailyDiaryServiceDto;
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +24,8 @@ public class DailyDiaryResponse {
     @AllArgsConstructor
     public static class RecordResponse {
         private Long id;
-        private SeasonalDiarySticker sticker;
+        private Long stickerId;
+        private String stickerImageUrl;
         private String content;
         private LocalDateTime createdAt;
     }
@@ -46,7 +46,8 @@ public class DailyDiaryResponse {
                 .date(dto.getDate())
                 .records(dto.getRecords().stream().map(r -> RecordResponse.builder()
                         .id(r.getId())
-                        .sticker(r.getSticker())
+                        .stickerId(r.getStickerId())
+                        .stickerImageUrl(r.getStickerImageUrl())
                         .content(r.getContent())
                         .createdAt(r.getCreatedAt())
                         .build()).toList())

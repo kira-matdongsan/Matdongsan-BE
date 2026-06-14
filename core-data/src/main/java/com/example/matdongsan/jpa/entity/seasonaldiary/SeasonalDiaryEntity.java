@@ -1,7 +1,6 @@
 package com.example.matdongsan.jpa.entity.seasonaldiary;
 
 import com.example.matdongsan.jpa.entity.common.BaseTimeEntityWithSoftDelete;
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,9 +28,8 @@ public class SeasonalDiaryEntity extends BaseTimeEntityWithSoftDelete {
     @Column(name = "record_date", nullable = false)
     private LocalDate recordDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "sticker", nullable = false, length = 30)
-    private SeasonalDiarySticker sticker;
+    @Column(name = "sticker_id", nullable = false)
+    private Long stickerId;
 
     @Column(name = "content", nullable = false, length = 40)
     private String content;

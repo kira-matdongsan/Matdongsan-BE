@@ -3,7 +3,6 @@ package com.example.matdongsan.seasonaldiary.repository;
 import com.example.matdongsan.jpa.entity.seasonaldiary.SeasonalDiaryEntity;
 import com.example.matdongsan.jpa.repository.SeasonalDiaryJpaRepository;
 import com.example.matdongsan.seasonaldiary.domain.SeasonalDiary;
-import com.example.matdongsan.seasonaldiary.enums.SeasonalDiarySticker;
 import com.example.matdongsan.seasonaldiary.mapper.SeasonalDiaryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -22,8 +21,8 @@ public class SeasonalDiaryCommandRepositoryImpl implements SeasonalDiaryCommandR
     }
 
     @Override
-    public void update(Long id, SeasonalDiarySticker sticker, String content) {
-        jpaRepository.updateById(id, sticker, content);
+    public void update(Long id, Long stickerId, String content) {
+        jpaRepository.updateById(id, stickerId, content);
     }
 
     @Override
